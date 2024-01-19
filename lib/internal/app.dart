@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:vk_music/data/vk_api/models/vk_api.dart';
-import 'package:vk_music/domain/auth_bloc/auth_bloc.dart';
-import 'package:vk_music/presentation/auth/login_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vk_music/data/vk_api/models/vk_api.dart';
+import 'package:vk_music/domain/const.dart';
+import 'package:vk_music/domain/music_loader/music_loader_cubit.dart';
+import 'package:vk_music/domain/music_player.dart';
+import 'package:vk_music/domain/state/nav_bar/nav_bar_cubit.dart';
+import 'package:vk_music/presentation/auth/login_screen.dart';
+
+import '../domain/state/auth/auth_bloc.dart';
+import '../domain/state/music_player/music_player_bloc.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -10,21 +16,42 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final VKApi vkApi = VKApi();
-    final authBloc = AuthBloc(vkApi: vkApi)
+    final navBar = NavBarCubit();
+    final musicLoaderBloc = MusicLoaderCubit(vkApi);
+    final musicPlayerBloc = MusicPlayerBloc(musicPlayer: MusicPlayer(), vkApi: vkApi);
+    final authBloc = AuthBloc(vkApi: vkApi, musicLoader: musicLoaderBloc)
       ..add(LoadUserEvent());
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<AuthBloc>(
-            create: (context) => authBloc
+          create: (context) => authBloc
+        ),
+        BlocProvider<MusicLoaderCubit>(
+          create: (context) => musicLoaderBloc
+        ),
+        BlocProvider<MusicPlayerBloc>(
+          create: (context) => musicPlayerBloc
+        ),
+        BlocProvider<NavBarCubit>(
+            create: (context) => navBar
         )
       ],
       child: MaterialApp(
         title: 'VK Music Player',
+        navigatorKey: navigatorKey,
         theme: ThemeData(
             useMaterial3: true,
+            appBarTheme: const AppBarTheme(
+              backgroundColor: Colors.black
+            ),
+            bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+              backgroundColor: Colors.black
+            ),
             colorScheme: ColorScheme.fromSeed(
-                seedColor: Colors.blue,
-                brightness: Brightness.dark
+              background: Colors.black,
+              seedColor: Colors.redAccent,
+              brightness: Brightness.dark,
             )
         ),
         home: const LoginScreen(),

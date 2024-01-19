@@ -1,6 +1,15 @@
+
+import 'package:hive/hive.dart';
+
+part 'user.g.dart';
+
+@HiveType(typeId: 1)
 class User {
+  @HiveField(1)
   final String accessToken;
+  @HiveField(2)
   final String userId;
+  @HiveField(3)
   final String secret;
 
   const User({
@@ -16,4 +25,8 @@ class User {
       secret: json['secret'] as String
     );
   }
+
+  @override
+  String toString() =>
+      'User(accessToken: $accessToken, userId: $userId, secret: $secret)';
 }

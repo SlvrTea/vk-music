@@ -1,38 +1,49 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vk_music/domain/const.dart';
+import 'package:vk_music/presentation/home/home.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:webview_flutter_android/webview_flutter_android.dart';
 
-import '../../domain/auth_bloc/auth_bloc.dart';
+import '../../domain/state/auth/auth_bloc.dart';
 
 class Tfa extends StatefulWidget {
+  const Tfa({super.key, required this.redirect, required this.query});
+
   final String redirect;
-  const Tfa({super.key, required this.redirect});
+  final Map<String, dynamic> query;
 
   @override
   State<Tfa> createState() => _TfaState();
 }
 
 class _TfaState extends State<Tfa> {
+  late final WebViewController webViewController;
+
+  @override
+  void initState() {
+    super.initState();
+    webViewController = WebViewController()
+      ..setNavigationDelegate(NavigationDelegate(
+          onUrlChange: (url) {
+            if (url.url!.startsWith('https://oauth.vk.com/blank.html#success=1')) {
+              final auth = BlocProvider.of<AuthBloc>(context);
+              auth.add(AuthUserEvent(password: widget.query['password'], login: widget.query['login'], url: url.url));
+              navigatorKey.currentState!.push(
+                  MaterialPageRoute(builder: (_) => const Home())
+              );
+            }
+          }
+      ))
+      ..loadRequest(Uri.parse(widget.redirect));
+  }
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
-    // return SafeArea(
-    //   child: WebViewWidget(
-    //     controller: WebViewController(),
-    //     navigationDelegate: (NavigationRequest request) async {
-    //       if (request.url.startsWith('https://oauth.vk.com/blank.html')) {
-    //         context.read<AuthBloc>().add(AuthUserEvent(url: request.url));
-    //         Navigator.pop(context);
-    //       }
-    //       return NavigationDecision.navigate;
-    //     },
-    //     userAgent:
-    //     'VKAndroidApp/4.13.1-1206 (Android 4.4.3; SDK 19; armeabi; ; ru)',
-    //     initialUrl: widget.redirect,
-    //   ),
-    // );
+    final webView = WebViewWidget(controller: webViewController);
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Двухфакторная аутентификация'),
+      ),
+      body: WebViewWidget(controller: webViewController),
+    );
   }
 }

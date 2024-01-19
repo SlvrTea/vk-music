@@ -7,7 +7,11 @@ class AuthInitial extends AuthState {}
 
 class UserLoadingState extends AuthState {}
 
-class UserLoadedState extends AuthState {}
+class UserLoadedState extends AuthState {
+  final User user;
+
+  UserLoadedState({required this.user});
+}
 
 class AuthFailed extends AuthState {
   final String errorMessage;

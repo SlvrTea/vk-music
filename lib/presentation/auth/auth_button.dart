@@ -1,7 +1,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vk_music/domain/auth_bloc/auth_bloc.dart';
+import 'package:vk_music/presentation/home/home.dart';
+
+import '../../domain/state/auth/auth_bloc.dart';
 
 class AuthButton extends StatelessWidget {
   final String login;
@@ -22,6 +24,10 @@ class AuthButton extends StatelessWidget {
       listener: (context, state) {
         if (state is AuthFailed) {
           ScaffoldMessenger.of(context).showSnackBar(snackBar(state.errorMessage));
+        } else if (state is UserLoadedState) {
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (_) => const Home())
+          );
         }
       },
       builder: (context, state) {
@@ -32,7 +38,7 @@ class AuthButton extends StatelessWidget {
                 password: password
               ));
             },
-            child: state is! UserLoadingState
+            child: state is AuthFailed || state is AuthInitial
                 ? const Text('Войти', style: TextStyle(fontSize: 18))
                 : const Center(child: CircularProgressIndicator())
         );
