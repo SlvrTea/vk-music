@@ -38,7 +38,6 @@ class _TfaState extends State<Tfa> {
   }
   @override
   Widget build(BuildContext context) {
-    final webView = WebViewWidget(controller: webViewController);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Двухфакторная аутентификация'),
