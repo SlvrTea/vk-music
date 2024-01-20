@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../domain/state/auth/auth_bloc.dart';
-import '../home/home.dart';
+import '../home_screen/home.dart';
 
 class Capcha extends StatefulWidget {
   const Capcha ({super.key, required this.capchaUrl, required this.capchaSId, required this.query});

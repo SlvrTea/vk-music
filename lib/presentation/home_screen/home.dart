@@ -2,8 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vk_music/domain/state/nav_bar/nav_bar_cubit.dart';
+import 'package:vk_music/domain/state/playlists/playlists_cubit.dart';
 import 'package:vk_music/presentation/auth/login_screen.dart';
-import 'package:vk_music/presentation/home/music_list.dart';
+import 'package:vk_music/presentation/cover.dart';
+import 'package:vk_music/presentation/playlists_tab/playlists_tab.dart';
+import 'package:vk_music/presentation/song_list/music_list.dart';
 import 'package:vk_music/presentation/navbar/navigation_bar.dart';
 
 import '../../domain/music_loader/music_loader_cubit.dart';
@@ -15,7 +18,7 @@ class Home extends StatelessWidget {
   final tabs = const [
     _MainTab(),
     Center(child: Text('2')),
-    Center(child: Text('3'))
+    PlaylistsTab()
   ];
 
   @override
@@ -32,7 +35,7 @@ class Home extends StatelessWidget {
         selectedIndex: navBarCubit.state,
         items: [
           NavBarItem(icon: const Icon(Icons.music_note_rounded), activeColor: Colors.redAccent, inactiveColor: Colors.grey),
-          NavBarItem(icon: const Icon(Icons.favorite_rounded), activeColor: Colors.redAccent, inactiveColor: Colors.grey),
+          NavBarItem(icon: const Icon(Icons.search), activeColor: Colors.redAccent, inactiveColor: Colors.grey),
           NavBarItem(icon: const Icon(Icons.album), activeColor: Colors.redAccent, inactiveColor: Colors.grey)
         ],
       ),
@@ -47,13 +50,41 @@ class _MainTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final state = context.watch<MusicLoaderCubit>().state;
     if (state is MusicLoadedState) {
-      return MusicList(songList: state.songs);
+      return SingleChildScrollView(
+        child: Column(
+          children: [
+            const _PlaylistsSection(),
+            MusicList(songList: state.songs),
+          ],
+        ),
+      );
     } else if (state is MusicLoadingFailed) {
       return Text(state.errorMessage);
     }
     return const Center(child: CircularProgressIndicator());
   }
 }
+
+class _PlaylistsSection extends StatelessWidget with PlaylistCoverGetterMixin {
+  const _PlaylistsSection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final cubit = context.watch<PlaylistsCubit>();
+    final state = cubit.state;
+    if (state is PlaylistsLoadedState) {
+      return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+            children: getCovers(state.playlists)
+        ),
+      );
+    }
+    cubit.getPlaylists();
+    return const Center(child: CircularProgressIndicator());
+  }
+}
+
 
 class _Drawer extends StatelessWidget {
   const _Drawer({super.key});
@@ -78,3 +109,4 @@ class _Drawer extends StatelessWidget {
     );
   }
 }
+

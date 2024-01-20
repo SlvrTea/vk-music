@@ -1,9 +1,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vk_music/presentation/home/home.dart';
 
 import '../../domain/state/auth/auth_bloc.dart';
+import '../home_screen/home.dart';
 
 class AuthButton extends StatelessWidget {
   final String login;
@@ -38,9 +38,9 @@ class AuthButton extends StatelessWidget {
                 password: password
               ));
             },
-            child: state is AuthFailed || state is AuthInitial
-                ? const Text('Войти', style: TextStyle(fontSize: 18))
-                : const Center(child: CircularProgressIndicator())
+            child: state is! UserLoadingState
+                ? const Center(child: CircularProgressIndicator())
+                : const Text('Войти', style: TextStyle(fontSize: 18))
         );
       },
     );

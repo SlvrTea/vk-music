@@ -1,0 +1,42 @@
+
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../domain/models/playlist.dart';
+import '../../domain/state/playlist/playlist_cubit.dart';
+import '../song_list/music_list.dart';
+
+class PlaylistScreen extends StatelessWidget {
+  const PlaylistScreen(this.playlist, {super.key});
+
+  final Playlist playlist;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(playlist.title)),
+      body: _BodyWidget(playlist),
+    );
+  }
+}
+
+class _BodyWidget extends StatelessWidget {
+  const _BodyWidget(this.playlist, {super.key});
+
+  final Playlist playlist;
+
+  @override
+  Widget build(BuildContext context) {
+    final cubit = context.watch<PlaylistCubit>();
+    final state = cubit.state;
+    if (state is PlaylistLoadedState && state.playlist.id == playlist.id) {
+      return SingleChildScrollView(
+        child: MusicList(songList: state.songs)
+      );
+    } else if (state is PlaylistLoadingErrorState) {
+      return Text(state.error);
+    }
+    cubit.loadPlaylist(playlist);
+    return const Center(child: CircularProgressIndicator());
+  }
+}

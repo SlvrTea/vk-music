@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vk_music/domain/const.dart';
-import 'package:vk_music/presentation/home/home.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../domain/state/auth/auth_bloc.dart';
+import '../home_screen/home.dart';
 
 class Tfa extends StatefulWidget {
   const Tfa({super.key, required this.redirect, required this.query});
