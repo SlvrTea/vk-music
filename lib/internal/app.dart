@@ -4,8 +4,10 @@ import 'package:vk_music/data/vk_api/models/vk_api.dart';
 import 'package:vk_music/domain/const.dart';
 import 'package:vk_music/domain/music_loader/music_loader_cubit.dart';
 import 'package:vk_music/domain/music_player.dart';
+import 'package:vk_music/domain/state/music_progress/music_progress_cubit.dart';
 import 'package:vk_music/domain/state/nav_bar/nav_bar_cubit.dart';
 import 'package:vk_music/domain/state/playlists/playlists_cubit.dart';
+import 'package:vk_music/domain/state/search/search_cubit.dart';
 import 'package:vk_music/presentation/auth/login_screen.dart';
 
 import '../domain/state/auth/auth_bloc.dart';
@@ -19,8 +21,10 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     final VKApi vkApi = VKApi();
     final navBar = NavBarCubit();
+    final search = SearchCubit(vkApi);
     final musicLoaderBloc = MusicLoaderCubit(vkApi);
     final musicPlayerBloc = MusicPlayerBloc(musicPlayer: MusicPlayer(), vkApi: vkApi);
+    final musicProgress = MusicProgressCubit(musicPlayer: musicPlayerBloc.musicPlayer, musicPlayerBloc: musicPlayerBloc);
     final playlists = PlaylistsCubit(vkApi);
     final playlist = PlaylistCubit(vkApi);
     final authBloc = AuthBloc(vkApi: vkApi, musicLoader: musicLoaderBloc)
@@ -45,11 +49,18 @@ class App extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => playlist
+        ),
+        BlocProvider(
+          create: (_) => musicProgress
+        ),
+        BlocProvider(
+          create: (_) => search
         )
       ],
       child: MaterialApp(
         title: 'VK Music Player',
         navigatorKey: navigatorKey,
+
         theme: ThemeData(
             useMaterial3: true,
             appBarTheme: const AppBarTheme(

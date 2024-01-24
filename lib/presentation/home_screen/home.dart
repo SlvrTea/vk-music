@@ -6,6 +6,7 @@ import 'package:vk_music/domain/state/playlists/playlists_cubit.dart';
 import 'package:vk_music/presentation/auth/login_screen.dart';
 import 'package:vk_music/presentation/cover.dart';
 import 'package:vk_music/presentation/playlists_tab/playlists_tab.dart';
+import 'package:vk_music/presentation/search/search_tab.dart';
 import 'package:vk_music/presentation/song_list/music_list.dart';
 import 'package:vk_music/presentation/navbar/navigation_bar.dart';
 
@@ -17,7 +18,7 @@ class Home extends StatelessWidget {
 
   final tabs = const [
     _MainTab(),
-    Center(child: Text('2')),
+    SearchTab(),
     PlaylistsTab()
   ];
 
@@ -51,6 +52,7 @@ class _MainTab extends StatelessWidget {
     final state = context.watch<MusicLoaderCubit>().state;
     if (state is MusicLoadedState) {
       return SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
             const _PlaylistsSection(),
@@ -73,10 +75,14 @@ class _PlaylistsSection extends StatelessWidget with PlaylistCoverGetterMixin {
     final cubit = context.watch<PlaylistsCubit>();
     final state = cubit.state;
     if (state is PlaylistsLoadedState) {
-      return SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-            children: getCovers(state.playlists)
+      return SizedBox(
+        height: 146,
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: getCovers(state.playlists),
+          ),
         ),
       );
     }

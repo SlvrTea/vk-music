@@ -5,22 +5,26 @@ class Song {
   final String duration;
   final String? accessKey;
   final String? id;
+  final String? ownerId;
+  final String? shortId;
   final String? url;
   final String? photoUrl34;
   final String? photoUrl68;
   final String? photoUrl135;
   final bool online;
   Song({
-      required this.artist,
-      required this.title,
-      required this.duration,
-      required this.accessKey,
-      required this.id,
-      required this.url,
-      this.photoUrl34,
-      this.photoUrl68,
-      this.photoUrl135,
-      required this.online
+    required this.artist,
+    required this.title,
+    required this.duration,
+    required this.accessKey,
+    required this.id,
+    required this.shortId,
+    required this.ownerId,
+    required this.url,
+    this.photoUrl34,
+    this.photoUrl68,
+    this.photoUrl135,
+    required this.online
     });
 
   factory Song.fromMap({required Map<String, dynamic> map}) {
@@ -33,7 +37,9 @@ class Song {
       photoUrl34: map['album']?['thumb']?['photo_34'].toString(),
       photoUrl68: map['album']?['thumb']?['photo_68'].toString(),
       photoUrl135: map['album']?['thumb']?['photo_135'].toString(),
-      id: '${map['owner_id']}${map['id']}',
+      id: '${map['owner_id']}_${map['id']}',
+      shortId: map['id']?.toString(),
+      ownerId: map['owner_id']?.toString(),
       online: true,
     );
   }
@@ -63,6 +69,8 @@ class Song {
     String? duration,
     String? accessKey,
     String? id,
+    String? shortId,
+    String? ownerId,
     String? url,
     String? photoUrl34,
     String? photoUrl68,
@@ -75,6 +83,8 @@ class Song {
       duration: duration ?? this.duration,
       accessKey: accessKey ?? this.accessKey,
       id: id ?? this.id,
+      shortId: shortId ?? this.shortId,
+      ownerId: ownerId ?? this.ownerId,
       url: url ?? this.url,
       photoUrl34: photoUrl34 ?? this.photoUrl34,
       photoUrl68: photoUrl68 ?? this.photoUrl68,

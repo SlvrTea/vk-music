@@ -12,6 +12,13 @@ class PlaylistLoadedState extends PlaylistState {
   final List<Song> songs;
 
   PlaylistLoadedState({required this.playlist, required this.songs});
+
+  PlaylistLoadedState copyWith({Playlist? playlist, List<Song>? songs}) {
+    return PlaylistLoadedState(
+      playlist: playlist ?? this.playlist,
+      songs: songs ?? this.songs
+    );
+  }
 }
 
 class PlaylistLoadingErrorState extends PlaylistState {

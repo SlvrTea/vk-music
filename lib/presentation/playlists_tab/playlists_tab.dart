@@ -16,6 +16,7 @@ class PlaylistsTab extends StatelessWidget with PlaylistCoverGetterMixin {
         child: SizedBox(
           width: MediaQuery.of(context).size.width * 0.9,
           child: GridView.count(
+            physics: const BouncingScrollPhysics(),
             crossAxisCount: 3,
             crossAxisSpacing: 4,
             mainAxisSpacing: 4,

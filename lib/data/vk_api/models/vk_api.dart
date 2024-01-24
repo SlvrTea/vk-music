@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:math';
+import 'dart:math' as math;
 
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:dio/dio.dart';
@@ -18,7 +18,7 @@ abstract class _VKApi {
   Future<Response<dynamic>> method(String method, String args) async {
     final User user = Hive.box('userBox').get('user');
     final deviceId = _getRandomString(16);
-    const v = 5.95;
+    const v = 5.116;
 
     String url =
         '/method/$method?v=$v&access_token=${user.accessToken}&device_id=$deviceId&$args';
@@ -39,7 +39,7 @@ abstract class _VKApi {
     const chars =
         'QqWwEeRrTtYyUuIiOoPpAaSsDdFfGgHhJjKkLlZzXxCcVvBbNnMm1234567890';
     return String.fromCharCodes(Iterable.generate(
-        lenght, (_) => chars.codeUnitAt(Random().nextInt(chars.length))));
+        lenght, (_) => chars.codeUnitAt(math.Random().nextInt(chars.length))));
   }
 }
 
@@ -109,7 +109,6 @@ class _VKMusic extends _VKApi {
     if (response.data == null) {
       data = response.data['error']['error_msg'];
     } else {
-      print(response.data['response']!);
       data = (response.data['response']!['items'] as List)
           .map((e) => Playlist.fromMap(map: e))
           .toList();

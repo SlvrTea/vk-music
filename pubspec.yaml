@@ -28,6 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  audio_video_progress_bar: ^2.0.1
   cached_network_image: ^3.3.0
   dio: ^5.4.0
   flutter:
