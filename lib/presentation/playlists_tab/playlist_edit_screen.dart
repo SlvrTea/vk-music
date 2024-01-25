@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vk_music/domain/const.dart';
 import 'package:vk_music/domain/state/playlist/playlist_cubit.dart';
 import 'package:vk_music/presentation/cover.dart';
+import 'package:vk_music/presentation/playlists_tab/add_music_screen.dart';
 
 import '../../data/vk_api/models/song.dart';
 
@@ -31,7 +32,14 @@ class _PlaylistEditState extends State<PlaylistEdit> {
   }
 
   void handleReorder(Song song, int newIndex) {
-    _reorder.removeWhere((element) => _reorder[_reorder.indexOf(element)].contains(element[1]));
+    List? toDelete;
+    _reorder.any((element) {
+      if (element.contains(song.shortId)) {
+        toDelete = element;
+      }
+      return false;
+    });
+    _reorder.remove(toDelete);
     _reorder.add([song.ownerId, song.shortId, newIndex]);
   }
 
@@ -97,6 +105,7 @@ class _PlaylistEditState extends State<PlaylistEdit> {
                     ),
                   ),
                   ListTile(
+                    onTap: () => navigatorKey.currentState!.push(MaterialPageRoute(builder: (_) => const AddMusicScreen())),
                     titleTextStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     title: const Text('Добавить музыку'),
                     leading: Container(
@@ -146,7 +155,7 @@ class _PlaylistEditState extends State<PlaylistEdit> {
         ),
       );
     }
-    return const CircularProgressIndicator();
+    return const Center(child: CircularProgressIndicator());
   }
 }
 

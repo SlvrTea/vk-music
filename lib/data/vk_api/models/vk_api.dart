@@ -18,13 +18,13 @@ abstract class _VKApi {
   Future<Response<dynamic>> method(String method, String args) async {
     final User user = Hive.box('userBox').get('user');
     final deviceId = _getRandomString(16);
-    const v = 5.116;
+    const v = 5.95;
 
     String url =
         '/method/$method?v=$v&access_token=${user.accessToken}&device_id=$deviceId&$args';
     final hash = crypto.md5.convert(utf8.encode(url + user.secret));
 
-    var response = await Dio().get('https://api.vk.com$url&sig=$hash',
+    var response = await Dio().post('https://api.vk.com$url&sig=$hash',
         options: Options(headers: {
           "User-Agent":
           "VKAndroidApp/4.13.1-1206 (Android 4.4.3; SDK 19; armeabi; ; ru)",

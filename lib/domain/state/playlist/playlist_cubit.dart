@@ -68,7 +68,17 @@ class PlaylistCubit extends Cubit<PlaylistState> {
       '${songsToAdd == null ? '' : '&audio_ids_to_add=${songsToAdd.map((e) => e.id).toList().join(',')}'}'
       '${reorder == null ? '' : '&reorder_actions=$reorderFormat'}'
     );
+
     log(response.data.toString());
     emit((state as PlaylistLoadedState).copyWith(playlist: Playlist.fromMap(map: response.data['response']['playlist'])));
+  }
+
+  void addAudiosToPlaylist(Playlist playlist, List<String> audiosToAdd) async {
+    final User user = userBox.get('user');
+    var response = await vkApi.music.method('execute.addAudioToPlaylist',
+        'owner_id=${user.userId}&playlist_id=${playlist.id}&audio_ids=${audiosToAdd.join(',')}');
+    log(response.data.toString());
+    // emit((state as PlaylistLoadedState).copyWith(playlist: Playlist.fromMap(map: response.data['response']['playlist'])));
+    loadPlaylist(playlist);
   }
 }

@@ -17,7 +17,7 @@ class PlaylistScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(playlist.title)),
+      appBar: AppBar(title: const Text('Плейлист')),
       body: _BodyWidget(playlist),
     );
   }
