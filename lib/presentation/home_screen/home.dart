@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vk_music/domain/state/nav_bar/nav_bar_cubit.dart';
 import 'package:vk_music/domain/state/playlists/playlists_cubit.dart';
+import 'package:vk_music/domain/utils/getPlaylistSource.dart';
 import 'package:vk_music/presentation/auth/login_screen.dart';
 import 'package:vk_music/presentation/cover.dart';
 import 'package:vk_music/presentation/playlists_tab/playlists_tab.dart';
 import 'package:vk_music/presentation/search/search_tab.dart';
-import 'package:vk_music/presentation/song_list/music_list.dart';
 import 'package:vk_music/presentation/navbar/navigation_bar.dart';
+import 'package:vk_music/presentation/song_list/song_tile.dart';
 
 import '../../domain/music_loader/music_loader_cubit.dart';
 import '../../domain/state/auth/auth_bloc.dart';
@@ -49,14 +50,51 @@ class _MainTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<MusicLoaderCubit>().state;
+    final cubit = context.watch<MusicLoaderCubit>();
+    final state = cubit.state;
     if (state is MusicLoadedState) {
-      return SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Column(
-          children: [
-            const _PlaylistsSection(),
-            MusicList(songList: state.songs),
+      return RefreshIndicator(
+        onRefresh: () async {
+          cubit.loadMusic();
+        },
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            const SliverToBoxAdapter(
+              child: _PlaylistsSection(),
+            ),
+            SliverReorderableList(
+              itemBuilder: (context, index) {
+                return Material(
+                  key: ValueKey(index),
+                  child: ReorderableDelayedDragStartListener(
+                    index: index,
+                    child: SongTile(
+                      song: state.songs[index],
+                      withMenu: true,
+                      playlist: getPlaylistSource(state.songs)
+                    )
+                  ),
+                );
+              },
+              itemCount: state.songs.length,
+              onReorder: (oldIndex, newIndex) {
+                if (oldIndex < newIndex) {
+                  newIndex -= 1;
+                }
+                if (newIndex == 0) {
+                  final oldSongId = state.songs[0].shortId;
+                  final item = state.songs.removeAt(oldIndex);
+                  state.songs.insert(newIndex, item);
+                  cubit.reorder(item, before: oldSongId);
+                } else {
+                  final oldSongId = state.songs[newIndex - 1].shortId;
+                  final item = state.songs.removeAt(oldIndex);
+                  state.songs.insert(newIndex, item);
+                  cubit.reorder(item, after: oldSongId);
+                }
+              }
+            )
           ],
         ),
       );

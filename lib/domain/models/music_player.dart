@@ -1,22 +1,15 @@
 
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:vk_music/domain/models/player_playlist.dart';
 
-import '../data/vk_api/models/song.dart';
+import '../../data/vk_api/models/song.dart';
 
 class MusicPlayer {
   final player = AudioPlayer();
 
-  Future<void> play({required Song song}) async {
-    await player.setAudioSource(AudioSource.uri(
-      song.online ? Uri.parse(song.url!) : Uri.file(song.url!),
-      tag: MediaItem(
-        id: song.id.toString(),
-        title: song.title,
-        artist: song.artist,
-        artUri: song.photoUrl68 != null ? Uri.tryParse(song.photoUrl68!) : null
-      )
-    ));
+  Future<void> playPlaylist(PlayerPlaylist playlist) async {
+    player.setAudioSource(ConcatenatingAudioSource(children: playlist.sources));
     await player.play();
   }
 

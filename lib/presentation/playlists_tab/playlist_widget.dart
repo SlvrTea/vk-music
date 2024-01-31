@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:vk_music/domain/const.dart';
 import 'package:vk_music/domain/models/playlist.dart';
 import 'package:vk_music/presentation/cover.dart';
 import 'package:vk_music/presentation/playlists_tab/playlist_screen.dart';
@@ -17,7 +18,7 @@ class PlaylistWidget extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: () {
-          Navigator.of(context).push(
+          navigatorKey.currentState!.push(
             MaterialPageRoute(builder: (_) => PlaylistScreen(playlist))
           );
         },

@@ -3,23 +3,52 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:vk_music/data/vk_api/models/song.dart';
+import 'package:vk_music/domain/models/player_playlist.dart';
+import 'package:vk_music/presentation/menus/audio_context_menu.dart';
 
-import '../../domain/state/music_player/music_player_bloc.dart';
+import '../../domain/const.dart';
+import '../../domain/state/music_player/music_player_cubit.dart';
 import '../cover.dart';
+
 
 class SongTile extends StatelessWidget {
   final Song song;
-  final PlayerMode playerMode;
-  final int index;
+  final bool withMenu;
+  final int? playlistId;
+  final PlayerPlaylist playlist;
 
-  const SongTile({super.key, required this.song, required this.playerMode, required this.index});
+  const SongTile({
+    super.key,
+    required this.song,
+    required this.playlist,
+    this.withMenu = false,
+    this.playlistId,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final musicBloc = context.watch<MusicPlayerBloc>();
+    final musicBloc = context.watch<MusicPlayerCubit>();
     int duration = int.parse(song.duration);
     return ListTile(
-      trailing: Text('${duration ~/ 60}:${duration % 60 == 0 ? '00' : duration % 60}'),
+      trailing: withMenu
+          ? Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('${duration ~/ 60}:${duration % 60 < 10 ? '0${duration % 60}' : duration % 60}'),
+              IconButton(
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) {
+                      return MyAudiosMenu(song);
+                    }
+                  );
+                },
+                icon: const Icon(Icons.more_vert_rounded)
+              )
+            ]
+          )
+          : Text('${duration ~/ 60}:${duration % 60 == 0 ? '00' : duration % 60}'),
       leading: CoverWidget(
           photoUrl: song.photoUrl135,
           child: musicBloc.state.song == song
@@ -31,7 +60,7 @@ class SongTile extends StatelessWidget {
       titleTextStyle: const TextStyle(fontWeight: FontWeight.bold),
       title: Text(song.title, maxLines: 1, overflow: TextOverflow.ellipsis),
       subtitle: Text(song.artist, maxLines: 1, overflow: TextOverflow.ellipsis),
-      onTap: () => musicBloc.add(PlayMusicEvent(song: song, index: index))
+      onTap: () => musicBloc.playMusic(playlist: playlist, song: song)
     );
   }
 }
@@ -65,7 +94,7 @@ class _IconState extends State<_Icon> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<MusicPlayerBloc, MusicPlayerState>(
+    return BlocConsumer<MusicPlayerCubit, MusicPlayerState>(
       listener: (context, state) {
         if (state.playStatus == PlayStatus.trackPlaying) {
           _controller.forward();
@@ -76,11 +105,8 @@ class _IconState extends State<_Icon> with TickerProviderStateMixin {
       builder: (context, state) {
         return GestureDetector(
           onTap: () {
-            if (state.song != null &&
-                state.processingState != ProcessingState.idle) {
-              context
-                  .read<MusicPlayerBloc>()
-                  .add(PlayMusicEvent(index: 0, song: state.song!.copyWith()));
+            if (state.song != null && state.processingState != ProcessingState.idle) {
+              context.read<MusicPlayerCubit>().playMusic(song: state.song!);
             }
           },
           child: AnimatedIcon(

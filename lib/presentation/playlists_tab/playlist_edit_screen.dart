@@ -135,7 +135,7 @@ class _PlaylistEditState extends State<PlaylistEdit> {
                       onTap: () {},
                       trailing: IconButton(
                           onPressed: () => cubit.deleteFromPlaylist(playlist: state.playlist, songsToDelete: [state.songs[index]], allPlaylistSongs: state.songs),
-                          icon: const Icon(Icons.highlight_remove_rounded)
+                          icon: const Icon(Icons.clear_rounded)
                       ),
                     ),
                   ),

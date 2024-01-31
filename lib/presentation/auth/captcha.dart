@@ -26,11 +26,11 @@ class _CapchaState extends State<Capcha> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Capcha')),
+      appBar: AppBar(title: const Text('Captcha')),
       body: Center(
         child: Column(
           children: [
-            CachedNetworkImage(imageUrl: widget.capchaUrl),
+            Image.network(widget.capchaUrl),
             TextField(
               controller: textEdit,
               onChanged: (value) => setState(() {}),

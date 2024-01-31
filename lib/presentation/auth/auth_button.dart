@@ -38,7 +38,7 @@ class AuthButton extends StatelessWidget {
                 password: password
               ));
             },
-            child: state is! UserLoadingState
+            child: state is UserLoadingState
                 ? const Center(child: CircularProgressIndicator())
                 : const Text('Войти', style: TextStyle(fontSize: 18))
         );

@@ -15,19 +15,19 @@ class VKApi {
 }
 
 abstract class _VKApi {
-  Future<Response<dynamic>> method(String method, String args) async {
+  Future<Response<dynamic>> method(String method, String args, {bool isNew = false}) async {
     final User user = Hive.box('userBox').get('user');
     final deviceId = _getRandomString(16);
     const v = 5.95;
 
     String url =
-        '/method/$method?v=$v&access_token=${user.accessToken}&device_id=$deviceId&$args';
+        '/method/$method?v=${isNew ? 5.116 : v}&access_token=${user.accessToken}&device_id=$deviceId&$args';
     final hash = crypto.md5.convert(utf8.encode(url + user.secret));
 
-    var response = await Dio().post('https://api.vk.com$url&sig=$hash',
+    var response = await Dio().get('https://api.vk.com$url&sig=$hash',
         options: Options(headers: {
           "User-Agent":
-          "VKAndroidApp/4.13.1-1206 (Android 4.4.3; SDK 19; armeabi; ; ru)",
+            "VKAndroidApp/4.13.1-1206 (Android 4.4.3; SDK 19; armeabi; ; ru)",
           "Accept": "image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, */*"
         }
     ));
@@ -86,7 +86,6 @@ class _VKAuth extends _VKApi {
 }
 
 class _VKMusic extends _VKApi {
-  final User user = Hive.box('userBox').get('user');
 
   Future<dynamic> getMusic({required String args}) async {
     var response = await super.method('audio.get', args);
@@ -103,6 +102,7 @@ class _VKMusic extends _VKApi {
   }
 
   Future<dynamic> getPlaylists({required String args}) async {
+    final User user = Hive.box('userBox').get('user');
     var response = await super.method('audio.getPlaylists', 'owner_id=${user.userId}');
 
     late dynamic data;

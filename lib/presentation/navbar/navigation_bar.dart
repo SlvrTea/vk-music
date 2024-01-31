@@ -1,13 +1,10 @@
 
-import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:vk_music/domain/music_loader/music_loader_cubit.dart';
-import 'package:vk_music/domain/state/music_progress/music_progress_cubit.dart';
-import 'package:vk_music/presentation/navbar/slider_button.dart';
+import 'package:vk_music/presentation/navbar/audio_bar.dart';
 
-import '../../domain/state/music_player/music_player_bloc.dart';
+import '../../domain/state/music_player/music_player_cubit.dart';
 part 'navigation_bar_item.dart';
 
 class NavBar extends StatelessWidget {
@@ -47,8 +44,8 @@ class NavBar extends StatelessWidget {
 
 @override
   Widget build(BuildContext context) {
-    final musicBloc = context.watch<MusicPlayerBloc>();
-    final musicProgress = context.watch<MusicProgressCubit>();
+    final musicBloc = context.watch<MusicPlayerCubit>();
+
     final background = backgroundColor
         ?? Theme.of(context).bottomNavigationBarTheme.backgroundColor;
     return Container(
@@ -62,26 +59,7 @@ class NavBar extends StatelessWidget {
           children: [
             musicBloc.state.processingState == ProcessingState.idle 
                 ? const SizedBox() :
-                Padding(
-                  padding: const EdgeInsets.only(left: 8, right: 8, top: 8),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const SizedBox(
-                        child: SliderButton()
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: ProgressBar(
-                          progress: musicProgress.state.currentDuration ?? const Duration(),
-                          buffered: musicProgress.state.bufferDuration ?? const Duration(),
-                          total: Duration(seconds: int.parse(musicBloc.state.song!.duration)),
-                          onSeek: (duration) => musicProgress.seekValue(duration),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                const AudioBar(),
             Container(
               width: double.infinity,
               height: height + iconSizeEffectCalculator(iconSize),
@@ -89,7 +67,7 @@ class NavBar extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: items.map((item) {
-                  var index = items.indexOf(item);
+                  final index = items.indexOf(item);
                   return Expanded(
                       child: GestureDetector(
                         onTap: () => onItemSelected(index),

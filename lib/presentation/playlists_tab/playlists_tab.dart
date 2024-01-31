@@ -27,6 +27,6 @@ class PlaylistsTab extends StatelessWidget with PlaylistCoverGetterMixin {
       );
     }
     cubit.getPlaylists();
-    return const Center(child: CircularProgressIndicator(),);
+    return const Center(child: CircularProgressIndicator());
   }
 }

@@ -1,9 +1,11 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vk_music/data/vk_api/models/vk_api.dart';
 import 'package:vk_music/domain/const.dart';
 import 'package:vk_music/domain/music_loader/music_loader_cubit.dart';
-import 'package:vk_music/domain/music_player.dart';
+import 'package:vk_music/domain/models/music_player.dart';
 import 'package:vk_music/domain/state/music_progress/music_progress_cubit.dart';
 import 'package:vk_music/domain/state/nav_bar/nav_bar_cubit.dart';
 import 'package:vk_music/domain/state/playlists/playlists_cubit.dart';
@@ -11,7 +13,7 @@ import 'package:vk_music/domain/state/search/search_cubit.dart';
 import 'package:vk_music/presentation/auth/login_screen.dart';
 
 import '../domain/state/auth/auth_bloc.dart';
-import '../domain/state/music_player/music_player_bloc.dart';
+import '../domain/state/music_player/music_player_cubit.dart';
 import '../domain/state/playlist/playlist_cubit.dart';
 
 class App extends StatelessWidget {
@@ -23,8 +25,8 @@ class App extends StatelessWidget {
     final navBar = NavBarCubit();
     final search = SearchCubit(vkApi);
     final musicLoaderBloc = MusicLoaderCubit(vkApi);
-    final musicPlayerBloc = MusicPlayerBloc(musicPlayer: MusicPlayer(), vkApi: vkApi);
-    final musicProgress = MusicProgressCubit(musicPlayer: musicPlayerBloc.musicPlayer, musicPlayerBloc: musicPlayerBloc);
+    final musicPlayerBloc = MusicPlayerCubit(musicPlayer: MusicPlayer(), vkApi: vkApi);
+    final musicProgress = MusicProgressCubit(musicPlayer: musicPlayerBloc.musicPlayer);
     final playlists = PlaylistsCubit(vkApi);
     final playlist = PlaylistCubit(vkApi);
     final authBloc = AuthBloc(vkApi: vkApi, musicLoader: musicLoaderBloc)
@@ -38,7 +40,7 @@ class App extends StatelessWidget {
         BlocProvider<MusicLoaderCubit>(
           create: (context) => musicLoaderBloc
         ),
-        BlocProvider<MusicPlayerBloc>(
+        BlocProvider<MusicPlayerCubit>(
           create: (context) => musicPlayerBloc
         ),
         BlocProvider<NavBarCubit>(
@@ -60,7 +62,8 @@ class App extends StatelessWidget {
       child: MaterialApp(
         title: 'VK Music Player',
         navigatorKey: navigatorKey,
-
+        scrollBehavior: const MaterialScrollBehavior()
+            .copyWith(dragDevices: PointerDeviceKind.values.toSet()),
         theme: ThemeData(
             useMaterial3: true,
             appBarTheme: const AppBarTheme(

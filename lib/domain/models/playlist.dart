@@ -10,6 +10,7 @@ class Playlist {
   final String? photoUrl300;
   final String? photoUrl600;
   final String? accessKey;
+  final String? ownerId;
   final bool isOwner;
 
   Playlist({
@@ -22,6 +23,7 @@ class Playlist {
     this.photoUrl270,
     this.photoUrl300,
     this.photoUrl600,
+    this.ownerId,
     this.isOwner = false,
     required this.accessKey
   });
@@ -32,6 +34,7 @@ class Playlist {
       description: map['description'].toString().replaceAll("/", "&").isEmpty ? null : map['description'].toString().replaceAll("/", "&"),
       accessKey: map['access_key']?.toString() ?? '',
       id: map['id'].toString(),
+      ownerId: map['owner_id'].toString(),
       isOwner: map.containsKey('original') ? (map['original']?['owner_id'] == map['owner_id']) : true,
       photoUrl34: map['thumbs']?[0]?['photo_34']?.toString() ?? map['photo']?['photo_34']?.toString(),
       photoUrl68: map['thumbs']?[0]?['photo_68']?.toString() ?? map['photo']?['photo_68']?.toString(),

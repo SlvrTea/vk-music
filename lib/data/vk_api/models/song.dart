@@ -11,7 +11,6 @@ class Song {
   final String? photoUrl34;
   final String? photoUrl68;
   final String? photoUrl135;
-  final bool online;
   Song({
     required this.artist,
     required this.title,
@@ -24,7 +23,6 @@ class Song {
     this.photoUrl34,
     this.photoUrl68,
     this.photoUrl135,
-    required this.online
     });
 
   factory Song.fromMap({required Map<String, dynamic> map}) {
@@ -40,7 +38,6 @@ class Song {
       id: '${map['owner_id']}_${map['id']}',
       shortId: map['id']?.toString(),
       ownerId: map['owner_id']?.toString(),
-      online: true,
     );
   }
 
@@ -75,7 +72,6 @@ class Song {
     String? photoUrl34,
     String? photoUrl68,
     String? photoUrl135,
-    bool? online,
   }) {
     return Song(
       artist: artist ?? this.artist,
@@ -89,7 +85,6 @@ class Song {
       photoUrl34: photoUrl34 ?? this.photoUrl34,
       photoUrl68: photoUrl68 ?? this.photoUrl68,
       photoUrl135: photoUrl135 ?? this.photoUrl135,
-      online: online ?? this.online,
     );
   }
 }

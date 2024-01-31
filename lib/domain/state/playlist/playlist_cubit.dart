@@ -58,15 +58,14 @@ class PlaylistCubit extends Cubit<PlaylistState> {
         }
       }
       reorderFormat += ']';
-      log(reorderFormat);
     }
     var response = await vkApi.music.method('execute.savePlaylist',
-      'owner_id=${user.userId}'
+      'owner_id=${playlist.ownerId}'
       '&playlist_id=${playlist.id}'
       '&title=${title ?? playlist.title}'
       '&description=${description ?? playlist.description}'
       '${songsToAdd == null ? '' : '&audio_ids_to_add=${songsToAdd.map((e) => e.id).toList().join(',')}'}'
-      '${reorder == null ? '' : '&reorder_actions=$reorderFormat'}'
+      '${reorder == null ? '' : '&reorder_actions=$reorderFormat'}', isNew: true
     );
 
     log(response.data.toString());
@@ -78,7 +77,7 @@ class PlaylistCubit extends Cubit<PlaylistState> {
     var response = await vkApi.music.method('execute.addAudioToPlaylist',
         'owner_id=${user.userId}&playlist_id=${playlist.id}&audio_ids=${audiosToAdd.join(',')}');
     log(response.data.toString());
-    // emit((state as PlaylistLoadedState).copyWith(playlist: Playlist.fromMap(map: response.data['response']['playlist'])));
+    emit((state as PlaylistLoadedState).copyWith(playlist: Playlist.fromMap(map: response.data['response']['playlist'])));
     loadPlaylist(playlist);
   }
 }

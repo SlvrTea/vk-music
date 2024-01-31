@@ -87,7 +87,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         );
       }
       if (e.response!.data['redirect_uri'] != null) {
-        print(e.response!.data);
         navigatorKey.currentState!.pushReplacement(
           MaterialPageRoute(builder: (_) => Tfa(
             redirect: e.response!.data['redirect_uri'],
