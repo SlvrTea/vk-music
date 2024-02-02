@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:just_audio/just_audio.dart';
@@ -39,8 +40,8 @@ class MusicPlayerCubit extends Cubit<MusicPlayerState> {
       musicPlayer.resume();
       emit(state.copyWith(playStatus: PlayStatus.trackPlaying));
     } else {
+      log('${song.toString()} is now playing.');
       emit(state.copyWith(song: song, playStatus: PlayStatus.trackPlaying));
-      seek(playlist!.songs.indexOf(song!));
       musicPlayer.playPlaylist(state.playlist!);
     }
   }
@@ -59,17 +60,20 @@ class MusicPlayerCubit extends Cubit<MusicPlayerState> {
 
   void seek(int index) {
     assert(state.playlist != null);
+    log('Seeking to $index');
     emit(state.copyWith(song: state.playlist!.songs[index]));
-    musicPlayer.player.seek(Duration.zero, index: index);
+    musicPlayer.seek(Duration.zero, index: index);
   }
 
   void setLoopMode(LoopMode mode) {
     assert(state.playlist != null);
+    log('Change loop mode to $mode');
     musicPlayer.player.setLoopMode(mode);
   }
 
   void setShuffleModeEnabled(bool enabled) {
     assert(state.playlist != null);
+    log('Change shuffle mode to $enabled');
     musicPlayer.player.setShuffleModeEnabled(enabled);
   }
 

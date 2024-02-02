@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart' show Bloc, Emitter;
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +33,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       late User user;
       final response = await vkApi.auth.captchaAuth(queryParameters: event.query, capchaSId: event.captchaSid, captchaKey: event.captchaKey);
+      log('Loggin: ${response.toString()}');
       user = User.fromJson(response);
       userBox.put('user', user);
       emit(UserLoadedState(user: user));
@@ -40,6 +43,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthFailed(errorMessage: 'Нет интернет подключения'));
       }
       if (e.response!.data['redirect_uri'] != null) {
+        log('Tfa needed');
         navigatorKey.currentState!.pushReplacement(
             MaterialPageRoute(builder: (_) => Tfa(
               redirect: e.response!.data,
@@ -77,6 +81,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthFailed(errorMessage: 'Нет интернет подключения'));
       }
       if (e.response!.data['error'] == 'need_captcha') {
+        log('Captcha needed. Captcha seed: ${e.response!.data['captcha_sid']}. Captcha img url: ${e.response!.data['captcha_img']}');
         navigatorKey.currentState!.pushReplacement(
             MaterialPageRoute(builder: (_) => Capcha(
               capchaUrl: e.response!.data['captcha_img'],
@@ -87,6 +92,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         );
       }
       if (e.response!.data['redirect_uri'] != null) {
+        log('Tfa needed');
         navigatorKey.currentState!.pushReplacement(
           MaterialPageRoute(builder: (_) => Tfa(
             redirect: e.response!.data['redirect_uri'],
@@ -98,9 +104,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     }
   }
-  _onUserLogoutEvent(UserLogoutEvent event, Emitter emit) {}
+  _onUserLogoutEvent(UserLogoutEvent event, Emitter emit) {
+    log('User logout');
+    userBox.delete('user');
+    emit(AuthInitial());
+  }
   _onLoadUserEvent(LoadUserEvent event, Emitter emit) {
     User? user = userBox.get('user');
+    log('Loading user: ${user.toString()}');
     if (user != null) {
       musicLoader.loadMusic();
       emit(UserLoadedState(user: user));

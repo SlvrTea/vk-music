@@ -65,18 +65,21 @@ class App extends StatelessWidget {
         scrollBehavior: const MaterialScrollBehavior()
             .copyWith(dragDevices: PointerDeviceKind.values.toSet()),
         theme: ThemeData(
-            useMaterial3: true,
-            appBarTheme: const AppBarTheme(
-              backgroundColor: Colors.black
-            ),
-            bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-              backgroundColor: Colors.black
-            ),
-            colorScheme: ColorScheme.fromSeed(
-              background: Colors.black,
-              seedColor: Colors.redAccent,
-              brightness: Brightness.dark,
-            )
+          useMaterial3: true,
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.black
+          ),
+          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+            backgroundColor: Colors.black
+          ),
+          colorScheme: ColorScheme.fromSeed(
+            background: Colors.black,
+            seedColor: Colors.redAccent,
+            brightness: Brightness.dark,
+          ),
+          bottomSheetTheme: const BottomSheetThemeData(
+            backgroundColor: Colors.black
+          )
         ),
         home: const LoginScreen(),
       ),

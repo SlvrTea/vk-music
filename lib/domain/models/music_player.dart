@@ -25,8 +25,8 @@ class MusicPlayer {
     await player.stop();
   }
 
-  Future<void> seek(duration) async {
-    await player.seek(duration);
+  Future<void> seek(Duration? duration, {int? index}) async {
+    await player.seek(duration, index: index);
   }
 
   Stream getCurrentPos() {

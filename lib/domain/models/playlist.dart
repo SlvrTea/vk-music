@@ -59,4 +59,9 @@ class Playlist {
       photoUrl34: photoUrl34
     );
   }
+
+  @override
+  String toString() {
+    return 'Playlist: $title, $id';
+  }
 }

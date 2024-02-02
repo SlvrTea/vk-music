@@ -18,13 +18,15 @@ class PlaylistCubit extends Cubit<PlaylistState> {
 
   PlaylistCubit(this.vkApi) : super(PlaylistInitial());
 
-  void loadPlaylist(Playlist playlist) {
+  void loadPlaylist(Playlist playlist) async {
     emit(PlaylistLoadingState());
+    log('Loading following playlist: ${playlist.toString()}');
     vkApi.music.getMusic(args: 'album_id=${playlist.id}&count=2000').then((value) {
       try {
         final List<Song> songs = value;
         emit(PlaylistLoadedState(songs: songs, playlist: playlist));
       } catch (e) {
+        log('API returned error: ${e.toString()}');
         emit(PlaylistLoadingErrorState(value));
       }
     });
@@ -35,7 +37,7 @@ class PlaylistCubit extends Cubit<PlaylistState> {
     final User user = userBox.get('user');
     allPlaylistSongs.removeWhere((element) => songsToDelete.contains(element));
     final audios = songsToDelete.map((e) => e.id).toList().join(',');
-    log('From playlist ${playlist.title} deleted audios with following ids: $audios');
+    log('From playlist ${playlist.title} deleted following audios: ${audios.toString()}');
     emit((state as PlaylistLoadedState).copyWith(songs: allPlaylistSongs));
     try {
       vkApi.music.method('audio.removeFromPlaylist', 'playlist_id=${playlist.id}&owner_id=${user.userId}&audio_ids=$audios');
