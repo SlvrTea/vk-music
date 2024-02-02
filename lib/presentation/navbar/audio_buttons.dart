@@ -52,7 +52,7 @@ class _MusicBarPlayButtonState extends State<MusicBarPlayButton> with TickerProv
           },
           child: AnimatedIcon(
             progress: _animation,
-            icon: AnimatedIcons.play_pause,
+            icon: AnimatedIcons.pause_play,
             size: 32,
           ),
         );
@@ -94,3 +94,105 @@ class MusicBarPreviousAudioButton extends StatelessWidget {
     );
   }
 }
+
+class ShuffleButton extends StatefulWidget {
+  const ShuffleButton({super.key});
+
+  @override
+  State<ShuffleButton> createState() => _ShuffleButtonState();
+}
+
+class _ShuffleButtonState extends State<ShuffleButton> {
+  bool isSelected = false;
+  @override
+  Widget build(BuildContext context) {
+    final musicPlayerCubit = context.read<MusicPlayerCubit>();
+    return IconButton(
+      onPressed: () {
+        setState(() => isSelected = !isSelected);
+        musicPlayerCubit.setShuffleModeEnabled(isSelected);
+      },
+      icon: Stack(
+        alignment: Alignment.center,
+        children: [
+          isSelected
+              ? Container(
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: Colors.grey.withOpacity(0.3)),
+              width: 46,
+              height: 32,
+              )
+              : const SizedBox(width: 46),
+          Icon(
+            Icons.shuffle_rounded,
+            size: 32,
+            color: isSelected ? Colors.white : Colors.grey,
+          )
+        ]
+      )
+    );
+  }
+}
+
+class LoopModeButton extends StatefulWidget {
+  const LoopModeButton({super.key});
+
+  @override
+  State<LoopModeButton> createState() => _LoopModeButtonState();
+}
+
+class _LoopModeButtonState extends State<LoopModeButton> {
+  LoopMode loopMode = LoopMode.off;
+  bool isSelected = false;
+
+  IconData _getCurrentIcon() {
+    switch (loopMode) {
+      case LoopMode.one:
+        return Icons.repeat_one_rounded;
+      default:
+        return Icons.repeat_rounded;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final musicPlayerCubit = context.read<MusicPlayerCubit>();
+    return IconButton(
+        onPressed: () {
+          switch (loopMode) {
+            case LoopMode.off:
+              loopMode = LoopMode.all;
+            case LoopMode.all:
+              loopMode = LoopMode.one;
+            case LoopMode.one:
+              loopMode = LoopMode.off;
+          }
+          setState(() {
+            if (loopMode == LoopMode.off) {
+              isSelected = false;
+            } else {
+              isSelected = true;
+            }
+          });
+          musicPlayerCubit.setLoopMode(loopMode);
+        },
+        icon: Stack(
+          alignment: Alignment.center,
+          children: [
+            isSelected
+              ? Container(
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: Colors.grey.withOpacity(0.3)),
+                width: 46,
+                height: 32,
+              )
+              : const SizedBox(width: 46),
+            Icon(
+              _getCurrentIcon(),
+              size: 32,
+              color: isSelected ? Colors.white : Colors.grey,
+            )
+          ]
+        )
+    );
+  }
+}
+

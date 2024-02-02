@@ -1,8 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vk_music/presentation/navbar/audio_details_bottom_sheet.dart';
 import 'package:vk_music/presentation/navbar/audio_buttons.dart';
+import 'package:vk_music/presentation/navbar/audio_details_bottom_sheet.dart';
 
 import '../../domain/state/music_player/music_player_cubit.dart';
 

@@ -1,47 +1,30 @@
 
 import 'package:just_audio/just_audio.dart';
-import 'package:just_audio_background/just_audio_background.dart';
 import 'package:vk_music/domain/models/player_playlist.dart';
-
-import '../../data/vk_api/models/song.dart';
 
 class MusicPlayer {
   final player = AudioPlayer();
 
-  Future<void> playPlaylist(PlayerPlaylist playlist) async {
-    player.setAudioSource(ConcatenatingAudioSource(children: playlist.sources));
+  Future<void> playPlaylist(PlayerPlaylist playlist, {int? initialIndex}) async {
+    player.setAudioSource(ConcatenatingAudioSource(children: playlist.sources), initialIndex: initialIndex);
     await player.play();
   }
 
-  Future<void> pause() async {
-    await player.pause();
-  }
+  Future<void> pause() async => await player.pause();
 
-  Future<void> resume() async {
-    await player.play();
-  }
+  Future<void> resume() async => await player.play();
 
-  Future<void> stop() async {
-    await player.stop();
-  }
+  Future<void> stop() async => await player.stop();
 
-  Future<void> seek(Duration? duration, {int? index}) async {
-    await player.seek(duration, index: index);
-  }
+  Future<void> seek(Duration? duration, {int? index}) async => await player.seek(duration, index: index);
 
-  Stream getCurrentPos() {
-    return player.positionStream.cast();
-  }
+  Stream<Duration> getCurrentPos() => player.positionStream.cast();
 
-  Stream getCurrentBufferPos() {
-    return player.bufferedPositionStream.cast();
-  }
+  Stream<Duration> getCurrentBufferPos() => player.bufferedPositionStream.cast();
 
-  Stream onComplete() {
-    return player.playerStateStream.cast();
-  }
+  Stream<PlayerState> onComplete() => player.playerStateStream.cast();
 
-  Future<void> close() async {
-    await player.dispose();
-  }
+  Stream<int?> currentIndex() => player.currentIndexStream.cast();
+
+  Future<void> close() async => await player.dispose();
 }

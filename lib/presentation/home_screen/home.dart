@@ -6,9 +6,9 @@ import 'package:vk_music/domain/state/playlists/playlists_cubit.dart';
 import 'package:vk_music/domain/utils/getPlaylistSource.dart';
 import 'package:vk_music/presentation/auth/login_screen.dart';
 import 'package:vk_music/presentation/cover.dart';
+import 'package:vk_music/presentation/navbar/navigation_bar.dart';
 import 'package:vk_music/presentation/playlists_tab/playlists_tab.dart';
 import 'package:vk_music/presentation/search/search_tab.dart';
-import 'package:vk_music/presentation/navbar/navigation_bar.dart';
 import 'package:vk_music/presentation/song_list/song_tile.dart';
 
 import '../../domain/music_loader/music_loader_cubit.dart';

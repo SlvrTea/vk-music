@@ -2,11 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vk_music/presentation/cover.dart';
-import 'package:vk_music/presentation/navbar/slider_bar.dart';
 import 'package:vk_music/presentation/navbar/audio_buttons.dart';
+import 'package:vk_music/presentation/navbar/slider_bar.dart';
 
 import '../../domain/state/music_player/music_player_cubit.dart';
-import '../../domain/state/music_progress/music_progress_cubit.dart';
 
 class AudioDetailBottomSheet extends StatefulWidget {
   const AudioDetailBottomSheet({super.key});
@@ -47,6 +46,13 @@ class _AudioDetailBottomSheetState extends State<AudioDetailBottomSheet> {
               child: SliderBar(),
             ),
           ),
+          const Row(
+            children: [
+              ShuffleButton(),
+              Spacer(),
+              LoopModeButton()
+            ],
+          )
         ],
       ),
     );

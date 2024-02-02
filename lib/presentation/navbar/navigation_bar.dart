@@ -5,6 +5,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:vk_music/presentation/navbar/audio_bar.dart';
 
 import '../../domain/state/music_player/music_player_cubit.dart';
+
 part 'navigation_bar_item.dart';
 
 class NavBar extends StatelessWidget {

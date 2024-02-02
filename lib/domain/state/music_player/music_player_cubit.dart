@@ -16,18 +16,15 @@ class MusicPlayerCubit extends Cubit<MusicPlayerState> {
   final MusicPlayer musicPlayer;
   final VKApi vkApi;
   late StreamSubscription playerStatusSubscription;
+  late StreamSubscription currentIndexSubscription;
 
   MusicPlayerCubit({required this.musicPlayer, required this.vkApi})
       : super(MusicPlayerState()) {
     playerStatusSubscription = musicPlayer.onComplete().listen((event) {
-      switch (event.processingState) {
-        case ProcessingState.idle:
-          changePrecessingState(ProcessingState.idle);
-        case ProcessingState.loading:
-          changePrecessingState(ProcessingState.loading);
-        case ProcessingState.ready:
-          changePrecessingState(ProcessingState.ready);
-      }
+      changePrecessingState(event.processingState);
+    });
+    currentIndexSubscription = musicPlayer.currentIndex().listen((event) {
+      if (event != null) seek(event);
     });
   }
 
@@ -39,22 +36,25 @@ class MusicPlayerCubit extends Cubit<MusicPlayerState> {
     } else if (state.playStatus == PlayStatus.trackInPause && song == state.song) {
       musicPlayer.resume();
       emit(state.copyWith(playStatus: PlayStatus.trackPlaying));
-    } else {
+    } else if (state.processingState == ProcessingState.ready) {
       log('${song.toString()} is now playing.');
       emit(state.copyWith(song: song, playStatus: PlayStatus.trackPlaying));
-      musicPlayer.playPlaylist(state.playlist!);
+      seek(state.playlist!.songs.indexOf(song!));
+    } else if (song != null) {
+      emit(state.copyWith(song: song, playStatus: PlayStatus.trackPlaying));
+      musicPlayer.playPlaylist(state.playlist!, initialIndex: state.playlist!.songs.indexOf(song));
     }
   }
 
   void seekToNext() {
     assert(state.playlist != null);
-    emit(state.copyWith(song: state.playlist!.songs[musicPlayer.player.currentIndex! + 1]));
+    emit(state.copyWith(song: state.playlist!.songs[musicPlayer.player.nextIndex!]));
     musicPlayer.player.seekToNext();
   }
 
   void seekToPrevious() {
     assert(state.playlist != null);
-    emit(state.copyWith(song: state.playlist!.songs[musicPlayer.player.currentIndex! - 1]));
+    emit(state.copyWith(song: state.playlist!.songs[musicPlayer.player.previousIndex!]));
     musicPlayer.player.seekToPrevious();
   }
 
