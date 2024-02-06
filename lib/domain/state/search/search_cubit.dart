@@ -5,6 +5,7 @@ import 'package:vk_music/data/vk_api/models/user.dart';
 
 import '../../../data/vk_api/models/song.dart';
 import '../../../data/vk_api/models/vk_api.dart';
+import '../../models/playlist.dart';
 
 part 'search_state.dart';
 
@@ -14,15 +15,23 @@ class SearchCubit extends Cubit<SearchState> {
 
   void search(String q, {int? count, int? offset}) async {
     emit(SearchProgressState());
-    final response = await vkApi.music.method('audio.search',
+    final responseAudio = await vkApi.music.method('audio.search',
         'q=$q'
         '${count != null ? '&count=$count' : ''}'
         '${offset != null ? '&offset=$offset' : ''}'
     );
-    final songs = (response.data['response']['items'] as List)
+    final songs = (responseAudio.data['response']['items'] as List)
         .map((e) => Song.fromMap(map: e))
         .toList();
-    emit(SearchFinishedState(songs));
+    final responseAlbums = await vkApi.music.method('audio.searchAlbums',
+        'q=$q'
+        '${count != null ? '&count=$count' : ''}'
+        '${offset != null ? '&offset=$offset' : ''}'
+    );
+    final albums = (responseAlbums.data['response']['items'] as List)
+        .map((e) => Playlist.fromMap(map: e))
+        .toList();
+    emit(SearchFinishedState(songs, albums));
   }
 
   void loadMore(String q, {int? offset}) async {
@@ -34,8 +43,7 @@ class SearchCubit extends Cubit<SearchState> {
     final songs = (response.data['response']['items'] as List)
         .map((e) => Song.fromMap(map: e))
         .toList();
-    (state as SearchFinishedState).searchResult.addAll(songs);
-    emit(SearchFinishedState((state as SearchFinishedState).searchResult));
+    emit((state as SearchFinishedState).copyWith(songs: songs));
   }
 
   void getRecommendations({int? offset}) async {

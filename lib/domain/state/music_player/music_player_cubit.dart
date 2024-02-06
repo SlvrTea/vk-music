@@ -28,8 +28,11 @@ class MusicPlayerCubit extends Cubit<MusicPlayerState> {
     });
   }
 
-  void playMusic({Song? song, PlayerPlaylist? playlist}) {
-    if (playlist != state.playlist) emit(state.copyWith(playlist: playlist));
+  void playMusic({required Song song, PlayerPlaylist? playlist}) {
+    if (playlist != null && playlist.sources != state.playlist?.sources) {
+      emit(state.copyWith(playlist: playlist));
+      musicPlayer.player.setAudioSource(ConcatenatingAudioSource(children: playlist.sources));
+    }
     if (musicPlayer.player.playing && song == state.song && state.processingState != ProcessingState.loading) {
       musicPlayer.pause();
       emit(state.copyWith(playStatus: PlayStatus.trackInPause));
@@ -39,8 +42,8 @@ class MusicPlayerCubit extends Cubit<MusicPlayerState> {
     } else if (state.processingState == ProcessingState.ready) {
       log('${song.toString()} is now playing.');
       emit(state.copyWith(song: song, playStatus: PlayStatus.trackPlaying));
-      seek(state.playlist!.songs.indexOf(song!));
-    } else if (song != null) {
+      seek(state.playlist!.songs.indexOf(song));
+    } else {
       emit(state.copyWith(song: song, playStatus: PlayStatus.trackPlaying));
       musicPlayer.playPlaylist(state.playlist!, initialIndex: state.playlist!.songs.indexOf(song));
     }
@@ -88,6 +91,7 @@ class MusicPlayerCubit extends Cubit<MusicPlayerState> {
   Future<void> close() {
     musicPlayer.close();
     playerStatusSubscription.cancel();
+    currentIndexSubscription.cancel();
     return super.close();
   }
 }

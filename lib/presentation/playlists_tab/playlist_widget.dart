@@ -13,7 +13,7 @@ class PlaylistWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 200,
+      height: 160,
       width: 150,
       child: InkWell(
         borderRadius: BorderRadius.circular(16),

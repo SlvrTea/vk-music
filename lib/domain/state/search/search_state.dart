@@ -9,12 +9,14 @@ class SearchProgressState extends SearchState {}
 
 class SearchFinishedState extends SearchState {
   final List<Song> searchResult;
+  final List<Playlist> playlistsResult;
 
-  SearchFinishedState(this.searchResult);
+  SearchFinishedState(this.searchResult, this.playlistsResult);
 
-  SearchFinishedState copyWith({List<Song>? songs}) {
+  SearchFinishedState copyWith({List<Song>? songs, List<Playlist>? playlists}) {
     return SearchFinishedState(
-      songs ?? searchResult
+      songs ?? searchResult,
+      playlists ?? playlistsResult
     );
   }
 }

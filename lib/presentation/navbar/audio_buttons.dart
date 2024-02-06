@@ -52,7 +52,7 @@ class _MusicBarPlayButtonState extends State<MusicBarPlayButton> with TickerProv
           },
           child: AnimatedIcon(
             progress: _animation,
-            icon: AnimatedIcons.pause_play,
+            icon: AnimatedIcons.play_pause,
             size: 32,
           ),
         );

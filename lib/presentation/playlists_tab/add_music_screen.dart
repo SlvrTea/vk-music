@@ -37,6 +37,7 @@ class AddMusicScreen extends StatelessWidget {
         ),
         body: ListView.builder(
           physics: const BouncingScrollPhysics(),
+          itemCount: musicLoaderState.songs.length,
           itemBuilder: (context, index) {
             final song = musicLoaderState.songs[index];
             if (!playlistSongs.contains(song)) {

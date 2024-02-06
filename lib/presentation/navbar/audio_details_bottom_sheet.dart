@@ -46,6 +46,7 @@ class _AudioDetailBottomSheetState extends State<AudioDetailBottomSheet> {
               child: SliderBar(),
             ),
           ),
+          const SizedBox(height: 32),
           const Row(
             children: [
               ShuffleButton(),

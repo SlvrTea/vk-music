@@ -63,6 +63,12 @@ class _MainTab extends StatelessWidget {
             const SliverToBoxAdapter(
               child: _PlaylistsSection(),
             ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                child: Text('Моя музыка: ${state.songs.length}', style: const TextStyle(fontSize: 18)),
+              )
+            ),
             SliverReorderableList(
               itemBuilder: (context, index) {
                 return Material(

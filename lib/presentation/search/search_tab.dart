@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vk_music/domain/state/search/search_cubit.dart';
+import 'package:vk_music/presentation/search/search_result.dart';
 import 'package:vk_music/presentation/song_list/music_list.dart';
 
 class SearchTab extends StatefulWidget {
@@ -39,41 +40,41 @@ class _SearchTabState extends State<SearchTab> {
         }
         return true;
       },
-      child: SingleChildScrollView(
+      child: CustomScrollView(
         physics: const BouncingScrollPhysics(),
-        child: Column(
-          children: [
-            Padding(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
                 controller: _controller,
                 onChanged: (value) => setState(() {}),
                 decoration: InputDecoration(
-                  prefixIcon: IconButton(
-                    onPressed: () {
-                      cubit.search(_controller.text, count: 20);
-                    },
-                    icon: const Icon(Icons.search_rounded, color: Colors.white)
-                  ),
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      if (_controller.text.isNotEmpty) {
-                        _controller.clear();
-                        cubit.getRecommendations();
-                      }
-                    },
-                    icon: const Icon(Icons.clear_rounded, color: Colors.white),
-                  )
+                    prefixIcon: IconButton(
+                        onPressed: () {
+                          cubit.search(_controller.text, count: 20);
+                        },
+                        icon: const Icon(Icons.search_rounded, color: Colors.white)
+                    ),
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        if (_controller.text.isNotEmpty) {
+                          _controller.clear();
+                          cubit.getRecommendations();
+                        }
+                      },
+                      icon: const Icon(Icons.clear_rounded, color: Colors.white),
+                    )
                 ).applyDefaults(_inputDecoration),
               ),
             ),
-            (state is SearchFinishedState)
-                ? MusicList(songList: state.searchResult)
-                : (state is SearchRecommendations)
-                ? MusicList(songList: state.recs)
-                : const Center(child: CircularProgressIndicator())
-          ],
-        ),
+          ),
+          (state is SearchFinishedState)
+              ? const SearchResult()
+              : (state is SearchRecommendations)
+              ? SliverToBoxAdapter(child: MusicList(songList: state.recs))
+              : const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator()))
+        ]
       ),
     );
   }
