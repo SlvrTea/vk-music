@@ -2,10 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vk_music/data/vk_api/models/vk_api.dart';
 import 'package:vk_music/domain/const.dart';
 import 'package:vk_music/domain/models/music_player.dart';
-import 'package:vk_music/domain/music_loader/music_loader_cubit.dart';
 import 'package:vk_music/domain/state/music_progress/music_progress_cubit.dart';
 import 'package:vk_music/domain/state/nav_bar/nav_bar_cubit.dart';
 import 'package:vk_music/domain/state/playlists/playlists_cubit.dart';
@@ -13,6 +11,7 @@ import 'package:vk_music/domain/state/search/search_cubit.dart';
 import 'package:vk_music/presentation/auth/login_screen.dart';
 
 import '../domain/state/auth/auth_bloc.dart';
+import '../domain/state/music_loader/music_loader_cubit.dart';
 import '../domain/state/music_player/music_player_cubit.dart';
 import '../domain/state/playlist/playlist_cubit.dart';
 
@@ -21,15 +20,14 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final VKApi vkApi = VKApi();
     final navBar = NavBarCubit();
-    final search = SearchCubit(vkApi);
-    final musicLoaderBloc = MusicLoaderCubit(vkApi);
-    final musicPlayerBloc = MusicPlayerCubit(musicPlayer: MusicPlayer(), vkApi: vkApi);
+    final search = SearchCubit();
+    final musicLoaderBloc = MusicLoaderCubit();
+    final musicPlayerBloc = MusicPlayerCubit(musicPlayer: MusicPlayer());
     final musicProgress = MusicProgressCubit(musicPlayer: musicPlayerBloc.musicPlayer);
-    final playlists = PlaylistsCubit(vkApi);
-    final playlist = PlaylistCubit(vkApi);
-    final authBloc = AuthBloc(vkApi: vkApi, musicLoader: musicLoaderBloc)
+    final playlists = PlaylistsCubit();
+    final playlist = PlaylistCubit();
+    final authBloc = AuthBloc(musicLoader: musicLoaderBloc)
       ..add(LoadUserEvent());
 
     return MultiBlocProvider(

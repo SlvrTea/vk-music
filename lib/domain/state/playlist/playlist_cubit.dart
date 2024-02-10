@@ -1,46 +1,37 @@
-import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:meta/meta.dart';
+import 'package:vk_music/internal/dependencies/repository_module.dart';
 
-import '../../../data/vk_api/models/song.dart';
-import '../../../data/vk_api/models/user.dart';
-import '../../../data/vk_api/models/vk_api.dart';
 import '../../models/playlist.dart';
+import '../../models/song.dart';
 
 part 'playlist_state.dart';
 
 class PlaylistCubit extends Cubit<PlaylistState> {
-  final VKApi vkApi;
-  final Box userBox = Hive.box('userBox');
+  final musicRepository = RepositoryModule.musicRepository();
 
-  PlaylistCubit(this.vkApi) : super(PlaylistInitial());
+  PlaylistCubit() : super(PlaylistInitial());
 
   void loadPlaylist(Playlist playlist) async {
     emit(PlaylistLoadingState());
-    log('Loading following playlist: ${playlist.toString()}');
-    vkApi.music.getMusic(args: 'album_id=${playlist.id}&count=2000').then((value) {
-      try {
-        final List<Song> songs = value;
-        emit(PlaylistLoadedState(songs: songs, playlist: playlist));
-      } catch (e) {
-        log('API returned error: ${e.toString()}');
-        emit(PlaylistLoadingErrorState(value));
-      }
-    });
+    final playlistSongs = await musicRepository.getPlaylistMusic(playlist);
+    try {
+      emit(PlaylistLoadedState(songs: playlistSongs, playlist: playlist));
+    } catch (e) {
+      emit(PlaylistLoadingErrorState(playlistSongs));
+    }
   }
 
   void deleteFromPlaylist(
-      {required Playlist playlist, required List<Song> songsToDelete, required List<Song> allPlaylistSongs}) {
-    final User user = userBox.get('user');
-    allPlaylistSongs.removeWhere((element) => songsToDelete.contains(element));
-    final audios = songsToDelete.map((e) => e.id).toList().join(',');
-    log('From playlist ${playlist.title} deleted following audios: ${audios.toString()}');
-    emit((state as PlaylistLoadedState).copyWith(songs: allPlaylistSongs));
+      {required Playlist playlist, required List<Song> songsToDelete}) {
+    assert (state is! PlaylistLoadedState);
+    final songs = (state as PlaylistLoadedState).songs;
+    songs.removeWhere((element) => songsToDelete.contains(element));
     try {
-      vkApi.music.method('audio.removeFromPlaylist', 'playlist_id=${playlist.id}&owner_id=${user.userId}&audio_ids=$audios');
+      musicRepository.deleteFromPlaylist(playlist: playlist, songsToDelete: songsToDelete);
+      emit((state as PlaylistLoadedState).copyWith(songs: songs));
     } catch (e) {
       emit(PlaylistLoadingErrorState(e.toString()));
     }
@@ -48,38 +39,13 @@ class PlaylistCubit extends Cubit<PlaylistState> {
 
   void savePlaylist(
       {required Playlist playlist, String? title, String? description, List<Song>? songsToAdd, List? reorder}) async {
-    final User user = userBox.get('user');
-    String reorderFormat = '';
-    if (reorder != null && reorder.isNotEmpty) {
-      reorderFormat += '[';
-      for (List element in reorder) {
-        if (element != reorder.last) {
-          reorderFormat += '[${element.join(',')}],';
-        } else {
-          reorderFormat += '[${element.join(',')}]';
-        }
-      }
-      reorderFormat += ']';
-    }
-    var response = await vkApi.music.method('execute.savePlaylist',
-      'owner_id=${playlist.ownerId}'
-      '&playlist_id=${playlist.id}'
-      '&title=${title ?? playlist.title}'
-      '&description=${description ?? playlist.description}'
-      '${songsToAdd == null ? '' : '&audio_ids_to_add=${songsToAdd.map((e) => e.id).toList().join(',')}'}'
-      '${reorder == null ? '' : '&reorder_actions=$reorderFormat'}', isNew: true
-    );
-
-    log(response.data.toString());
-    emit((state as PlaylistLoadedState).copyWith(playlist: Playlist.fromMap(map: response.data['response']['playlist'])));
+    final response =
+      await musicRepository.savePlaylist(playlist: playlist, title: title, description: description, songsToAdd: songsToAdd, reorder: reorder);
+    emit((state as PlaylistLoadedState).copyWith(playlist: response));
   }
 
   void addAudiosToPlaylist(Playlist playlist, List<String> audiosToAdd) async {
-    final User user = userBox.get('user');
-    var response = await vkApi.music.method('execute.addAudioToPlaylist',
-        'owner_id=${user.userId}&playlist_id=${playlist.id}&audio_ids=${audiosToAdd.join(',')}');
-    log(response.data.toString());
-    emit((state as PlaylistLoadedState).copyWith(playlist: Playlist.fromMap(map: response.data['response']['playlist'])));
-    loadPlaylist(playlist);
+    final response = await musicRepository.addAudiosToPlaylist(playlist, audiosToAdd);
+    emit((state as PlaylistLoadedState).copyWith(playlist: response));
   }
 }

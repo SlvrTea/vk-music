@@ -11,8 +11,8 @@ import 'package:vk_music/presentation/playlists_tab/playlists_tab.dart';
 import 'package:vk_music/presentation/search/search_tab.dart';
 import 'package:vk_music/presentation/song_list/song_tile.dart';
 
-import '../../domain/music_loader/music_loader_cubit.dart';
 import '../../domain/state/auth/auth_bloc.dart';
+import '../../domain/state/music_loader/music_loader_cubit.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -66,7 +66,7 @@ class _MainTab extends StatelessWidget {
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                child: Text('Моя музыка: ${state.songs.length}', style: const TextStyle(fontSize: 18)),
+                child: Text('Моя музыка: ${state.songs.length}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
               )
             ),
             SliverReorderableList(

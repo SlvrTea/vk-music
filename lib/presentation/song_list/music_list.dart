@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:vk_music/domain/utils/getPlaylistSource.dart';
 import 'package:vk_music/presentation/song_list/song_tile.dart';
 
-import '../../data/vk_api/models/song.dart';
+import '../../domain/models/song.dart';
 
 class MusicList extends StatelessWidget {
   final List<Song> songList;

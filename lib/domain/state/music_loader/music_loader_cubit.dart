@@ -1,0 +1,42 @@
+
+import 'package:bloc/bloc.dart';
+import 'package:meta/meta.dart';
+import 'package:vk_music/internal/dependencies/repository_module.dart';
+
+import '../../models/song.dart';
+
+part 'music_loader_state.dart';
+
+class MusicLoaderCubit extends Cubit<MusicLoaderState> {
+  MusicLoaderCubit() : super(MusicLoaderInitial());
+
+  final musicRepository = RepositoryModule.musicRepository();
+
+  void loadMusic() async {
+    emit(MusicLoadingState());
+    var response = await musicRepository.getMusic('count=2000');
+    try {
+      final List<Song> songs = response;
+      if (songs.isNotEmpty) {
+        emit(MusicLoadedState(songs: songs));
+      }
+    } catch (e) {
+      emit(MusicLoadingFailed(errorMessage: response.toString()));
+    }
+  }
+
+  void audioDelete(Song song) {
+    musicRepository.deleteAudio(song);
+    (state as MusicLoadedState).songs.remove(song);
+    emit(MusicLoadedState(songs: (state as MusicLoadedState).songs));
+  }
+
+  void addAudio(Song audio) {
+    musicRepository.addAudio(audio);
+    (state as MusicLoadedState).songs.add(audio);
+    emit(MusicLoadedState(songs: (state as MusicLoadedState).songs));
+  }
+  
+  void reorder(Song song, {String? before, String? after}) =>
+      musicRepository.reorder(song, before: before, after: after);
+}

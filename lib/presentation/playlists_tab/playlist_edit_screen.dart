@@ -6,7 +6,7 @@ import 'package:vk_music/domain/state/playlist/playlist_cubit.dart';
 import 'package:vk_music/presentation/cover.dart';
 import 'package:vk_music/presentation/playlists_tab/add_music_screen.dart';
 
-import '../../data/vk_api/models/song.dart';
+import '../../domain/models/song.dart';
 
 class PlaylistEdit extends StatefulWidget {
   const PlaylistEdit({super.key});
@@ -132,7 +132,7 @@ class _PlaylistEditState extends State<PlaylistEdit> {
                       subtitle: Text(state.songs[index].artist, maxLines: 1, overflow: TextOverflow.ellipsis),
                       onTap: () {},
                       trailing: IconButton(
-                          onPressed: () => cubit.deleteFromPlaylist(playlist: state.playlist, songsToDelete: [state.songs[index]], allPlaylistSongs: state.songs),
+                          onPressed: () => cubit.deleteFromPlaylist(playlist: state.playlist, songsToDelete: [state.songs[index]]),
                           icon: const Icon(Icons.clear_rounded)
                       ),
                     ),

@@ -4,10 +4,21 @@ import 'package:vk_music/domain/models/player_playlist.dart';
 
 class MusicPlayer {
   final player = AudioPlayer();
+  ConcatenatingAudioSource? _audioSource;
 
-  Future<void> playPlaylist(PlayerPlaylist playlist, {int? initialIndex}) async {
-    player.setAudioSource(ConcatenatingAudioSource(children: playlist.sources), initialIndex: initialIndex);
+  Future<void> play(PlayerPlaylist playlist, {int? initialIndex}) async {
+    if (_audioSource == null) {
+      _audioSource = ConcatenatingAudioSource(children: playlist.sources);
+      player.setAudioSource(_audioSource!, initialIndex: initialIndex);
+    } else {
+      _audioSource!
+        ..clear()
+        ..addAll(playlist.sources);
+    }
     await player.play();
+  }
+
+  void updatePlaylist(PlayerPlaylist playlist) {
   }
 
   Future<void> pause() async => await player.pause();
@@ -21,10 +32,6 @@ class MusicPlayer {
   Stream<Duration> getCurrentPos() => player.positionStream.cast();
 
   Stream<Duration> getCurrentBufferPos() => player.bufferedPositionStream.cast();
-
-  Stream<PlayerState> onComplete() => player.playerStateStream.cast();
-
-  Stream<int?> currentIndex() => player.currentIndexStream.cast();
 
   Future<void> close() async => await player.dispose();
 }

@@ -2,10 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vk_music/domain/const.dart';
-import 'package:vk_music/domain/music_loader/music_loader_cubit.dart';
 import 'package:vk_music/presentation/playlists_tab/select_playlist.dart';
 
-import '../../data/vk_api/models/song.dart';
+import '../../domain/models/song.dart';
+import '../../domain/state/music_loader/music_loader_cubit.dart';
 import '../cover.dart';
 
 class MyAudiosMenu extends StatelessWidget {

@@ -1,14 +1,14 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:vk_music/data/vk_api/vk_music.dart';
 import 'package:vk_music/domain/models/playlist.dart';
+import 'package:vk_music/internal/dependencies/repository_module.dart';
 
 part 'playlists_state.dart';
 
 class PlaylistsCubit extends Cubit<PlaylistsState> {
-  PlaylistsCubit(this.vkApi) : super(PlaylistsInitial());
+  PlaylistsCubit() : super(PlaylistsInitial());
   
-  final VKApi vkApi;
+  final musicRepository = RepositoryModule.musicRepository();
   
-  Future<void> getPlaylists() async => emit(PlaylistsLoadedState(await vkApi.music.getPlaylists(args: 'count=200')));
+  Future<void> getPlaylists() async => emit(PlaylistsLoadedState(await musicRepository.getPlaylists('count=200')));
 }

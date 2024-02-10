@@ -2,11 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:vk_music/data/vk_api/models/song.dart';
 import 'package:vk_music/domain/models/player_playlist.dart';
 import 'package:vk_music/presentation/menus/audio_context_menu.dart';
 
 import '../../domain/const.dart';
+import '../../domain/models/song.dart';
 import '../../domain/state/music_player/music_player_cubit.dart';
 import '../cover.dart';
 
@@ -50,7 +50,7 @@ class SongTile extends StatelessWidget {
           )
           : Text('${duration ~/ 60}:${duration % 60 == 0 ? '00' : duration % 60}'),
       leading: CoverWidget(
-          photoUrl: song.photoUrl135,
+          photoUrl: song.photoUrl600,
           child: musicBloc.state.song == song
               ? musicBloc.state.playStatus == PlayStatus.trackPlaying
               ? const Icon(Icons.pause_rounded, size: 40)

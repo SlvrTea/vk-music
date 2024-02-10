@@ -1,7 +1,6 @@
 
 import 'package:just_audio/just_audio.dart';
-
-import '../../data/vk_api/models/song.dart';
+import 'package:vk_music/domain/models/song.dart';
 
 class PlayerPlaylist {
   PlayerPlaylist({required this.sources, required this.songs});

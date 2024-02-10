@@ -2,8 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:just_audio_background/just_audio_background.dart';
-import 'package:vk_music/data/vk_api/models/user.dart';
 import 'package:vk_music/internal/app.dart';
+
+import 'domain/models/user.dart';
 
 void main() async {
   await JustAudioBackground.init(

@@ -43,29 +43,54 @@ class _SearchTabState extends State<SearchTab> {
       child: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
+          // SliverToBoxAdapter(
+          //   child: Padding(
+          //     padding: const EdgeInsets.all(8.0),
+          //     child: TextField(
+          //       controller: _controller,
+          //       onChanged: (value) => setState(() {}),
+          //       decoration: InputDecoration(
+          //           prefixIcon: IconButton(
+          //               onPressed: () {
+          //                 cubit.search(_controller.text, count: 20);
+          //               },
+          //               icon: const Icon(Icons.search_rounded, color: Colors.white)
+          //           ),
+          //           suffixIcon: IconButton(
+          //             onPressed: () {
+          //               if (_controller.text.isNotEmpty) {
+          //                 _controller.clear();
+          //                 cubit.getRecommendations();
+          //               }
+          //             },
+          //             icon: const Icon(Icons.clear_rounded, color: Colors.white),
+          //           )
+          //       ).applyDefaults(_inputDecoration),
+          //     ),
+          //   ),
+          // ),
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: TextField(
+              child: SearchBar(
                 controller: _controller,
-                onChanged: (value) => setState(() {}),
-                decoration: InputDecoration(
-                    prefixIcon: IconButton(
-                        onPressed: () {
-                          cubit.search(_controller.text, count: 20);
-                        },
-                        icon: const Icon(Icons.search_rounded, color: Colors.white)
-                    ),
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        if (_controller.text.isNotEmpty) {
-                          _controller.clear();
-                          cubit.getRecommendations();
-                        }
-                      },
-                      icon: const Icon(Icons.clear_rounded, color: Colors.white),
-                    )
-                ).applyDefaults(_inputDecoration),
+                leading: IconButton(
+                  onPressed: () => cubit.search(_controller.text),
+                  icon: const Icon(Icons.search_rounded, color: Colors.white)
+                ),
+                onSubmitted: (text) => cubit.search(_controller.text, count: 20),
+                trailing: [
+                  IconButton(
+                    onPressed: () {
+                      if (_controller.text.isNotEmpty) cubit.getRecommendations();
+                      _controller.clear();
+                    },
+                    icon: const Icon(Icons.clear_rounded, color: Colors.white),
+                  )
+                ],
+                backgroundColor: const MaterialStatePropertyAll(
+                  Colors.transparent
+                ),
               ),
             ),
           ),
@@ -73,18 +98,9 @@ class _SearchTabState extends State<SearchTab> {
               ? const SearchResult()
               : (state is SearchRecommendations)
               ? SliverToBoxAdapter(child: MusicList(songList: state.recs))
-              : const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator()))
-        ]
+              : const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator())),
+        ],
       ),
     );
   }
 }
-
-final _inputDecoration = InputDecorationTheme(
-  focusedBorder: OutlineInputBorder(
-      borderSide: const BorderSide(color: Colors.white, width: 2.0),
-      borderRadius: BorderRadius.circular(16)),
-  enabledBorder: OutlineInputBorder(
-      borderSide: const BorderSide(color: Colors.white, width: 2.0),
-      borderRadius: BorderRadius.circular(16)),
-);

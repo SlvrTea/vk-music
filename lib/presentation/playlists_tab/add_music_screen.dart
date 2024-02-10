@@ -5,8 +5,8 @@ import 'package:vk_music/domain/const.dart';
 import 'package:vk_music/domain/state/playlist/playlist_cubit.dart';
 import 'package:vk_music/presentation/cover.dart';
 
-import '../../data/vk_api/models/song.dart';
-import '../../domain/music_loader/music_loader_cubit.dart';
+import '../../domain/models/song.dart';
+import '../../domain/state/music_loader/music_loader_cubit.dart';
 
 final _audiosToAdd = <String>[];
 
@@ -76,7 +76,7 @@ class _AddTileState extends State<_AddTile> {
         if (isSelected) {
           _audiosToAdd.remove(widget.song.id);
         } else {
-          _audiosToAdd.add(widget.song.id!);
+          _audiosToAdd.add(widget.song.id);
         }
         isSelected = !isSelected;
       }),

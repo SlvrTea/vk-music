@@ -32,38 +32,53 @@ class _BodyWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final cubit = context.watch<PlaylistCubit>();
     final state = cubit.state;
-    if (state is PlaylistLoadedState && state.playlist.id == playlist.id) {
-      return SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Column(
-          children: [
-            CoverWidget(photoUrl: state.playlist.photoUrl600, size: 250),
-            _TitleWidget(state.playlist.title),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                playlist.isOwner
+    if (state is PlaylistLoadedState) {
+      if (state.playlist.id != playlist.id) cubit.loadPlaylist(playlist);
+    } else if (state is! PlaylistLoadingErrorState) {
+      cubit.loadPlaylist(playlist);
+    }
+    return (state is PlaylistLoadedState && state.playlist.id == playlist.id)
+        ? SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            children: [
+              CoverWidget(photoUrl: state.playlist.photoUrl600, size: 250),
+              _TitleWidget(state.playlist.title),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  playlist.isOwner
                     ? Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton.icon(
-                          onPressed: () => navigatorKey.currentState!
-                              .push(MaterialPageRoute(builder: (_) => const PlaylistEdit())),
-                          icon: const Icon(Icons.edit_rounded),
-                          label: const Text('Изменить')
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton.icon(
+                        onPressed: () => navigatorKey.currentState!
+                          .push(MaterialPageRoute(builder: (_) => const PlaylistEdit())),
+                        icon: const Icon(Icons.edit_rounded),
+                        label: const Text('Изменить')
                       ),
                     )
-                    : const SizedBox()
-              ],
-            ),
-            MusicList(songList: state.songs),
-          ],
+                    : const SizedBox(),
+                  !playlist.isFollowing
+                      ? playlist.isOwner ? const SizedBox()
+                      : ElevatedButton.icon(
+                          onPressed: () {},
+                          icon: const Icon(Icons.add_rounded),
+                          label: const Text('Добавить')
+                       )
+                      : SizedBox(
+                        width: 150,
+                        child: IconButton.filled(
+                          onPressed: () {},
+                          icon: const Icon(Icons.check_rounded),
+                        ),
+                      )
+                  ],
+              ),
+              MusicList(songList: state.songs),
+            ],
+          )
         )
-      );
-    } else if (state is PlaylistLoadingErrorState) {
-      return Text(state.error);
-    }
-    cubit.loadPlaylist(playlist);
-    return const Center(child: CircularProgressIndicator());
+      : const Center(child: CircularProgressIndicator());
   }
 }
 

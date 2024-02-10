@@ -6,8 +6,8 @@ import 'package:vk_music/domain/utils/getPlaylistSource.dart';
 import 'package:vk_music/presentation/playlists_tab/playlist_widget.dart';
 import 'package:vk_music/presentation/song_list/song_tile.dart';
 
-import '../../data/vk_api/models/song.dart';
 import '../../domain/models/playlist.dart';
+import '../../domain/models/song.dart';
 
 class SearchResult extends StatelessWidget {
   const SearchResult({super.key});
@@ -18,6 +18,10 @@ class SearchResult extends StatelessWidget {
     return SliverList(
       delegate: SliverChildListDelegate(
         [
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            child: Text('Альбомы', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+          ),
           _SearchAlbumsWidget(state.playlistsResult),
           _SearchSongsWidget(state.searchResult),
         ]
@@ -50,7 +54,7 @@ class _SearchSongsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: songs.map((e) => SongTile(song: e, playlist: getPlaylistSource(songs))).toList(),
+      children: songs.map((e) => SongTile(song: e, playlist: getPlaylistSource(songs), withMenu: true)).toList(),
     );
   }
 }

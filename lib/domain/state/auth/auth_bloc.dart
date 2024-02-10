@@ -5,21 +5,22 @@ import 'package:bloc/bloc.dart' show Bloc, Emitter;
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:vk_music/data/vk_api/vk_music.dart';
+import 'package:vk_music/data/service/vk_auth_service.dart';
 import 'package:vk_music/domain/const.dart';
-import 'package:vk_music/domain/music_loader/music_loader_cubit.dart';
 import 'package:vk_music/presentation/auth/captcha.dart';
 import 'package:vk_music/presentation/tfa/tfa.dart';
+
+import '../../models/user.dart';
+import '../music_loader/music_loader_cubit.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final VKApi vkApi;
+  final VKAuthService auth = VKAuthService();
   final MusicLoaderCubit musicLoader;
   final userBox = Hive.box('userBox');
   AuthBloc({
-    required this.vkApi,
     required this.musicLoader
   }) : super(AuthInitial()) {
     on<AuthUserEvent>(_onAuthUserEvent);
@@ -32,8 +33,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(UserLoadingState());
     try {
       late User user;
-      final response = await vkApi.auth.captchaAuth(queryParameters: event.query, capchaSId: event.captchaSid, captchaKey: event.captchaKey);
-      log('Loggin: ${response.toString()}');
+      final response = await auth.captchaAuth(queryParameters: event.query, capchaSId: event.captchaSid, captchaKey: event.captchaKey);
       user = User.fromJson(response);
       userBox.put('user', user);
       emit(UserLoadedState(user: user));
@@ -61,7 +61,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       late User user;
       if (event.url == null) {
-        final response = await vkApi.auth.auth(
+        final response = await auth.auth(
             login: event.login!,
             password: event.password!
         );
@@ -104,11 +104,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     }
   }
+
   _onUserLogoutEvent(UserLogoutEvent event, Emitter emit) {
     log('User logout');
     userBox.delete('user');
     emit(AuthInitial());
   }
+
   _onLoadUserEvent(LoadUserEvent event, Emitter emit) {
     User? user = userBox.get('user');
     log('Loading user: ${user.toString()}');

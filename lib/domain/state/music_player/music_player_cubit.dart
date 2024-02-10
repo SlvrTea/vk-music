@@ -5,31 +5,25 @@ import 'package:bloc/bloc.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:vk_music/domain/models/player_playlist.dart';
 
-import '../../../data/vk_api/models/song.dart';
-import '../../../data/vk_api/models/vk_api.dart';
 import '../../const.dart';
 import '../../models/music_player.dart';
+import '../../models/song.dart';
 
 part 'music_player_state.dart';
 
 class MusicPlayerCubit extends Cubit<MusicPlayerState> {
   final MusicPlayer musicPlayer;
-  final VKApi vkApi;
   late StreamSubscription playerStatusSubscription;
-  late StreamSubscription currentIndexSubscription;
 
-  MusicPlayerCubit({required this.musicPlayer, required this.vkApi})
+  MusicPlayerCubit({required this.musicPlayer})
       : super(MusicPlayerState()) {
-    playerStatusSubscription = musicPlayer.onComplete().listen((event) {
+    playerStatusSubscription = musicPlayer.player.playerStateStream.listen((event) {
       changePrecessingState(event.processingState);
-    });
-    currentIndexSubscription = musicPlayer.currentIndex().listen((event) {
-      if (event != null) seek(event);
     });
   }
 
   void playMusic({required Song song, PlayerPlaylist? playlist}) {
-    if (playlist != null && playlist.sources != state.playlist?.sources) {
+    if (playlist != null && playlist != state.playlist) {
       emit(state.copyWith(playlist: playlist));
       musicPlayer.player.setAudioSource(ConcatenatingAudioSource(children: playlist.sources));
     }
@@ -40,12 +34,12 @@ class MusicPlayerCubit extends Cubit<MusicPlayerState> {
       musicPlayer.resume();
       emit(state.copyWith(playStatus: PlayStatus.trackPlaying));
     } else if (state.processingState == ProcessingState.ready) {
-      log('${song.toString()} is now playing.');
       emit(state.copyWith(song: song, playStatus: PlayStatus.trackPlaying));
       seek(state.playlist!.songs.indexOf(song));
+      log('${song.toString()} is playing.');
     } else {
       emit(state.copyWith(song: song, playStatus: PlayStatus.trackPlaying));
-      musicPlayer.playPlaylist(state.playlist!, initialIndex: state.playlist!.songs.indexOf(song));
+      musicPlayer.play(state.playlist!, initialIndex: state.playlist!.songs.indexOf(song));
     }
   }
 
@@ -91,7 +85,6 @@ class MusicPlayerCubit extends Cubit<MusicPlayerState> {
   Future<void> close() {
     musicPlayer.close();
     playerStatusSubscription.cancel();
-    currentIndexSubscription.cancel();
     return super.close();
   }
 }

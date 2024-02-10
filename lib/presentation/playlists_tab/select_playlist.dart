@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vk_music/presentation/cover.dart';
 
-import '../../data/vk_api/models/song.dart';
 import '../../domain/const.dart';
+import '../../domain/models/song.dart';
 import '../../domain/state/playlist/playlist_cubit.dart';
 import '../../domain/state/playlists/playlists_cubit.dart';
 
@@ -38,7 +38,7 @@ class SelectPlaylist extends StatelessWidget {
                     child: InkWell(
                       borderRadius: BorderRadius.circular(16),
                       onTap: () {
-                        playlistCubit.addAudiosToPlaylist(e, [song.id!]);
+                        playlistCubit.addAudiosToPlaylist(e, [song.id]);
                         navigatorKey.currentState!.pop();
                       },
                       child: Column(
