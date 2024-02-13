@@ -14,16 +14,22 @@ part 'music_player_state.dart';
 class MusicPlayerCubit extends Cubit<MusicPlayerState> {
   final MusicPlayer musicPlayer;
   late StreamSubscription playerStatusSubscription;
+  late StreamSubscription currentIndexSubscription;
 
   MusicPlayerCubit({required this.musicPlayer})
       : super(MusicPlayerState()) {
     playerStatusSubscription = musicPlayer.player.playerStateStream.listen((event) {
       changePrecessingState(event.processingState);
     });
+    currentIndexSubscription = musicPlayer.player.currentIndexStream.listen((event) {
+      if (event != null && state.playlist != null && event != musicPlayer.player.currentIndex) {
+        seek(musicPlayer.player.currentIndex!);
+      }
+    });
   }
 
   void playMusic({required Song song, PlayerPlaylist? playlist}) {
-    if (playlist != null && playlist != state.playlist) {
+    if (playlist != null && state.playlist == null) {
       emit(state.copyWith(playlist: playlist));
       musicPlayer.player.setAudioSource(ConcatenatingAudioSource(children: playlist.sources));
     }
@@ -84,6 +90,7 @@ class MusicPlayerCubit extends Cubit<MusicPlayerState> {
   @override
   Future<void> close() {
     musicPlayer.close();
+    currentIndexSubscription.cancel();
     playerStatusSubscription.cancel();
     return super.close();
   }

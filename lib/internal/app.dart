@@ -70,13 +70,25 @@ class App extends StatelessWidget {
           bottomNavigationBarTheme: const BottomNavigationBarThemeData(
             backgroundColor: Colors.black
           ),
+          drawerTheme: const DrawerThemeData(
+            surfaceTintColor: Colors.black,
+            backgroundColor: Colors.black,
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ButtonStyle(
+              shape: MaterialStatePropertyAll(
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))
+              )
+            )
+          ),
           colorScheme: ColorScheme.fromSeed(
             background: Colors.black,
             seedColor: Colors.redAccent,
             brightness: Brightness.dark,
           ),
           bottomSheetTheme: const BottomSheetThemeData(
-            backgroundColor: Colors.black
+            backgroundColor: Colors.black,
+            surfaceTintColor: Colors.black,
           )
         ),
         home: const LoginScreen(),
