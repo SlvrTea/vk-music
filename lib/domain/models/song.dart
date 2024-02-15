@@ -25,6 +25,22 @@ class Song {
     this.photoUrl135,
   });
 
+  factory Song.fromMap(Map<String, dynamic> map){
+    return Song(
+      artist: map['artist'].toString().replaceAll("/", "&"),
+      title: map['title'].toString().replaceAll("/", "&"),
+      duration: map['duration'].toString(),
+      accessKey: map['access_key']?.toString() ?? '',
+      url: map['url']?.toString() ?? '',
+      id: '${map['owner_id']}_${map['id']}',
+      shortId: map['id'].toString(),
+      ownerId: map['owner_id'].toString(),
+      photoUrl68: map['album']?['thumb']?['photo_68'].toString(),
+      photoUrl135: map['album']?['thumb']?['photo_135'].toString(),
+      photoUrl600: map['album']?['thumb']?['photo_600'].toString()
+    );
+  }
+
   @override
   String toString() {
     return 'Song(artist: $artist, title: $title, duration: $duration)';

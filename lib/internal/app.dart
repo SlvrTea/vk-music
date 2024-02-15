@@ -61,7 +61,7 @@ class App extends StatelessWidget {
         title: 'VK Music Player',
         navigatorKey: navigatorKey,
         scrollBehavior: const MaterialScrollBehavior()
-            .copyWith(dragDevices: PointerDeviceKind.values.toSet()),
+            .copyWith(dragDevices: PointerDeviceKind.values.toSet(), physics: const BouncingScrollPhysics()),
         theme: ThemeData(
           useMaterial3: true,
           appBarTheme: const AppBarTheme(

@@ -6,10 +6,6 @@ import 'dart:math' as math;
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:dio/dio.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:vk_music/data/api/api_playlist.dart';
-import 'package:vk_music/data/api/api_song.dart';
-import 'package:vk_music/data/mapper/playlist_mapper.dart';
-import 'package:vk_music/data/mapper/song_mapper.dart';
 
 import '../../domain/models/playlist.dart';
 import '../../domain/models/song.dart';
@@ -44,7 +40,7 @@ class VKService {
       data = response.data['error']['error_msg'];
     } else {
       data = (response.data['response']!['items'] as List)
-          .map((e) => SongMapper.fromApi(ApiSong.fromApi(e)))
+          .map((e) => Song.fromMap(e))
           .toList();
     }
     return data;
@@ -78,7 +74,7 @@ class VKService {
       data = response.data['error']['error_msg'];
     } else {
       data = (response.data['response']!['items'] as List)
-          .map((e) => PlaylistMapper.formApi(ApiPlaylist.fromApi(e)))
+          .map((e) => Playlist.fromMap(e))
           .toList();
     }
     log('Loading user`s playlists. Api response: $data');
@@ -116,13 +112,13 @@ class VKService {
         '${reorder == null ? '' : '&reorder_actions=$reorderFormat'}', isNew: true
     );
 
-    return PlaylistMapper.formApi(ApiPlaylist.fromApi(response.data['response']));
+    return Playlist.fromMap(response.data['response']);
   }
 
   Future<dynamic> addAudiosToPlaylist(Playlist playlist, List<String> audiosToAdd) async {
     final response = await method('execute.addAudioToPlaylist',
         'owner_id=${user.userId}&playlist_id=${playlist.id}&audio_ids=${audiosToAdd.join(',')}');
-    return PlaylistMapper.formApi(ApiPlaylist.fromApi(response.data['response']['playlist']));
+    return Playlist.fromMap(response.data['response']['playlist']);
   }
 }
 

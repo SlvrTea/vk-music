@@ -9,7 +9,7 @@ class Playlist {
   final String? photoUrl270;
   final String? photoUrl300;
   final String? photoUrl600;
-  final String? accessKey;
+  final String accessKey;
   final String ownerId;
   final bool isOwner;
   final bool isFollowing;
@@ -29,6 +29,24 @@ class Playlist {
     this.isOwner = false,
     required this.accessKey
   });
+
+  factory Playlist.fromMap(Map<String, dynamic> map) {
+    return Playlist(
+      title: map['title'].toString().replaceAll("/", "&"),
+      description: map['description'].toString().replaceAll("/", "&").isEmpty ? null : map['description'].toString().replaceAll("/", "&"),
+      accessKey: map['access_key']?.toString() ?? '',
+      id: map['id'].toString(),
+      ownerId: map['owner_id'].toString(),
+      isOwner: !(map.containsKey('followed')),
+      isFollowing: map.containsKey('followed'),
+      photoUrl34: map['thumbs']?[0]?['photo_34']?.toString() ?? map['photo']?['photo_34']?.toString(),
+      photoUrl68: map['thumbs']?[0]?['photo_68']?.toString() ?? map['photo']?['photo_68']?.toString(),
+      photoUrl135: map['thumbs']?[0]?['photo_135']?.toString() ?? map['photo']?['photo_135']?.toString(),
+      photoUrl270: map['thumbs']?[0]?['photo_270']?.toString() ?? map['photo']?['photo_270']?.toString(),
+      photoUrl300: map['thumbs']?[0]?['photo_300']?.toString() ?? map['photo']?['photo_300']?.toString(),
+      photoUrl600: map['thumbs']?[0]?['photo_600']?.toString() ?? map['photo']?['photo_600']?.toString(),
+    );
+  }
 
 
   Playlist copyWith({String? title, String? description}) {
@@ -51,6 +69,6 @@ class Playlist {
 
   @override
   String toString() {
-    return 'Playlist: $title, $id, $isOwner';
+    return 'Playlist: $title, $id';
   }
 }

@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vk_music/domain/const.dart';
+import 'package:vk_music/domain/state/playlists/playlists_cubit.dart';
 import 'package:vk_music/presentation/playlists_tab/select_playlist.dart';
 
 import '../../domain/models/song.dart';
@@ -33,9 +34,13 @@ class MyAudiosMenu extends StatelessWidget {
             leading: const Icon(Icons.playlist_add_rounded),
             title: const Text('Добавить в плейлист'),
             onTap: () {
-              navigatorKey.currentState!.pop();
-              navigatorKey.currentState!
-                  .push(MaterialPageRoute(builder: (_) => SelectPlaylist(song)));
+              final ownedPlaylists = (context.read<PlaylistsCubit>().state as PlaylistsLoadedState)
+                  .playlists.where((element) => element.isOwner).toList();
+              if (ownedPlaylists.isNotEmpty) {
+                navigatorKey.currentState!.pop();
+                navigatorKey.currentState!
+                    .push(MaterialPageRoute(builder: (_) => SelectPlaylist(song, ownedPlaylists)));
+              }
             },
           ),
           state.songs.contains(song)
