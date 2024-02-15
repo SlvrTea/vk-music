@@ -97,7 +97,7 @@ class _SearchTabState extends State<SearchTab> {
           (state is SearchFinishedState)
               ? const SearchResult()
               : (state is SearchRecommendations)
-              ? SliverToBoxAdapter(child: MusicList(songList: state.recs))
+              ? SliverToBoxAdapter(child: MusicList(songs: state.recs))
               : const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator())),
         ],
       ),

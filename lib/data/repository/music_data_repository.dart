@@ -39,4 +39,19 @@ class MusicDataRepository implements MusicRepository {
 
   @override
   Future<dynamic> addAudiosToPlaylist(Playlist playlist, List<String> audiosToAdd) => _api.addAudiosToPlaylist(playlist, audiosToAdd);
+
+  @override
+  Future search(String q, {int? count, int? offset}) => _api.search(q, count: count, offset: offset);
+
+  @override
+  Future searchAlbum(String q) => _api.searchAlbum(q);
+
+  @override
+  Future searchPlaylist(String q) {
+    // TODO: implement searchPlaylist
+    throw UnimplementedError();
+  }
+
+  @override
+  Future getRecommendations({int? offset}) => _api.getRecommendations(offset: offset);
 }

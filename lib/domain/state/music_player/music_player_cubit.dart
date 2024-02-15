@@ -39,12 +39,11 @@ class MusicPlayerCubit extends Cubit<MusicPlayerState> {
     } else if (state.playStatus == PlayStatus.trackInPause && song == state.song) {
       musicPlayer.resume();
       emit(state.copyWith(playStatus: PlayStatus.trackPlaying));
-    } else if (state.processingState == ProcessingState.ready) {
+    } else if (state.processingState == ProcessingState.ready && state.playlist!.songs.contains(song)) {
       emit(state.copyWith(song: song, playStatus: PlayStatus.trackPlaying));
       seek(state.playlist!.songs.indexOf(song));
-      log('${song.toString()} is playing.');
     } else {
-      emit(state.copyWith(song: song, playStatus: PlayStatus.trackPlaying));
+      emit(state.copyWith(song: song, playlist: playlist!, playStatus: PlayStatus.trackPlaying));
       musicPlayer.play(state.playlist!, initialIndex: state.playlist!.songs.indexOf(song));
     }
   }

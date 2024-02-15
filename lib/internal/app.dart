@@ -33,28 +33,28 @@ class App extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<AuthBloc>(
-          create: (context) => authBloc
+            create: (context) => authBloc
         ),
         BlocProvider<MusicLoaderCubit>(
-          create: (context) => musicLoaderBloc
+            create: (context) => musicLoaderBloc
         ),
         BlocProvider<MusicPlayerCubit>(
-          create: (context) => musicPlayerBloc
+            create: (context) => musicPlayerBloc
         ),
         BlocProvider<NavBarCubit>(
             create: (context) => navBar
         ),
-        BlocProvider(
+        BlocProvider<PlaylistsCubit>(
             create: (_) => playlists
         ),
-        BlocProvider(
-          create: (_) => playlist
+        BlocProvider<PlaylistCubit>(
+            create: (_) => playlist
         ),
-        BlocProvider(
-          create: (_) => musicProgress
+        BlocProvider<MusicProgressCubit>(
+            create: (_) => musicProgress
         ),
-        BlocProvider(
-          create: (_) => search
+        BlocProvider<SearchCubit>(
+            create: (_) => search
         )
       ],
       child: MaterialApp(
@@ -63,33 +63,48 @@ class App extends StatelessWidget {
         scrollBehavior: const MaterialScrollBehavior()
             .copyWith(dragDevices: PointerDeviceKind.values.toSet(), physics: const BouncingScrollPhysics()),
         theme: ThemeData(
-          useMaterial3: true,
-          appBarTheme: const AppBarTheme(
-            backgroundColor: Colors.black
-          ),
-          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-            backgroundColor: Colors.black
-          ),
-          drawerTheme: const DrawerThemeData(
-            surfaceTintColor: Colors.black,
-            backgroundColor: Colors.black,
-          ),
-          elevatedButtonTheme: ElevatedButtonThemeData(
-            style: ButtonStyle(
-              shape: MaterialStatePropertyAll(
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))
-              )
+            useMaterial3: true,
+            appBarTheme: const AppBarTheme(
+                backgroundColor: Colors.black
+            ),
+            bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+                backgroundColor: Colors.black
+            ),
+            drawerTheme: const DrawerThemeData(
+              surfaceTintColor: Colors.black,
+              backgroundColor: Colors.black,
+            ),
+            filledButtonTheme: FilledButtonThemeData(
+                style: ButtonStyle(
+                  shape: MaterialStatePropertyAll(
+                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))
+                  ),
+                  backgroundColor: const MaterialStatePropertyAll(
+                      Color.fromARGB(255, 20, 20, 20)
+                  ),
+                  foregroundColor: const MaterialStatePropertyAll(Colors.white),
+                )
+            ),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+                style: ButtonStyle(
+                  shape: MaterialStatePropertyAll(
+                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))
+                  ),
+                  backgroundColor: const MaterialStatePropertyAll(
+                      Color.fromARGB(255, 20, 20, 20)
+                  ),
+                  foregroundColor: const MaterialStatePropertyAll(Colors.white),
+                )
+            ),
+            colorScheme: ColorScheme.fromSeed(
+              background: Colors.black,
+              seedColor: Colors.redAccent,
+              brightness: Brightness.dark,
+            ),
+            bottomSheetTheme: const BottomSheetThemeData(
+              backgroundColor: Colors.black,
+              surfaceTintColor: Colors.black,
             )
-          ),
-          colorScheme: ColorScheme.fromSeed(
-            background: Colors.black,
-            seedColor: Colors.redAccent,
-            brightness: Brightness.dark,
-          ),
-          bottomSheetTheme: const BottomSheetThemeData(
-            backgroundColor: Colors.black,
-            surfaceTintColor: Colors.black,
-          )
         ),
         home: const LoginScreen(),
       ),

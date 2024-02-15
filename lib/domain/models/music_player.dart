@@ -10,15 +10,11 @@ class MusicPlayer {
     if (_audioSource == null) {
       _audioSource = ConcatenatingAudioSource(children: playlist.sources);
       player.setAudioSource(_audioSource!, initialIndex: initialIndex);
-    } else {
-      _audioSource!
-        ..clear()
-        ..addAll(playlist.sources);
+    } else if (_audioSource != null) {
+      await _audioSource!.clear();
+      await _audioSource!.addAll(playlist.sources);
     }
     await player.play();
-  }
-
-  void updatePlaylist(PlayerPlaylist playlist) {
   }
 
   Future<void> pause() async => await player.pause();

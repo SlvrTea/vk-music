@@ -77,12 +77,25 @@ class VKService {
           .map((e) => Playlist.fromMap(e))
           .toList();
     }
-    log('Loading user`s playlists. Api response: $data');
+    log('Loading user`s playlists.');
     return data;
   }
 
-  Future<dynamic> getPlaylistMusic(Playlist playlist) async =>
-      await getMusic('album_id=${playlist.id}&owner_id=${playlist.ownerId}&count=2000');
+  Future<dynamic> getPlaylistMusic(Playlist playlist) async {
+    final response = await method('audio.get',
+        'owner_id=${playlist.ownerId}&album_id=${playlist.id}'
+    );
+
+    late dynamic data;
+    if (response.data['response'] == null) {
+      data = response.data['error']['error_msg'];
+    } else {
+      data = (response.data['response']!['items'] as List)
+          .map((e) => Song.fromMap(e))
+          .toList();
+    }
+    return data;
+  }
 
   Future<void> deleteFromPlaylist({required Playlist playlist, required List<Song> songsToDelete}) async {
     final audios = songsToDelete.map((e) => e.id).toList().join(',');
@@ -119,6 +132,33 @@ class VKService {
     final response = await method('execute.addAudioToPlaylist',
         'owner_id=${user.userId}&playlist_id=${playlist.id}&audio_ids=${audiosToAdd.join(',')}');
     return Playlist.fromMap(response.data['response']['playlist']);
+  }
+
+  Future<dynamic> search(String q, {int? count, int? offset}) async {
+    final response = await method('audio.search',
+        'q=$q'
+        '${count != null ? '&count=$count' : ''}'
+        '${offset != null ? '&offset=$offset' : ''}'
+    );
+    return (response.data['response']['items'] as List)
+        .map((e) => Song.fromMap(e))
+        .toList();
+  }
+
+  Future<dynamic> searchAlbum(String q) async {
+    final response = await method('audio.searchAlbums', 'q=$q');
+    return (response.data['response']['items'] as List)
+        .map((e) => Playlist.fromMap(e))
+        .toList();
+  }
+
+  Future<dynamic> getRecommendations({int? offset}) async {
+    final response = await method('audio.getRecommendations',
+        'user_id=${user.userId}&count=20${offset == null ? '' : '&offset=$offset'}'
+    );
+    return (response.data['response']['items'] as List)
+        .map((e) => Song.fromMap(e))
+        .toList();
   }
 }
 

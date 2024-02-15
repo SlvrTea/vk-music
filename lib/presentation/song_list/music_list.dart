@@ -1,22 +1,22 @@
 
 import 'package:flutter/material.dart';
-import 'package:vk_music/domain/utils/getPlaylistSource.dart';
+import 'package:vk_music/domain/models/player_playlist.dart';
 import 'package:vk_music/presentation/song_list/song_tile.dart';
 
 import '../../domain/models/song.dart';
 
 class MusicList extends StatelessWidget {
-  final List<Song> songList;
+  final List<Song> songs;
   final bool withMenu;
-  const MusicList({super.key, required this.songList, this.withMenu = false});
+  const MusicList({super.key, required this.songs, this.withMenu = false});
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: songList.map((e) => SongTile(
+      children: songs.map((e) => SongTile(
         song: e,
-        withMenu: true,
-        playlist: getPlaylistSource(songList),
+        withMenu: withMenu,
+        playlist: PlayerPlaylist.formSongList(songs),
       )).toList(),
     );
   }

@@ -20,4 +20,12 @@ abstract class MusicRepository {
   Future<dynamic> savePlaylist({required Playlist playlist, String? title, String? description, List<Song>? songsToAdd, List? reorder});
 
   Future<dynamic> addAudiosToPlaylist(Playlist playlist, List<String> audiosToAdd);
+
+  Future<dynamic> search(String q, {int? count, int? offset});
+
+  Future<dynamic> searchAlbum(String q);
+
+  Future<dynamic> searchPlaylist(String q);
+
+  Future<dynamic> getRecommendations({int? offset});
 }

@@ -1,8 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vk_music/domain/models/player_playlist.dart';
 import 'package:vk_music/domain/state/search/search_cubit.dart';
-import 'package:vk_music/domain/utils/getPlaylistSource.dart';
 import 'package:vk_music/presentation/playlists_tab/playlist_widget.dart';
 import 'package:vk_music/presentation/song_list/song_tile.dart';
 
@@ -54,7 +54,7 @@ class _SearchSongsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: songs.map((e) => SongTile(song: e, playlist: getPlaylistSource(songs), withMenu: true)).toList(),
+      children: songs.map((e) => SongTile(song: e, playlist: PlayerPlaylist.formSongList(songs), withMenu: true)).toList(),
     );
   }
 }

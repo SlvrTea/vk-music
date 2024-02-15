@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vk_music/domain/const.dart';
+import 'package:vk_music/domain/models/player_playlist.dart';
+import 'package:vk_music/domain/state/music_player/music_player_cubit.dart';
 import 'package:vk_music/presentation/cover.dart';
 import 'package:vk_music/presentation/playlists_tab/playlist_edit_screen.dart';
 
@@ -47,6 +49,17 @@ class _BodyWidget extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      context.read<MusicPlayerCubit>().playMusic(
+                        song: state.songs.first,
+                        playlist: PlayerPlaylist.formSongList(state.songs)
+                      );
+                    },
+                    icon: const Icon(Icons.play_arrow_rounded),
+                    label: const Text('Слушать')
+                  ),
+                  const SizedBox(width: 8),
                   playlist.isOwner
                     ? Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -56,6 +69,7 @@ class _BodyWidget extends StatelessWidget {
                         icon: const Icon(Icons.edit_rounded),
                         label: const Text('Изменить')
                       ),
+
                     )
                     : const SizedBox(),
                   !playlist.isFollowing
@@ -63,18 +77,36 @@ class _BodyWidget extends StatelessWidget {
                       : ElevatedButton.icon(
                           onPressed: () {},
                           icon: const Icon(Icons.add_rounded),
-                          label: const Text('Добавить')
+                          label: const Text('Добавить'),
+                          style: ButtonStyle(
+                            shape: MaterialStatePropertyAll(
+                                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))
+                            ),
+                            backgroundColor: const MaterialStatePropertyAll(
+                                Color.fromARGB(255, 20, 20, 20)
+                            ),
+                            foregroundColor: const MaterialStatePropertyAll(Colors.white),
+                          ),
                        )
                       : SizedBox(
-                        width: 150,
+                        width: 90,
                         child: IconButton.filled(
                           onPressed: () {},
                           icon: const Icon(Icons.check_rounded),
+                          style: ButtonStyle(
+                            shape: MaterialStatePropertyAll(
+                                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))
+                            ),
+                            backgroundColor: const MaterialStatePropertyAll(
+                                Color.fromARGB(255, 20, 20, 20)
+                            ),
+                            foregroundColor: const MaterialStatePropertyAll(Colors.white),
+                          ),
                         ),
                       )
                   ],
               ),
-              MusicList(songList: state.songs),
+              MusicList(songs: state.songs, withMenu: true),
             ],
           )
         )

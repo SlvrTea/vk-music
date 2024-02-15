@@ -17,11 +17,7 @@ class PlaylistCubit extends Cubit<PlaylistState> {
   void loadPlaylist(Playlist playlist) async {
     emit(PlaylistLoadingState());
     final playlistSongs = await musicRepository.getPlaylistMusic(playlist);
-    try {
-      emit(PlaylistLoadedState(songs: playlistSongs, playlist: playlist));
-    } catch (e) {
-      emit(PlaylistLoadingErrorState(playlistSongs));
-    }
+    emit(PlaylistLoadedState(songs: playlistSongs, playlist: playlist));
   }
 
   void deleteFromPlaylist(
@@ -29,12 +25,8 @@ class PlaylistCubit extends Cubit<PlaylistState> {
     assert (state is! PlaylistLoadedState);
     final songs = (state as PlaylistLoadedState).songs;
     songs.removeWhere((element) => songsToDelete.contains(element));
-    try {
-      musicRepository.deleteFromPlaylist(playlist: playlist, songsToDelete: songsToDelete);
-      emit((state as PlaylistLoadedState).copyWith(songs: songs));
-    } catch (e) {
-      emit(PlaylistLoadingErrorState(e.toString()));
-    }
+    musicRepository.deleteFromPlaylist(playlist: playlist, songsToDelete: songsToDelete);
+    emit((state as PlaylistLoadedState).copyWith(songs: songs));
   }
 
   void savePlaylist(

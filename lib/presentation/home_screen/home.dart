@@ -1,9 +1,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vk_music/domain/models/player_playlist.dart';
 import 'package:vk_music/domain/state/nav_bar/nav_bar_cubit.dart';
 import 'package:vk_music/domain/state/playlists/playlists_cubit.dart';
-import 'package:vk_music/domain/utils/getPlaylistSource.dart';
 import 'package:vk_music/presentation/auth/login_screen.dart';
 import 'package:vk_music/presentation/cover.dart';
 import 'package:vk_music/presentation/navbar/navigation_bar.dart';
@@ -53,6 +53,7 @@ class _MainTab extends StatelessWidget {
     final cubit = context.watch<MusicLoaderCubit>();
     final state = cubit.state;
     if (state is MusicLoadedState) {
+      final playlist = PlayerPlaylist.formSongList(state.songs);
       return RefreshIndicator(
         onRefresh: () async {
           cubit.loadMusic();
@@ -78,7 +79,7 @@ class _MainTab extends StatelessWidget {
                     child: SongTile(
                       song: state.songs[index],
                       withMenu: true,
-                      playlist: getPlaylistSource(state.songs)
+                      playlist: playlist
                     )
                   ),
                 );
