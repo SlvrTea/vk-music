@@ -57,6 +57,7 @@ class _MainTab extends StatelessWidget {
       return RefreshIndicator(
         onRefresh: () async {
           cubit.loadMusic();
+          context.read<PlaylistsCubit>().getPlaylists();
         },
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),

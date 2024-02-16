@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:vk_music/domain/models/player_playlist.dart';
 
@@ -18,12 +19,14 @@ class MusicPlayerCubit extends Cubit<MusicPlayerState> {
 
   MusicPlayerCubit({required this.musicPlayer})
       : super(MusicPlayerState()) {
+    setLoopMode(getLoopMode());
+    setShuffleModeEnabled(Hive.box('userBox').get('shuffle'));
     playerStatusSubscription = musicPlayer.player.playerStateStream.listen((event) {
       changePrecessingState(event.processingState);
     });
-    currentIndexSubscription = musicPlayer.player.currentIndexStream.listen((event) {
-      if (event != null && state.playlist != null && event != musicPlayer.player.currentIndex) {
-        seek(musicPlayer.player.currentIndex!);
+    currentIndexSubscription = musicPlayer.player.currentIndexStream.cast().listen((event) {
+      if (event != null && state.playlist != null && state.song != null) {
+        if (event != state.playlist!.songs.indexOf(state.song!)) seek(event);
       }
     });
   }
@@ -43,7 +46,7 @@ class MusicPlayerCubit extends Cubit<MusicPlayerState> {
       emit(state.copyWith(song: song, playStatus: PlayStatus.trackPlaying));
       seek(state.playlist!.songs.indexOf(song));
     } else {
-      emit(state.copyWith(song: song, playlist: playlist!, playStatus: PlayStatus.trackPlaying));
+      emit(state.copyWith(song: song, playlist: playlist, playStatus: PlayStatus.trackPlaying));
       musicPlayer.play(state.playlist!, initialIndex: state.playlist!.songs.indexOf(song));
     }
   }
@@ -68,14 +71,21 @@ class MusicPlayerCubit extends Cubit<MusicPlayerState> {
   }
 
   void setLoopMode(LoopMode mode) {
-    assert(state.playlist != null);
     log('Change loop mode to $mode');
+    switch (mode) {
+      case LoopMode.off:
+        Hive.box('userBox').put('loopMode', 0);
+      case LoopMode.all:
+        Hive.box('userBox').put('loopMode', 1);
+      case LoopMode.one:
+        Hive.box('userBox').put('loopMode', 2);
+    }
     musicPlayer.player.setLoopMode(mode);
   }
 
   void setShuffleModeEnabled(bool enabled) {
-    assert(state.playlist != null);
     log('Change shuffle mode to $enabled');
+    Hive.box('userBox').put('shuffle', enabled);
     musicPlayer.player.setShuffleModeEnabled(enabled);
   }
 
@@ -84,6 +94,19 @@ class MusicPlayerCubit extends Cubit<MusicPlayerState> {
   void stopOnComplete() {
     musicPlayer.stop();
     emit(state.copyWith(playStatus: PlayStatus.empty));
+  }
+
+  LoopMode getLoopMode() {
+    switch (Hive.box('userBox').get('loopMode')) {
+      case 0:
+        return LoopMode.off;
+      case 1:
+        return LoopMode.all;
+      case 3:
+        return LoopMode.one;
+      default:
+        return LoopMode.off;
+    }
   }
 
   @override

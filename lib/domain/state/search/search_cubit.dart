@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:vk_music/domain/repository/music_repository.dart';
 import 'package:vk_music/internal/dependencies/repository_module.dart';
 
 import '../../models/playlist.dart';
@@ -8,8 +9,10 @@ import '../../models/song.dart';
 part 'search_state.dart';
 
 class SearchCubit extends Cubit<SearchState> {
-  final musicRepository = RepositoryModule.musicRepository();
-  SearchCubit() : super(SearchInitial());
+  late final MusicRepository musicRepository;
+  SearchCubit() : super(SearchInitial()) {
+    musicRepository = RepositoryModule.musicRepository();
+  }
 
   void search(String q, {int? count, int? offset}) async {
     emit(SearchProgressState());

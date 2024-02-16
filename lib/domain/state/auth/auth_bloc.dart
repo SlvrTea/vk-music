@@ -5,6 +5,7 @@ import 'package:bloc/bloc.dart' show Bloc, Emitter;
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:vk_music/data/service/vk_auth_service.dart';
 import 'package:vk_music/domain/const.dart';
 import 'package:vk_music/presentation/auth/captcha.dart';
@@ -36,6 +37,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final response = await auth.captchaAuth(queryParameters: event.query, capchaSId: event.captchaSid, captchaKey: event.captchaKey);
       user = User.fromJson(response);
       userBox.put('user', user);
+      userBox.put('loopMode', 0);
+      userBox.put('shuffle', false);
       emit(UserLoadedState(user: user));
       musicLoader.loadMusic();
     } on DioException catch(e) {
@@ -75,6 +78,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
       userBox.put('user', user);
       emit(UserLoadedState(user: user));
+      userBox.put('loopMode', LoopMode.off);
+      userBox.put('shuffle', false);
       musicLoader.loadMusic();
     } on DioException catch(e) {
       if (e.response == null) {

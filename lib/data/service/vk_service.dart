@@ -12,9 +12,8 @@ import '../../domain/models/song.dart';
 import '../../domain/models/user.dart';
 
 class VKService {
-  final User user = Hive.box('userBox').get('user');
-
   Future<Response<dynamic>> method(String method, String args, {bool isNew = false}) async {
+    final User user = Hive.box('userBox').get('user');
     final deviceId = _getRandomString(16);
     const v = 5.95;
 
@@ -47,6 +46,7 @@ class VKService {
   }
 
   Future<void> deleteAudio(Song song) async {
+    final User user = Hive.box('userBox').get('user');
     method('audio.delete', 'owner_id=${user.userId}&audio_id=${song.shortId}');
     log('Deleting following audio: ${song.toString()}');
   }
@@ -58,6 +58,7 @@ class VKService {
 
   Future<void> reorder(Song song, {String? before, String? after}) async {
     assert(before != null && after != null);
+    final User user = Hive.box('userBox').get('user');
     method('audio.reorder',
         'owner_id=${user.userId}&audio_id=${song.shortId}'
         '${before == null ? '' : '&before=$before'}'
@@ -67,6 +68,7 @@ class VKService {
   }
 
   Future<dynamic> getPlaylists(String args) async {
+    final User user = Hive.box('userBox').get('user');
     final response = await method('audio.getPlaylists', 'owner_id=${user.userId}');
 
     late dynamic data;
@@ -98,6 +100,7 @@ class VKService {
   }
 
   Future<void> deleteFromPlaylist({required Playlist playlist, required List<Song> songsToDelete}) async {
+    final User user = Hive.box('userBox').get('user');
     final audios = songsToDelete.map((e) => e.id).toList().join(',');
     method('audio.removeFromPlaylist', 'playlist_id=${playlist.id}&owner_id=${user.userId}&audio_ids=$audios');
   }
@@ -129,6 +132,7 @@ class VKService {
   }
 
   Future<dynamic> addAudiosToPlaylist(Playlist playlist, List<String> audiosToAdd) async {
+    final User user = Hive.box('userBox').get('user');
     final response = await method('execute.addAudioToPlaylist',
         'owner_id=${user.userId}&playlist_id=${playlist.id}&audio_ids=${audiosToAdd.join(',')}');
     return Playlist.fromMap(response.data['response']['playlist']);
@@ -153,6 +157,7 @@ class VKService {
   }
 
   Future<dynamic> getRecommendations({int? offset}) async {
+    final User user = Hive.box('userBox').get('user');
     final response = await method('audio.getRecommendations',
         'user_id=${user.userId}&count=20${offset == null ? '' : '&offset=$offset'}'
     );

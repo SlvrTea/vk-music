@@ -106,6 +106,15 @@ class _BodyWidget extends StatelessWidget {
                       )
                   ],
               ),
+              playlist.description != null
+                  ? Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(playlist.description!,
+                        style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.white)
+                      ),
+                  )
+                  : const SizedBox(),
+              const Divider(),
               MusicList(songs: state.songs, withMenu: true),
             ],
           )

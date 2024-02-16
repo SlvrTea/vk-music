@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:vk_music/domain/state/music_player/music_player_cubit.dart';
 
@@ -103,14 +104,14 @@ class ShuffleButton extends StatefulWidget {
 }
 
 class _ShuffleButtonState extends State<ShuffleButton> {
-  bool isSelected = false;
+  bool isSelected = Hive.box('userBox').get('shuffle');
   @override
   Widget build(BuildContext context) {
     final musicPlayerCubit = context.read<MusicPlayerCubit>();
     return IconButton(
       onPressed: () {
-        setState(() => isSelected = !isSelected);
         musicPlayerCubit.setShuffleModeEnabled(isSelected);
+        setState(() {});
       },
       icon: Stack(
         alignment: Alignment.center,
@@ -141,7 +142,7 @@ class LoopModeButton extends StatefulWidget {
 }
 
 class _LoopModeButtonState extends State<LoopModeButton> {
-  LoopMode loopMode = LoopMode.off;
+  late final LoopMode loopMode;
   bool isSelected = false;
 
   IconData _getCurrentIcon() {
@@ -156,6 +157,12 @@ class _LoopModeButtonState extends State<LoopModeButton> {
   @override
   Widget build(BuildContext context) {
     final musicPlayerCubit = context.read<MusicPlayerCubit>();
+    loopMode = musicPlayerCubit.getLoopMode();
+    if (loopMode == LoopMode.off) {
+      isSelected = false;
+    } else {
+      isSelected = true;
+    }
     return IconButton(
         onPressed: () {
           switch (loopMode) {

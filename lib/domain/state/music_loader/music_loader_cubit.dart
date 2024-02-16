@@ -4,13 +4,16 @@ import 'package:meta/meta.dart';
 import 'package:vk_music/internal/dependencies/repository_module.dart';
 
 import '../../models/song.dart';
+import '../../repository/music_repository.dart';
 
 part 'music_loader_state.dart';
 
 class MusicLoaderCubit extends Cubit<MusicLoaderState> {
-  MusicLoaderCubit() : super(MusicLoaderInitial());
+  late final MusicRepository musicRepository;
 
-  final musicRepository = RepositoryModule.musicRepository();
+  MusicLoaderCubit() : super(MusicLoaderInitial()) {
+    musicRepository = RepositoryModule.musicRepository();
+  }
 
   void loadMusic() async {
     emit(MusicLoadingState());
