@@ -22,7 +22,7 @@ class PlaylistCubit extends Cubit<PlaylistState> {
 
   void deleteFromPlaylist(
       {required Playlist playlist, required List<Song> songsToDelete}) {
-    assert (state is! PlaylistLoadedState);
+    assert (state is PlaylistLoadedState);
     final songs = (state as PlaylistLoadedState).songs;
     songs.removeWhere((element) => songsToDelete.contains(element));
     musicRepository.deleteFromPlaylist(playlist: playlist, songsToDelete: songsToDelete);

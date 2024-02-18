@@ -12,11 +12,12 @@ class MusicList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final playlist = PlayerPlaylist.formSongList(songs);
     return Column(
       children: songs.map((e) => SongTile(
         song: e,
         withMenu: withMenu,
-        playlist: PlayerPlaylist.formSongList(songs),
+        playlist: playlist,
       )).toList(),
     );
   }

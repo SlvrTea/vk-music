@@ -38,7 +38,7 @@ class _MusicBarPlayButtonState extends State<MusicBarPlayButton> with TickerProv
   Widget build(BuildContext context) {
     return BlocConsumer<MusicPlayerCubit, MusicPlayerState>(
       listener: (context, state) {
-        if (state.playStatus == PlayStatus.trackPlaying) {
+        if (state.playStatus != PlayStatus.trackInPause) {
           _controller.forward();
         } else {
           _controller.reverse();
@@ -48,7 +48,7 @@ class _MusicBarPlayButtonState extends State<MusicBarPlayButton> with TickerProv
         return GestureDetector(
           onTap: () {
             if (state.song != null && state.processingState != ProcessingState.idle) {
-              context.read<MusicPlayerCubit>().playMusic(song: state.song!);
+              context.read<MusicPlayerCubit>().play(song: state.song!);
             }
           },
           child: AnimatedIcon(

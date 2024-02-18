@@ -11,10 +11,12 @@ part 'navigation_bar_item.dart';
 class NavBar extends StatelessWidget {
   const NavBar({
     super.key,
+    required this.items,
+    required this.onItemSelected,
+    this.backgroundColor,
     this.selectedIndex = 0,
     this.height = 50,
     this.iconSize = 20,
-    this.backgroundColor,
     this.animationDuration = const Duration(milliseconds: 170),
     this.animationCurve = Curves.linear,
     this.shadows = const [
@@ -23,9 +25,8 @@ class NavBar extends StatelessWidget {
         blurRadius: 3,
       ),
     ],
-    required this.items,
-    required this.onItemSelected,
   });
+
 
   final Curve animationCurve;
   final Duration animationDuration;
@@ -47,8 +48,7 @@ class NavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final musicBloc = context.watch<MusicPlayerCubit>();
 
-    final background = backgroundColor
-        ?? Theme.of(context).bottomNavigationBarTheme.backgroundColor;
+    final background = backgroundColor ?? Theme.of(context).bottomNavigationBarTheme.backgroundColor;
     return Container(
       decoration: BoxDecoration(
         color: background,

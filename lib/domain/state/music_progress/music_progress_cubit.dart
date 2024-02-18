@@ -25,7 +25,7 @@ class MusicProgressCubit extends Cubit<MusicProgressState> {
   void changeBufferValue(Duration value) => emit(state.copyWith(bufferDuration: value));
 
   void seekValue(Duration value) {
-    musicPlayer.seek(value);
+    musicPlayer.player.seek(value);
     emit(state.copyWith(currentDuration: value));
   }
 }

@@ -30,7 +30,26 @@ class MyAudiosMenu extends StatelessWidget {
             subtitle: Text(song.artist, maxLines: 1, overflow: TextOverflow.ellipsis),
           ),
           const Divider(),
-          ListTile(
+          state.songs.contains(song)
+            ? const SizedBox()
+            : _ContextMenuItem(
+                leading: const Icon(Icons.add_rounded),
+                title: const Text('Добавить в мою музыку'),
+                onTap: () {
+                  cubit.addAudio(song);
+                  navigatorKey.currentState!.pop();
+                  final snackBar = SnackBar(
+                    content: const Text('Аудиозапись добавлена'),
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    width: 300,
+                    elevation: 5,
+                    showCloseIcon: true,
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                }
+            ),
+          _ContextMenuItem(
             leading: const Icon(Icons.playlist_add_rounded),
             title: const Text('Добавить в плейлист'),
             onTap: () {
@@ -44,24 +63,47 @@ class MyAudiosMenu extends StatelessWidget {
             },
           ),
           state.songs.contains(song)
-              ? ListTile(
-                leading: const Icon(Icons.delete_rounded),
+            ? _ContextMenuItem(
+                leading: const Icon(Icons.delete_outline_rounded),
                 title: const Text('Удалить из моей музыки'),
+                iconColor: Colors.red,
                 onTap: () {
+                  final snackBar = SnackBar(
+                    content: const Text('Аудиозапись удалена'),
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    width: 300,
+                    elevation: 5,
+                    showCloseIcon: true,
+                  );
                   cubit.audioDelete(song);
                   navigatorKey.currentState!.pop();
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
                 }
               )
-              : ListTile(
-                leading: const Icon(Icons.add_rounded),
-                title: const Text('Добавить в мою музыку'),
-                onTap: () {
-                  cubit.addAudio(song);
-                  navigatorKey.currentState!.pop();
-                }
-              )
+              : const SizedBox()
         ],
       ),
+    );
+  }
+}
+
+
+class _ContextMenuItem extends StatelessWidget {
+  const _ContextMenuItem({super.key, required this.title, required this.leading, required this.onTap, this.iconColor});
+
+  final Widget title;
+  final Widget leading;
+  final Color? iconColor;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      iconColor: iconColor ?? Theme.of(context).colorScheme.primary,
+      leading: leading,
+      title: title,
+      onTap: onTap,
     );
   }
 }

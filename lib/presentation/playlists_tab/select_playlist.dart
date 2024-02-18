@@ -18,7 +18,7 @@ class SelectPlaylist extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final playlistCubit = context.read<PlaylistCubit>();
-    if (context.read<PlaylistsCubit>().state is PlaylistsLoadedState) {
+    if (playlistCubit.state is PlaylistsLoadedState) {
       return Scaffold(
         appBar: AppBar(title: const Text('Мои плейлисты'),),
         body: Center(
@@ -39,6 +39,15 @@ class SelectPlaylist extends StatelessWidget {
                     onTap: () {
                       playlistCubit.addAudiosToPlaylist(e, [song.id]);
                       navigatorKey.currentState!.pop();
+                      final snackBar = SnackBar(
+                        content: Text('Аудиозапись добавлена в плейлист ${e.title}'),
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        width: 300,
+                        elevation: 5,
+                        showCloseIcon: true,
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     },
                     child: Column(
                       children: [

@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:just_audio/just_audio.dart';
 import 'package:vk_music/domain/models/player_playlist.dart';
 
@@ -13,6 +15,7 @@ class MusicPlayer {
     } else if (_audioSource != null) {
       await _audioSource!.clear();
       await _audioSource!.addAll(playlist.sources);
+      await player.seek(Duration.zero, index: initialIndex);
     }
     await player.play();
   }
@@ -22,8 +25,6 @@ class MusicPlayer {
   Future<void> resume() async => await player.play();
 
   Future<void> stop() async => await player.stop();
-
-  Future<void> seek(Duration? duration, {int? index}) async => await player.seek(duration, index: index);
 
   Stream<Duration> getCurrentPos() => player.positionStream.cast();
 

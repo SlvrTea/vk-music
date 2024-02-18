@@ -51,7 +51,7 @@ class _BodyWidget extends StatelessWidget {
                 children: [
                   ElevatedButton.icon(
                     onPressed: () {
-                      context.read<MusicPlayerCubit>().playMusic(
+                      context.read<MusicPlayerCubit>().play(
                         song: state.songs.first,
                         playlist: PlayerPlaylist.formSongList(state.songs)
                       );

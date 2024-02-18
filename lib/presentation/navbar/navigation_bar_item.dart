@@ -4,17 +4,13 @@ part of 'navigation_bar.dart';
 class NavBarItem {
   NavBarItem({
     required this.icon,
-    required this.activeColor,
-    required this.inactiveColor
+    this.activeColor,
+    this.inactiveColor
   });
 
-  NavBarItem.defaultTheme({
-    required this.icon
-  });
-
-  Color? activeColor;
   final Widget icon;
   Color? inactiveColor;
+  Color? activeColor;
 }
 
 class _NavBarItem extends StatelessWidget {
@@ -39,8 +35,8 @@ class _NavBarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedColor = item.activeColor ?? Theme.of(context).bottomNavigationBarTheme.selectedIconTheme!.color;
-    final unselectedColor = item.inactiveColor ?? Theme.of(context).bottomNavigationBarTheme.unselectedIconTheme!.color;
+    final selectedColor = item.activeColor ?? Theme.of(context).bottomNavigationBarTheme.selectedItemColor;
+    final unselectedColor = item.inactiveColor ?? Theme.of(context).bottomNavigationBarTheme.unselectedItemColor;
     return Container(
       color: backgroundColor,
       height: double.maxFinite,

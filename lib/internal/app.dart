@@ -68,7 +68,9 @@ class App extends StatelessWidget {
                 backgroundColor: Colors.black
             ),
             bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-                backgroundColor: Colors.black
+                backgroundColor: Colors.black,
+                selectedItemColor: Colors.purpleAccent,
+                unselectedItemColor: Colors.grey
             ),
             drawerTheme: const DrawerThemeData(
               surfaceTintColor: Colors.black,
@@ -98,7 +100,8 @@ class App extends StatelessWidget {
             ),
             colorScheme: ColorScheme.fromSeed(
               background: Colors.black,
-              seedColor: Colors.redAccent,
+              seedColor: Colors.purple,
+              primary: Colors.purpleAccent,
               brightness: Brightness.dark,
             ),
             bottomSheetTheme: const BottomSheetThemeData(

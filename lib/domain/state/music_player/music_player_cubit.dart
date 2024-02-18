@@ -15,7 +15,7 @@ part 'music_player_state.dart';
 class MusicPlayerCubit extends Cubit<MusicPlayerState> {
   final MusicPlayer musicPlayer;
   late StreamSubscription playerStatusSubscription;
-  late StreamSubscription currentIndexSubscription;
+  late StreamSubscription playbackStream;
 
   MusicPlayerCubit({required this.musicPlayer})
       : super(MusicPlayerState()) {
@@ -24,30 +24,29 @@ class MusicPlayerCubit extends Cubit<MusicPlayerState> {
     playerStatusSubscription = musicPlayer.player.playerStateStream.listen((event) {
       changePrecessingState(event.processingState);
     });
-    currentIndexSubscription = musicPlayer.player.currentIndexStream.cast().listen((event) {
-      if (event != null && state.playlist != null && state.song != null) {
-        if (event != state.playlist!.songs.indexOf(state.song!)) seek(event);
-      }
-    });
+    playbackStream = musicPlayer.player.positionDiscontinuityStream.listen((event) {
+        if (event.reason == PositionDiscontinuityReason.autoAdvance) _autoSeek(event.event.currentIndex!);
+      },
+      onError: (Object e, StackTrace stackTrace) => log('A stream error occurred: $e')
+    );
   }
 
-  void playMusic({required Song song, PlayerPlaylist? playlist}) {
-    if (playlist != null && state.playlist == null) {
-      emit(state.copyWith(playlist: playlist));
-      musicPlayer.player.setAudioSource(ConcatenatingAudioSource(children: playlist.sources));
-    }
-    if (musicPlayer.player.playing && song == state.song && state.processingState != ProcessingState.loading) {
+  void play({required Song song, PlayerPlaylist? playlist}) async {
+    assert(playlist != null || state.playlist != null);
+
+    if (playlist != null && playlist != state.playlist) {
+      emit(state.copyWith(song: song, playlist: playlist, currentSongIndex: playlist.songs.indexOf(song)));
+      await musicPlayer.play(playlist, initialIndex: playlist.songs.indexOf(song));
+    } else if (musicPlayer.player.playing && song == state.song) {
       musicPlayer.pause();
       emit(state.copyWith(playStatus: PlayStatus.trackInPause));
     } else if (state.playStatus == PlayStatus.trackInPause && song == state.song) {
       musicPlayer.resume();
       emit(state.copyWith(playStatus: PlayStatus.trackPlaying));
-    } else if (state.processingState == ProcessingState.ready && state.playlist!.songs.contains(song)) {
-      emit(state.copyWith(song: song, playStatus: PlayStatus.trackPlaying));
+    } else if (state.processingState == ProcessingState.ready) {
       seek(state.playlist!.songs.indexOf(song));
-    } else {
-      emit(state.copyWith(song: song, playlist: playlist, playStatus: PlayStatus.trackPlaying));
-      musicPlayer.play(state.playlist!, initialIndex: state.playlist!.songs.indexOf(song));
+      emit(state.copyWith(song: song, playStatus: PlayStatus.trackPlaying));
+      if (state.playStatus == PlayStatus.trackInPause) musicPlayer.resume();
     }
   }
 
@@ -65,9 +64,18 @@ class MusicPlayerCubit extends Cubit<MusicPlayerState> {
 
   void seek(int index) {
     assert(state.playlist != null);
-    log('Seeking to $index');
-    emit(state.copyWith(song: state.playlist!.songs[index]));
-    musicPlayer.seek(Duration.zero, index: index);
+    if (index != state.currentSongIndex) {
+      log('Seeking to $index');
+      emit(state.copyWith(song: state.playlist!.songs[index], currentSongIndex: index));
+      musicPlayer.player.seek(Duration.zero, index: index);
+    }
+  }
+
+  void _autoSeek(int index) {
+    assert(state.playlist != null);
+    if (index == musicPlayer.player.nextIndex) {
+      emit(state.copyWith(song: state.playlist!.songs[index], currentSongIndex: index));
+    }
   }
 
   void setLoopMode(LoopMode mode) {
@@ -112,7 +120,7 @@ class MusicPlayerCubit extends Cubit<MusicPlayerState> {
   @override
   Future<void> close() {
     musicPlayer.close();
-    currentIndexSubscription.cancel();
+    playbackStream.cancel();
     playerStatusSubscription.cancel();
     return super.close();
   }

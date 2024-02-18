@@ -36,9 +36,9 @@ class Home extends StatelessWidget {
         onItemSelected: (index) => navBarCubit.changeTab(index),
         selectedIndex: navBarCubit.state,
         items: [
-          NavBarItem(icon: const Icon(Icons.music_note_rounded), activeColor: Colors.redAccent, inactiveColor: Colors.grey),
-          NavBarItem(icon: const Icon(Icons.search), activeColor: Colors.redAccent, inactiveColor: Colors.grey),
-          NavBarItem(icon: const Icon(Icons.album), activeColor: Colors.redAccent, inactiveColor: Colors.grey)
+          NavBarItem(icon: const Icon(Icons.music_note_rounded)),
+          NavBarItem(icon: const Icon(Icons.search)),
+          NavBarItem(icon: const Icon(Icons.album))
         ],
       ),
     );
