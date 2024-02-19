@@ -167,9 +167,9 @@ class VKService {
   }
 }
 
-String _getRandomString(int lenght) {
+String _getRandomString(int length) {
   const chars =
       'QqWwEeRrTtYyUuIiOoPpAaSsDdFfGgHhJjKkLlZzXxCcVvBbNnMm1234567890';
   return String.fromCharCodes(Iterable.generate(
-      lenght, (_) => chars.codeUnitAt(math.Random().nextInt(chars.length))));
+      length, (_) => chars.codeUnitAt(math.Random().nextInt(chars.length))));
 }

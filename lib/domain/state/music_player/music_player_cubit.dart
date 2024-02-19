@@ -20,7 +20,7 @@ class MusicPlayerCubit extends Cubit<MusicPlayerState> {
   MusicPlayerCubit({required this.musicPlayer})
       : super(MusicPlayerState()) {
     setLoopMode(getLoopMode());
-    setShuffleModeEnabled(Hive.box('userBox').get('shuffle'));
+    setShuffleModeEnabled(getShuffle());
     playerStatusSubscription = musicPlayer.player.playerStateStream.listen((event) {
       changePrecessingState(event.processingState);
     });
@@ -103,6 +103,8 @@ class MusicPlayerCubit extends Cubit<MusicPlayerState> {
     musicPlayer.stop();
     emit(state.copyWith(playStatus: PlayStatus.empty));
   }
+
+  bool getShuffle() => Hive.box('userBox').get('shuffle') ?? false;
 
   LoopMode getLoopMode() {
     switch (Hive.box('userBox').get('loopMode')) {
