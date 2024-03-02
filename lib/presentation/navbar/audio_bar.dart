@@ -14,6 +14,7 @@ class AudioBar extends StatelessWidget {
     final musicBloc = context.watch<MusicPlayerCubit>();
     return InkWell(
       onTap: () => showModalBottomSheet(
+        isScrollControlled: true,
         context: context,
         builder: (_) => const AudioDetailBottomSheet()
       ),

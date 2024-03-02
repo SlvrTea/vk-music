@@ -119,7 +119,7 @@ class _ShuffleButtonState extends State<ShuffleButton> {
         children: [
           musicPlayerCubit.getShuffle()
               ? Container(
-                decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: Colors.grey.withOpacity(0.3)),
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.grey.withOpacity(0.3)),
                 width: 46,
                 height: 32,
               )
@@ -179,7 +179,7 @@ class _LoopModeButtonState extends State<LoopModeButton> {
           children: [
             isSelected
               ? Container(
-                decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: Colors.grey.withOpacity(0.3)),
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.grey.withOpacity(0.3)),
                 width: 46,
                 height: 32,
               )
