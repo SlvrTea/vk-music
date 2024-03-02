@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -104,29 +106,28 @@ class ShuffleButton extends StatefulWidget {
 }
 
 class _ShuffleButtonState extends State<ShuffleButton> {
-  bool isSelected = Hive.box('userBox').get('shuffle');
   @override
   Widget build(BuildContext context) {
-    final musicPlayerCubit = context.read<MusicPlayerCubit>();
+    final musicPlayerCubit = context.watch<MusicPlayerCubit>();
     return IconButton(
       onPressed: () {
-        musicPlayerCubit.setShuffleModeEnabled(isSelected);
+        musicPlayerCubit.switchShuffleMode();
         setState(() {});
       },
       icon: Stack(
         alignment: Alignment.center,
         children: [
-          isSelected
+          musicPlayerCubit.getShuffle()
               ? Container(
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: Colors.grey.withOpacity(0.3)),
-              width: 46,
-              height: 32,
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: Colors.grey.withOpacity(0.3)),
+                width: 46,
+                height: 32,
               )
               : const SizedBox(width: 46),
           Icon(
             Icons.shuffle_rounded,
             size: 32,
-            color: isSelected ? Colors.white : Colors.grey,
+            color: musicPlayerCubit.getShuffle() ? Colors.white : Colors.grey,
           )
         ]
       )
@@ -142,17 +143,8 @@ class LoopModeButton extends StatefulWidget {
 }
 
 class _LoopModeButtonState extends State<LoopModeButton> {
-  late final LoopMode loopMode;
+  late LoopMode loopMode;
   bool isSelected = false;
-
-  IconData _getCurrentIcon() {
-    switch (loopMode) {
-      case LoopMode.one:
-        return Icons.repeat_one_rounded;
-      default:
-        return Icons.repeat_rounded;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -193,7 +185,7 @@ class _LoopModeButtonState extends State<LoopModeButton> {
               )
               : const SizedBox(width: 46),
             Icon(
-              _getCurrentIcon(),
+              loopMode == LoopMode.one ? Icons.repeat_one_rounded : Icons.repeat_rounded,
               size: 32,
               color: isSelected ? Colors.white : Colors.grey,
             )

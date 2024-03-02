@@ -20,12 +20,13 @@ class MusicPlayerCubit extends Cubit<MusicPlayerState> {
   MusicPlayerCubit({required this.musicPlayer})
       : super(MusicPlayerState()) {
     setLoopMode(getLoopMode());
-    setShuffleModeEnabled(getShuffle());
+    musicPlayer.player.setShuffleModeEnabled(getShuffle());
     playerStatusSubscription = musicPlayer.player.playerStateStream.listen((event) {
       changePrecessingState(event.processingState);
     });
     playbackStream = musicPlayer.player.positionDiscontinuityStream.listen((event) {
         if (event.reason == PositionDiscontinuityReason.autoAdvance) _autoSeek(event.event.currentIndex!);
+        emit(state.copyWith(currentSongIndex: event.event.currentIndex));
       },
       onError: (Object e, StackTrace stackTrace) => log('A stream error occurred: $e')
     );
@@ -78,7 +79,7 @@ class MusicPlayerCubit extends Cubit<MusicPlayerState> {
     }
   }
 
-  void setLoopMode(LoopMode mode) {
+  void setLoopMode(LoopMode mode) async {
     log('Change loop mode to $mode');
     switch (mode) {
       case LoopMode.off:
@@ -88,13 +89,14 @@ class MusicPlayerCubit extends Cubit<MusicPlayerState> {
       case LoopMode.one:
         Hive.box('userBox').put('loopMode', 2);
     }
-    musicPlayer.player.setLoopMode(mode);
+    await musicPlayer.player.setLoopMode(mode);
   }
 
-  void setShuffleModeEnabled(bool enabled) {
-    log('Change shuffle mode to $enabled');
-    Hive.box('userBox').put('shuffle', enabled);
-    musicPlayer.player.setShuffleModeEnabled(enabled);
+  void switchShuffleMode() {
+    final mode = !getShuffle();
+    log('Change shuffle mode to $mode');
+    Hive.box('userBox').put('shuffle', mode);
+    musicPlayer.player.setShuffleModeEnabled(mode);
   }
 
   void changePrecessingState(ProcessingState value) => emit(state.copyWith(processingState: value));
@@ -112,7 +114,7 @@ class MusicPlayerCubit extends Cubit<MusicPlayerState> {
         return LoopMode.off;
       case 1:
         return LoopMode.all;
-      case 3:
+      case 2:
         return LoopMode.one;
       default:
         return LoopMode.off;
