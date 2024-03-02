@@ -38,13 +38,8 @@ class MyAudiosMenu extends StatelessWidget {
                 onTap: () {
                   cubit.addAudio(song);
                   navigatorKey.currentState!.pop();
-                  final snackBar = SnackBar(
-                    content: const Text('Аудиозапись добавлена'),
-                    behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                    width: 300,
-                    elevation: 5,
-                    showCloseIcon: true,
+                  const snackBar = SnackBar(
+                    content: Text('Аудиозапись добавлена')
                   );
                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
                 }

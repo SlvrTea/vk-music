@@ -67,6 +67,11 @@ class App extends StatelessWidget {
             appBarTheme: const AppBarTheme(
                 backgroundColor: Colors.black
             ),
+            snackBarTheme: SnackBarThemeData(
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              elevation: 5
+            ),
             bottomNavigationBarTheme: const BottomNavigationBarThemeData(
                 backgroundColor: Colors.black,
                 selectedItemColor: Colors.purpleAccent,
