@@ -22,6 +22,11 @@ class SearchResult extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             child: Text('Альбомы', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
           ),
+          _SearchAlbumsWidget(state.albumResult),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            child: Text('Плейлисты', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+          ),
           _SearchAlbumsWidget(state.playlistsResult),
           _SearchSongsWidget(state.searchResult),
         ]

@@ -156,6 +156,13 @@ class VKService {
         .toList();
   }
 
+  Future<dynamic> searchPlaylists(String q) async {
+    final response = await method('audio.searchPlaylists', 'q=$q');
+    return (response.data['response']['items'] as List)
+        .map((e) => Playlist.fromMap(e).copyWith(isOwner: false))
+        .toList();
+  }
+
   Future<dynamic> getRecommendations({int? offset}) async {
     final User user = Hive.box('userBox').get('user');
     final response = await method('audio.getRecommendations',
