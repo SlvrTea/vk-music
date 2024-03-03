@@ -37,7 +37,7 @@ class Playlist {
       accessKey: map['access_key']?.toString() ?? '',
       id: map['id'].toString(),
       ownerId: map['owner_id'].toString(),
-      isOwner: !(map.containsKey('followed')),
+      isOwner: !(map.containsKey('followed')) || !(map.containsKey('original')),
       isFollowing: map.containsKey('followed'),
       photoUrl34: map['thumbs']?[0]?['photo_34']?.toString() ?? map['photo']?['photo_34']?.toString(),
       photoUrl68: map['thumbs']?[0]?['photo_68']?.toString() ?? map['photo']?['photo_68']?.toString(),
@@ -49,7 +49,7 @@ class Playlist {
   }
 
 
-  Playlist copyWith({String? title, String? description}) {
+  Playlist copyWith({String? title, String? description, bool? isOwner}) {
     return Playlist(
       title: title ?? this.title,
       description: description,
@@ -57,7 +57,7 @@ class Playlist {
       id: id,
       accessKey: accessKey,
       isFollowing: isFollowing,
-      isOwner: isOwner,
+      isOwner: isOwner ?? this.isOwner,
       photoUrl600: photoUrl600,
       photoUrl300: photoUrl300,
       photoUrl270: photoUrl270,

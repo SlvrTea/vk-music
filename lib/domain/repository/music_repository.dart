@@ -28,4 +28,8 @@ abstract class MusicRepository {
   Future<dynamic> searchPlaylist(String q);
 
   Future<dynamic> getRecommendations({int? offset});
+
+  Future<void> followPlaylist(Playlist playlist);
+
+  Future<void> deletePlaylist(Playlist playlist);
 }

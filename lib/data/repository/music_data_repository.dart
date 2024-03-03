@@ -54,4 +54,10 @@ class MusicDataRepository implements MusicRepository {
 
   @override
   Future getRecommendations({int? offset}) => _api.getRecommendations(offset: offset);
+
+  @override
+  Future<void> followPlaylist(Playlist playlist) => _api.followPlaylist(playlist);
+
+  @override
+  Future<void> deletePlaylist(Playlist playlist) => _api.deletePlaylist(playlist);
 }

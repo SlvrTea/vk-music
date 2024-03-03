@@ -152,7 +152,7 @@ class VKService {
   Future<dynamic> searchAlbum(String q) async {
     final response = await method('audio.searchAlbums', 'q=$q');
     return (response.data['response']['items'] as List)
-        .map((e) => Playlist.fromMap(e))
+        .map((e) => Playlist.fromMap(e).copyWith(isOwner: false))
         .toList();
   }
 
@@ -165,6 +165,13 @@ class VKService {
         .map((e) => Song.fromMap(e))
         .toList();
   }
+  
+  Future<void> followPlaylist(Playlist playlist) => method('audio.followPlaylist',
+        'playlist_id=${playlist.id}&owner_id=${playlist.ownerId}');
+
+  Future<void> deletePlaylist(Playlist playlist) => method('audio.deletePlaylist',
+        'playlist_id=${playlist.id}&owner_id=${playlist.ownerId}');
+
 }
 
 String _getRandomString(int length) {
