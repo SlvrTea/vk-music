@@ -33,6 +33,10 @@ class AudioDetailBottomSheet extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
           )
         ),
+        const Padding(
+          padding: EdgeInsets.all(24),
+          child: SliderBar(),
+        ),
         const Spacer(),
         Text(
           musicBloc.state.song!.title,
@@ -41,23 +45,20 @@ class AudioDetailBottomSheet extends StatelessWidget {
             fontSize: 24,
             overflow: TextOverflow.ellipsis)),
         Text(musicBloc.state.song!.artist, style: const TextStyle(fontSize: 16)),
+        const Spacer(),
         const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            MusicBarPreviousAudioButton(),
-            MusicBarPlayButton(),
-            MusicBarNextAudioButton()
+            MusicBarPreviousAudioButton(size: 48),
+            MusicBarPlayButton(size: 48),
+            MusicBarNextAudioButton(size: 48)
           ],
         ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: SliderBar(),
-        ),
-        //const SizedBox(height: 32),
+        const Spacer(),
         const Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             ShuffleButton(),
-            Spacer(),
             LoopModeButton()
           ],
         )

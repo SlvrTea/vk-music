@@ -1,17 +1,15 @@
 
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive_flutter/adapters.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:vk_music/domain/state/music_player/music_player_cubit.dart';
 
 import '../../domain/const.dart';
 
 class MusicBarPlayButton extends StatefulWidget {
-  const MusicBarPlayButton({super.key});
+  const MusicBarPlayButton({super.key, this.size});
 
+  final double? size;
   @override
   State<MusicBarPlayButton> createState() => _MusicBarPlayButtonState();
 }
@@ -56,7 +54,7 @@ class _MusicBarPlayButtonState extends State<MusicBarPlayButton> with TickerProv
           child: AnimatedIcon(
             progress: _animation,
             icon: AnimatedIcons.play_pause,
-            size: 32,
+            size: widget.size ?? 32,
           ),
         );
       },

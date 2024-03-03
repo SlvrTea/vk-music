@@ -16,6 +16,7 @@ class SliderBar extends StatelessWidget {
     return ProgressBar(
       progress: musicProgress.state.currentDuration ?? const Duration(),
       buffered: musicProgress.state.bufferDuration ?? const Duration(),
+      thumbRadius: 6,
       total: Duration(seconds: int.parse(musicBloc.state.song!.duration)),
       onSeek: (duration) => musicProgress.seekValue(duration),
     );
