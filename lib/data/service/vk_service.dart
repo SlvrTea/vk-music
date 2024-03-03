@@ -152,7 +152,14 @@ class VKService {
   Future<dynamic> searchAlbum(String q) async {
     final response = await method('audio.searchAlbums', 'q=$q');
     return (response.data['response']['items'] as List)
-        .map((e) => Playlist.fromMap(e))
+        .map((e) => Playlist.fromMap(e).copyWith(isOwner: false))
+        .toList();
+  }
+
+  Future<dynamic> searchPlaylists(String q) async {
+    final response = await method('audio.searchPlaylists', 'q=$q');
+    return (response.data['response']['items'] as List)
+        .map((e) => Playlist.fromMap(e).copyWith(isOwner: false))
         .toList();
   }
 
@@ -165,11 +172,18 @@ class VKService {
         .map((e) => Song.fromMap(e))
         .toList();
   }
+  
+  Future<void> followPlaylist(Playlist playlist) => method('audio.followPlaylist',
+        'playlist_id=${playlist.id}&owner_id=${playlist.ownerId}');
+
+  Future<void> deletePlaylist(Playlist playlist) => method('audio.deletePlaylist',
+        'playlist_id=${playlist.id}&owner_id=${playlist.ownerId}');
+
 }
 
-String _getRandomString(int lenght) {
+String _getRandomString(int length) {
   const chars =
       'QqWwEeRrTtYyUuIiOoPpAaSsDdFfGgHhJjKkLlZzXxCcVvBbNnMm1234567890';
   return String.fromCharCodes(Iterable.generate(
-      lenght, (_) => chars.codeUnitAt(math.Random().nextInt(chars.length))));
+      length, (_) => chars.codeUnitAt(math.Random().nextInt(chars.length))));
 }

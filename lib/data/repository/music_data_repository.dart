@@ -47,11 +47,14 @@ class MusicDataRepository implements MusicRepository {
   Future searchAlbum(String q) => _api.searchAlbum(q);
 
   @override
-  Future searchPlaylist(String q) {
-    // TODO: implement searchPlaylist
-    throw UnimplementedError();
-  }
+  Future searchPlaylist(String q) => _api.searchPlaylists(q);
 
   @override
   Future getRecommendations({int? offset}) => _api.getRecommendations(offset: offset);
+
+  @override
+  Future<void> followPlaylist(Playlist playlist) => _api.followPlaylist(playlist);
+
+  @override
+  Future<void> deletePlaylist(Playlist playlist) => _api.deletePlaylist(playlist);
 }

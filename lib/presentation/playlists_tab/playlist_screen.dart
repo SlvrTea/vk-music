@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vk_music/domain/const.dart';
 import 'package:vk_music/domain/models/player_playlist.dart';
 import 'package:vk_music/domain/state/music_player/music_player_cubit.dart';
+import 'package:vk_music/domain/state/playlists/playlists_cubit.dart';
 import 'package:vk_music/presentation/cover.dart';
 import 'package:vk_music/presentation/playlists_tab/playlist_edit_screen.dart';
 
@@ -41,7 +42,6 @@ class _BodyWidget extends StatelessWidget {
     }
     return (state is PlaylistLoadedState && state.playlist.id == playlist.id)
         ? SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
           child: Column(
             children: [
               CoverWidget(photoUrl: state.playlist.photoUrl600, size: 250),
@@ -61,49 +61,11 @@ class _BodyWidget extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   playlist.isOwner
-                    ? Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton.icon(
-                        onPressed: () => navigatorKey.currentState!
-                          .push(MaterialPageRoute(builder: (_) => const PlaylistEdit())),
-                        icon: const Icon(Icons.edit_rounded),
-                        label: const Text('Изменить')
-                      ),
-
-                    )
-                    : const SizedBox(),
-                  !playlist.isFollowing
-                      ? playlist.isOwner ? const SizedBox()
-                      : ElevatedButton.icon(
-                          onPressed: () {},
-                          icon: const Icon(Icons.add_rounded),
-                          label: const Text('Добавить'),
-                          style: ButtonStyle(
-                            shape: MaterialStatePropertyAll(
-                                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))
-                            ),
-                            backgroundColor: const MaterialStatePropertyAll(
-                                Color.fromARGB(255, 20, 20, 20)
-                            ),
-                            foregroundColor: const MaterialStatePropertyAll(Colors.white),
-                          ),
-                       )
-                      : SizedBox(
-                        width: 90,
-                        child: IconButton.filled(
-                          onPressed: () {},
-                          icon: const Icon(Icons.check_rounded),
-                          style: ButtonStyle(
-                            shape: MaterialStatePropertyAll(
-                                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))
-                            ),
-                            backgroundColor: const MaterialStatePropertyAll(
-                                Color.fromARGB(255, 20, 20, 20)
-                            ),
-                            foregroundColor: const MaterialStatePropertyAll(Colors.white),
-                          ),
-                        ),
-                      )
+                    ? const _EditPlaylistButton()
+                    : const SizedBox.shrink(),
+                  playlist.isOwner
+                      ? const SizedBox.shrink()
+                      : _FollowButton(playlist)
                   ],
               ),
               playlist.description != null
@@ -113,7 +75,7 @@ class _BodyWidget extends StatelessWidget {
                         style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.white)
                       ),
                   )
-                  : const SizedBox(),
+                  : const SizedBox.shrink(),
               const Divider(),
               MusicList(songs: state.songs, withMenu: true),
             ],
@@ -134,5 +96,62 @@ class _TitleWidget extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Text(title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
     );
+  }
+}
+
+class _EditPlaylistButton extends StatelessWidget {
+  const _EditPlaylistButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ElevatedButton.icon(
+          onPressed: () => navigatorKey.currentState!.push(MaterialPageRoute(builder: (_) => const PlaylistEdit())),
+          icon: const Icon(Icons.edit_rounded),
+          label: const Text('Изменить')
+      )
+    );
+  }
+}
+
+class _FollowButton extends StatelessWidget {
+  const _FollowButton(this.playlist, {super.key});
+  final Playlist playlist;
+
+  @override
+  Widget build(BuildContext context) {
+    final cubit = context.watch<PlaylistsCubit>();
+    return playlist.isFollowing
+      ? SizedBox(
+        width: 90,
+        child: IconButton.filled(
+          onPressed: () => cubit.deletePlaylist(playlist),
+          icon: const Icon(Icons.check_rounded),
+          style: ButtonStyle(
+            shape: MaterialStatePropertyAll(
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))
+            ),
+            backgroundColor: const MaterialStatePropertyAll(
+                Color.fromARGB(255, 20, 20, 20)
+            ),
+            foregroundColor: const MaterialStatePropertyAll(Colors.white),
+          ),
+        ),
+      )
+      : ElevatedButton.icon(
+        onPressed: () => cubit.followPlaylist(playlist),
+        icon: const Icon(Icons.add_rounded),
+        label: const Text('Добавить'),
+        style: ButtonStyle(
+          shape: MaterialStatePropertyAll(
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))
+          ),
+          backgroundColor: const MaterialStatePropertyAll(
+              Color.fromARGB(255, 20, 20, 20)
+          ),
+          foregroundColor: const MaterialStatePropertyAll(Colors.white),
+        ),
+      );
   }
 }
