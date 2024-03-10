@@ -19,7 +19,7 @@ class MyAudiosMenu extends StatelessWidget {
     final cubit = context.read<MusicLoaderCubit>();
     final state = cubit.state as MusicLoadedState;
     return SizedBox(
-      height: 200,
+      height: 256,
       width: double.infinity,
       child: Column(
         children: [
@@ -44,6 +44,16 @@ class MyAudiosMenu extends StatelessWidget {
                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
                 }
             ),
+          song.mainArtist != null
+            ? _ContextMenuItem(
+                title: const Text('Перейти к музыканту'),
+                leading: const Icon(Icons.keyboard_voice_rounded),
+                onTap: () {
+                  print(song.mainArtist!.id);
+                }
+              )
+            : const SizedBox.shrink(),
+
           _ContextMenuItem(
             leading: const Icon(Icons.playlist_add_rounded),
             title: const Text('Добавить в плейлист'),
@@ -57,6 +67,7 @@ class MyAudiosMenu extends StatelessWidget {
               }
             },
           ),
+
           state.songs.contains(song)
             ? _ContextMenuItem(
                 leading: const Icon(Icons.delete_outline_rounded),

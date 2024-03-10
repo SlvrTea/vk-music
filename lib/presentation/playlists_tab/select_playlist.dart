@@ -36,7 +36,7 @@ class SelectPlaylist extends StatelessWidget {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(16),
                   onTap: () {
-                    playlistCubit.addAudiosToPlaylist(e, [song.id]);
+                    playlistCubit.addAudiosToPlaylist(e, [song]);
                     navigatorKey.currentState!.pop();
                     final snackBar = SnackBar(
                       content: Text('Аудиозапись добавлена в плейлист ${e.title}'),

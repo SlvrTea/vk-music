@@ -11,22 +11,22 @@ class PlaylistsTab extends StatelessWidget with PlaylistCoverGetterMixin {
   Widget build(BuildContext context) {
     final cubit = context.watch<PlaylistsCubit>();
     final state = cubit.state;
-    if (state is PlaylistsLoadedState) {
-      return Center(
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.9,
-          child: GridView.count(
-            physics: const BouncingScrollPhysics(),
-            crossAxisCount: 3,
-            crossAxisSpacing: 4,
-            mainAxisSpacing: 4,
-            childAspectRatio: 120/155,
-            children: getCovers(state.playlists),
-          ),
-        ),
-      );
+    if (state is! PlaylistsLoadedState) {
+      cubit.getPlaylists();
+      return const Center(child: CircularProgressIndicator());
     }
-    cubit.getPlaylists();
-    return const Center(child: CircularProgressIndicator());
-  }
+    return Center(
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.9,
+        child: GridView.count(
+          physics: const BouncingScrollPhysics(),
+          crossAxisCount: 3,
+          crossAxisSpacing: 4,
+          mainAxisSpacing: 4,
+          childAspectRatio: 120/155,
+          children: getCovers(state.playlists),
+        ),
+      ),
+    );
+    }
 }
