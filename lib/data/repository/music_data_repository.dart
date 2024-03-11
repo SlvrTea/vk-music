@@ -3,6 +3,7 @@ import 'package:vk_music/data/service/vk_audio_service.dart';
 import 'package:vk_music/domain/models/song.dart';
 import 'package:vk_music/domain/repository/music_repository.dart';
 
+import '../../domain/models/artist.dart';
 import '../../domain/models/playlist.dart';
 
 class MusicDataRepository implements MusicRepository {
@@ -21,6 +22,12 @@ class MusicDataRepository implements MusicRepository {
 
   @override
   Future getArtist(String id) => _api.getArtistById(id);
+
+  @override
+  Future getAlbumsByArtist(Artist artist) => _api.getAlbumsByArtist(artist);
+
+  @override
+  Future getAudiosByArtist(Artist artist) => _api.getAudiosByArtist(artist);
 
   @override
   Future<void> deleteAudio(Song song) => _api.delete(song);

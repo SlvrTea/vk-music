@@ -1,6 +1,4 @@
 
-import 'artist.dart';
-
 class Song {
   final String artist;
   final String title;
@@ -12,8 +10,10 @@ class Song {
   final String url;
   final String? photoUrl68;
   final String? photoUrl135;
+  final String? photoUrl270;
   final String? photoUrl600;
-  final Artist? mainArtist;
+  final String? photoUrl1200;
+  final String? mainArtistId;
   Song({
     required this.artist,
     required this.title,
@@ -23,10 +23,12 @@ class Song {
     required this.shortId,
     required this.ownerId,
     required this.url,
-    this.photoUrl600,
     this.photoUrl68,
     this.photoUrl135,
-    this.mainArtist
+    this.photoUrl270,
+    this.photoUrl600,
+    this.photoUrl1200,
+    this.mainArtistId
   });
 
   factory Song.fromMap(Map<String, dynamic> map){
@@ -41,9 +43,11 @@ class Song {
       ownerId: map['owner_id'].toString(),
       photoUrl68: map['album']?['thumb']?['photo_68'].toString(),
       photoUrl135: map['album']?['thumb']?['photo_135'].toString(),
+      photoUrl270: map['album']?['thumb']?['photo_270'],
       photoUrl600: map['album']?['thumb']?['photo_600'].toString(),
-      mainArtist: map.containsKey('main_artists')
-          ? Artist.fromMap(map['main_artists'][0]) : null,
+      photoUrl1200: map['album']?['thumb']?['photo_1200'],
+      mainArtistId: map.containsKey('main_artists')
+          ? map['main_artists'][0]['id'] : null,
     );
   }
 

@@ -8,7 +8,7 @@ import 'package:vk_music/presentation/auth/login_screen.dart';
 import 'package:vk_music/presentation/cover.dart';
 import 'package:vk_music/presentation/navbar/navigation_bar.dart';
 import 'package:vk_music/presentation/playlists_tab/playlists_tab.dart';
-import 'package:vk_music/presentation/search/search_tab.dart';
+import 'package:vk_music/presentation/search_tab/search_tab.dart';
 import 'package:vk_music/presentation/song_list/song_tile.dart';
 
 import '../../domain/state/auth/auth_bloc.dart';
@@ -123,9 +123,8 @@ class _PlaylistsSection extends StatelessWidget with PlaylistCoverGetterMixin {
       return const Center(child: CircularProgressIndicator());
     }
     return SizedBox(
-      height: 146,
+      height: 149,
       child: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
         scrollDirection: Axis.horizontal,
         child: Row(
           children: getCovers(state.playlists),

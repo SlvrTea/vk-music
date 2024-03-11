@@ -79,6 +79,7 @@ class VKAudioService extends VKService {
     return audios;
   }
 
+  /// Get audios from specified [Playlist]
   Future<List<Song>?> getPlaylistAudios(Playlist playlist, 
       {int? count, int? offset}) async {
     final audios = get('owner_id=${playlist.ownerId}&album_id=${playlist.id}'
@@ -114,7 +115,8 @@ class VKAudioService extends VKService {
   Future<Artist?> getArtistById(String artistId) async {
     final response = await method('audio.getArtistById',
         'artist_id=$artistId&extended=1');
-    log(response.data.toString());
+    log(response.data['response'].toString());
+    return Artist.fromMap(response.data['response']);
   }
 
   /// Get audios by artist

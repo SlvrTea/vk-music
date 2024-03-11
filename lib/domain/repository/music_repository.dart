@@ -1,4 +1,5 @@
 
+import '../models/artist.dart';
 import '../models/playlist.dart';
 import '../models/song.dart';
 
@@ -10,6 +11,10 @@ abstract class MusicRepository {
   Future<dynamic> getPlaylistAudios(Playlist playlist);
 
   Future<dynamic> getArtist(String id);
+
+  Future<dynamic> getAlbumsByArtist(Artist artist);
+
+  Future<dynamic> getAudiosByArtist(Artist artist);
 
   Future<void> deleteAudio(Song song);
 

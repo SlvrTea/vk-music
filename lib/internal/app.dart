@@ -13,7 +13,6 @@ import 'package:vk_music/presentation/auth/login_screen.dart';
 import '../domain/state/auth/auth_bloc.dart';
 import '../domain/state/music_loader/music_loader_cubit.dart';
 import '../domain/state/music_player/music_player_cubit.dart';
-import '../domain/state/playlist/playlist_cubit.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -26,7 +25,6 @@ class App extends StatelessWidget {
     final musicPlayerBloc = MusicPlayerCubit(musicPlayer: MusicPlayer());
     final musicProgress = MusicProgressCubit(musicPlayer: musicPlayerBloc.musicPlayer);
     final playlists = PlaylistsCubit();
-    final playlist = PlaylistCubit();
     final authBloc = AuthBloc(musicLoader: musicLoaderBloc)
       ..add(LoadUserEvent());
 
@@ -46,9 +44,6 @@ class App extends StatelessWidget {
         ),
         BlocProvider<PlaylistsCubit>(
             create: (_) => playlists
-        ),
-        BlocProvider<PlaylistCubit>(
-            create: (_) => playlist
         ),
         BlocProvider<MusicProgressCubit>(
             create: (_) => musicProgress

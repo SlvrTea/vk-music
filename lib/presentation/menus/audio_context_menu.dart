@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vk_music/domain/const.dart';
 import 'package:vk_music/domain/state/playlists/playlists_cubit.dart';
+import 'package:vk_music/presentation/artist_tab/artist_tab.dart';
 import 'package:vk_music/presentation/playlists_tab/select_playlist.dart';
 
 import '../../domain/models/song.dart';
@@ -44,16 +45,6 @@ class MyAudiosMenu extends StatelessWidget {
                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
                 }
             ),
-          song.mainArtist != null
-            ? _ContextMenuItem(
-                title: const Text('Перейти к музыканту'),
-                leading: const Icon(Icons.keyboard_voice_rounded),
-                onTap: () {
-                  print(song.mainArtist!.id);
-                }
-              )
-            : const SizedBox.shrink(),
-
           _ContextMenuItem(
             leading: const Icon(Icons.playlist_add_rounded),
             title: const Text('Добавить в плейлист'),
@@ -67,7 +58,17 @@ class MyAudiosMenu extends StatelessWidget {
               }
             },
           ),
-
+          song.mainArtistId != null
+            ? _ContextMenuItem(
+                title: const Text('Перейти к музыканту'),
+                leading: const Icon(Icons.keyboard_voice_rounded),
+                onTap: () {
+                  navigatorKey.currentState!.pop();
+                  navigatorKey.currentState!
+                      .push(MaterialPageRoute(builder: (_) => ArtistTab(song.mainArtistId!)));
+                }
+            )
+            : const SizedBox.shrink(),
           state.songs.contains(song)
             ? _ContextMenuItem(
                 leading: const Icon(Icons.delete_outline_rounded),

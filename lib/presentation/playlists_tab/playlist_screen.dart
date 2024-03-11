@@ -33,54 +33,55 @@ class _BodyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.watch<PlaylistCubit>();
-    final state = cubit.state;
-    if (state is PlaylistLoadedState) {
-      if (state.playlist.id != playlist.id) cubit.loadPlaylist(playlist);
-    } else if (state is! PlaylistLoadingErrorState) {
-      cubit.loadPlaylist(playlist);
-    }
-    if (state is! PlaylistLoadedState) {
-      return const Center(child: CircularProgressIndicator());
-    }
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          CoverWidget(photoUrl: state.playlist.photoUrl600, size: 250),
-          _TitleWidget(state.playlist.title),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton.icon(
-                onPressed: () {
-                  context.read<MusicPlayerCubit>().play(
-                    song: state.songs.first,
-                    playlist: PlayerPlaylist.formSongList(state.songs)
-                  );
-                },
-                icon: const Icon(Icons.play_arrow_rounded),
-                label: const Text('Слушать')
-              ),
-              const SizedBox(width: 8),
-              playlist.isOwner
-                ? const _EditPlaylistButton()
-                : const SizedBox.shrink(),
-              playlist.isOwner
-                ? const SizedBox.shrink()
-                : _FollowButton(playlist)
-            ],
-          ),
-          playlist.description != null
-            ? Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(playlist.description!,
-                  style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.white)
-              ),
-            ) : const SizedBox.shrink(),
-          const Divider(),
-          MusicList(songs: state.songs, withMenu: true),
-        ],
-      )
+    final cubit = PlaylistCubit()..loadPlaylist(playlist);
+    return BlocProvider(
+      create: (context) => cubit,
+      child: BlocBuilder<PlaylistCubit, PlaylistState>(
+        builder: (context, state) {
+          if (state is! PlaylistLoadedState) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                CoverWidget(photoUrl: state.playlist.photoUrl600, size: 250),
+                _TitleWidget(state.playlist.title),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        context.read<MusicPlayerCubit>().play(
+                          song: state.songs.first,
+                          playlist: PlayerPlaylist.formSongList(state.songs)
+                        );
+                      },
+                      icon: const Icon(Icons.play_arrow_rounded),
+                      label: const Text('Слушать')
+                    ),
+                    const SizedBox(width: 8),
+                    playlist.isOwner
+                      ? const _EditPlaylistButton()
+                      : const SizedBox.shrink(),
+                    playlist.isOwner
+                      ? const SizedBox.shrink()
+                      : _FollowButton(playlist)
+                  ],
+                ),
+                playlist.description != null
+                  ? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(playlist.description!,
+                        style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.white)
+                    ),
+                  ) : const SizedBox.shrink(),
+                const Divider(),
+                MusicList(songs: state.songs, withMenu: true),
+              ],
+            )
+          );
+        },
+      ),
     );
   }
 }
