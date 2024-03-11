@@ -14,8 +14,7 @@ class PlaylistWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 160,
-      width: 150,
+      width: size + 16,
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: () {
@@ -24,6 +23,7 @@ class PlaylistWidget extends StatelessWidget {
           );
         },
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             CoverWidget(photoUrl: playlist.photoUrl600, borderRadius: BorderRadius.circular(16), size: size),
             Padding(

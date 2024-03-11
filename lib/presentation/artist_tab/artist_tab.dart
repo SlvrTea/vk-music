@@ -89,7 +89,7 @@ class _BodyWidget extends StatelessWidget {
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: state.artistAlbums!
-                            .map((e) => PlaylistWidget(playlist: e)).toList(),
+                            .map((e) => PlaylistWidget(playlist: e, size: MediaQuery.of(context).size.width * .4)).toList(),
                       ),
                     )
                 ),

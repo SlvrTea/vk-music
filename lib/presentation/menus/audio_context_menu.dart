@@ -2,7 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vk_music/domain/const.dart';
+import 'package:vk_music/domain/state/nav_bar/nav_bar_cubit.dart';
 import 'package:vk_music/domain/state/playlists/playlists_cubit.dart';
+import 'package:vk_music/domain/state/search/search_cubit.dart';
 import 'package:vk_music/presentation/artist_tab/artist_tab.dart';
 import 'package:vk_music/presentation/playlists_tab/select_playlist.dart';
 
@@ -61,14 +63,22 @@ class MyAudiosMenu extends StatelessWidget {
           song.mainArtistId != null
             ? _ContextMenuItem(
                 title: const Text('Перейти к музыканту'),
-                leading: const Icon(Icons.keyboard_voice_rounded),
+                leading: const Icon(Icons.person),
                 onTap: () {
                   navigatorKey.currentState!.pop();
                   navigatorKey.currentState!
                       .push(MaterialPageRoute(builder: (_) => ArtistTab(song.mainArtistId!)));
                 }
             )
-            : const SizedBox.shrink(),
+            : _ContextMenuItem(
+                title: const Text('Найти музыканта'),
+                leading: const Icon(Icons.search_rounded),
+                onTap: () {
+                  navigatorKey.currentState!.pop();
+                  context.read<NavBarCubit>().changeTab(1);
+                  context.read<SearchCubit>().search(song.artist);
+                }
+            ),
           state.songs.contains(song)
             ? _ContextMenuItem(
                 leading: const Icon(Icons.delete_outline_rounded),
