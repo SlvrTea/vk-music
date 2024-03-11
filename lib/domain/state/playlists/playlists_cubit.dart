@@ -13,7 +13,7 @@ class PlaylistsCubit extends Cubit<PlaylistsState> {
     musicRepository = RepositoryModule.musicRepository();
   }
   
-  Future<void> getPlaylists() async => emit(PlaylistsLoadedState(await musicRepository.getPlaylists('count=200')));
+  Future<void> getPlaylists() async => emit(PlaylistsLoadedState(await musicRepository.getPlaylists()));
 
   void followPlaylist(Playlist playlist) {
     musicRepository.followPlaylist(playlist);

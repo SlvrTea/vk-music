@@ -14,7 +14,7 @@ class SearchCubit extends Cubit<SearchState> {
     musicRepository = RepositoryModule.musicRepository();
   }
 
-  void search(String q, {int? count, int? offset}) async {
+  void search(String q, {int count = 50, int? offset}) async {
     emit(SearchProgressState());
     final songs = await musicRepository.search(q, count: count, offset: offset);
     final albums = await musicRepository.searchAlbum(q);

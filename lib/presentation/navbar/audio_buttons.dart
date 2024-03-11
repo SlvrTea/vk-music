@@ -6,58 +6,23 @@ import 'package:vk_music/domain/state/music_player/music_player_cubit.dart';
 
 import '../../domain/const.dart';
 
-class MusicBarPlayButton extends StatefulWidget {
+class MusicBarPlayButton extends StatelessWidget {
   const MusicBarPlayButton({super.key, this.size});
 
   final double? size;
-  @override
-  State<MusicBarPlayButton> createState() => _MusicBarPlayButtonState();
-}
-
-class _MusicBarPlayButtonState extends State<MusicBarPlayButton> with TickerProviderStateMixin {
-  late Animation<double> _animation;
-  late AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 350),
-    );
-    _animation = CurvedAnimation(curve: Curves.easeInOutCubic, parent: _controller);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<MusicPlayerCubit, MusicPlayerState>(
-      listener: (context, state) {
-        if (state.playStatus != PlayStatus.trackInPause) {
-          _controller.forward();
-        } else {
-          _controller.reverse();
+    final state = context.watch<MusicPlayerCubit>().state;
+    return GestureDetector(
+      onTap: () {
+        if (state.song != null && state.processingState != ProcessingState.idle) {
+          context.read<MusicPlayerCubit>().play(song: state.song!);
         }
       },
-      builder: (context, state) {
-        return GestureDetector(
-          onTap: () {
-            if (state.song != null && state.processingState != ProcessingState.idle) {
-              context.read<MusicPlayerCubit>().play(song: state.song!);
-            }
-          },
-          child: AnimatedIcon(
-            progress: _animation,
-            icon: AnimatedIcons.play_pause,
-            size: widget.size ?? 32,
-          ),
-        );
-      },
+      child: state.playStatus != PlayStatus.trackInPause
+          ? Icon(Icons.pause_rounded, size: size ?? 32)
+          : Icon(Icons.play_arrow_rounded, size: size ?? 32)
     );
   }
 }

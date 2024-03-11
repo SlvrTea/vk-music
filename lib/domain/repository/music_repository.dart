@@ -1,10 +1,11 @@
 
+import '../../data/service/vk_service.dart';
 import '../models/artist.dart';
 import '../models/playlist.dart';
 import '../models/song.dart';
 
 abstract class MusicRepository {
-  Future<dynamic> get(String args);
+  Future<dynamic> get(List<Argument> args);
 
   Future<dynamic> getCurrentUserAudios();
 
@@ -22,7 +23,7 @@ abstract class MusicRepository {
 
   Future<void> reorder(Song song, {String? before, String? after});
 
-  Future<dynamic> getPlaylists(String args);
+  Future<dynamic> getPlaylists({int count = 200, int? offset});
 
   Future<dynamic> getPlaylistMusic(Playlist playlist);
 
@@ -32,7 +33,7 @@ abstract class MusicRepository {
 
   Future<dynamic> addAudiosToPlaylist(Playlist playlist, List<Song> audiosToAdd);
 
-  Future<dynamic> search(String q, {int? count, int? offset});
+  Future<dynamic> search(String q, {int count = 200, int? offset});
 
   Future<dynamic> searchAlbum(String q);
 
@@ -43,4 +44,6 @@ abstract class MusicRepository {
   Future<void> followPlaylist(Playlist playlist);
 
   Future<void> deletePlaylist(Playlist playlist);
+
+  Future<dynamic> getCatalog();
 }

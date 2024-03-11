@@ -37,7 +37,7 @@ class AudioDetailBottomSheet extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 25, vertical: 16),
           child: SliderBar(),
         ),
-        Spacer(),
+        const Spacer(),
         Text(
           musicBloc.state.song!.title,
           style: const TextStyle(
