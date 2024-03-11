@@ -1,9 +1,20 @@
 
+import '../models/artist.dart';
 import '../models/playlist.dart';
 import '../models/song.dart';
 
 abstract class MusicRepository {
-  Future<dynamic> getMusic(String args);
+  Future<dynamic> get(String args);
+
+  Future<dynamic> getCurrentUserAudios();
+
+  Future<dynamic> getPlaylistAudios(Playlist playlist);
+
+  Future<dynamic> getArtist(String id);
+
+  Future<dynamic> getAlbumsByArtist(Artist artist);
+
+  Future<dynamic> getAudiosByArtist(Artist artist);
 
   Future<void> deleteAudio(Song song);
 
@@ -19,7 +30,7 @@ abstract class MusicRepository {
 
   Future<dynamic> savePlaylist({required Playlist playlist, String? title, String? description, List<Song>? songsToAdd, List? reorder});
 
-  Future<dynamic> addAudiosToPlaylist(Playlist playlist, List<String> audiosToAdd);
+  Future<dynamic> addAudiosToPlaylist(Playlist playlist, List<Song> audiosToAdd);
 
   Future<dynamic> search(String q, {int? count, int? offset});
 

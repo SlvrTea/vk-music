@@ -9,6 +9,7 @@ class Playlist {
   final String? photoUrl270;
   final String? photoUrl300;
   final String? photoUrl600;
+  final String? photoUrl1200;
   final String accessKey;
   final String ownerId;
   final bool isOwner;
@@ -18,16 +19,17 @@ class Playlist {
     required this.title,
     required this.description,
     required this.id,
+    required this.ownerId,
+    required this.accessKey,
     this.photoUrl34,
     this.photoUrl68,
     this.photoUrl135,
     this.photoUrl270,
     this.photoUrl300,
     this.photoUrl600,
-    required this.ownerId,
+    this.photoUrl1200,
     this.isFollowing = false,
     this.isOwner = false,
-    required this.accessKey
   });
 
   factory Playlist.fromMap(Map<String, dynamic> map) {
@@ -45,6 +47,7 @@ class Playlist {
       photoUrl270: map['thumbs']?[0]?['photo_270']?.toString() ?? map['photo']?['photo_270']?.toString(),
       photoUrl300: map['thumbs']?[0]?['photo_300']?.toString() ?? map['photo']?['photo_300']?.toString(),
       photoUrl600: map['thumbs']?[0]?['photo_600']?.toString() ?? map['photo']?['photo_600']?.toString(),
+      photoUrl1200: map['thumbs']?[0]?['photo_1200']?.toString() ?? map['photo']?['photo_1200']?.toString(),
     );
   }
 
@@ -58,6 +61,7 @@ class Playlist {
       accessKey: accessKey,
       isFollowing: isFollowing,
       isOwner: isOwner ?? this.isOwner,
+      photoUrl1200: photoUrl1200,
       photoUrl600: photoUrl600,
       photoUrl300: photoUrl300,
       photoUrl270: photoUrl270,

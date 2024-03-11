@@ -17,7 +17,7 @@ class MusicLoaderCubit extends Cubit<MusicLoaderState> {
 
   void loadMusic() async {
     emit(MusicLoadingState());
-    var response = await musicRepository.getMusic('count=2000');
+    var response = await musicRepository.getCurrentUserAudios();
     try {
       final List<Song> songs = response;
       if (songs.isNotEmpty) {

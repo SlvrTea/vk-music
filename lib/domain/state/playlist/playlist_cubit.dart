@@ -36,7 +36,7 @@ class PlaylistCubit extends Cubit<PlaylistState> {
     emit((state as PlaylistLoadedState).copyWith(playlist: response));
   }
 
-  void addAudiosToPlaylist(Playlist playlist, List<String> audiosToAdd) async {
+  void addAudiosToPlaylist(Playlist playlist, List<Song> audiosToAdd) async {
     final response = await musicRepository.addAudiosToPlaylist(playlist, audiosToAdd);
     emit((state as PlaylistLoadedState).copyWith(playlist: response));
   }

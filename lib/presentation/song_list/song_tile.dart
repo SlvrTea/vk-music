@@ -37,9 +37,7 @@ class SongTile extends StatelessWidget {
                 onPressed: () {
                   showModalBottomSheet(
                     context: context,
-                    builder: (context) {
-                      return MyAudiosMenu(song);
-                    }
+                    builder: (_) => MyAudiosMenu(song)
                   );
                 },
                 icon: const Icon(Icons.more_vert_rounded)
@@ -48,7 +46,7 @@ class SongTile extends StatelessWidget {
           )
           : Text('${duration ~/ 60}:${duration % 60 == 0 ? '00' : duration % 60}'),
       leading: CoverWidget(
-          photoUrl: song.photoUrl600,
+          photoUrl: song.photoUrl270,
           child: musicBloc.state.song == song
               ? musicBloc.state.playStatus != PlayStatus.trackInPause
               ? const Icon(Icons.pause_rounded, size: 40)

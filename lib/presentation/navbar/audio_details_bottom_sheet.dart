@@ -26,7 +26,7 @@ class AudioDetailBottomSheet extends StatelessWidget {
           )
         ),
         Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(24.0),
           child: CoverWidget(
             photoUrl: musicBloc.state.song?.photoUrl600,
             size: MediaQuery.of(context).size.width - 50,
@@ -34,10 +34,10 @@ class AudioDetailBottomSheet extends StatelessWidget {
           )
         ),
         const Padding(
-          padding: EdgeInsets.all(24),
+          padding: EdgeInsets.symmetric(horizontal: 25, vertical: 16),
           child: SliderBar(),
         ),
-        const Spacer(),
+        Spacer(),
         Text(
           musicBloc.state.song!.title,
           style: const TextStyle(

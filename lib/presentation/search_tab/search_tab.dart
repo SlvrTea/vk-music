@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vk_music/domain/state/search/search_cubit.dart';
-import 'package:vk_music/presentation/search/search_result.dart';
+import 'package:vk_music/presentation/search_tab/search_result.dart';
 import 'package:vk_music/presentation/song_list/music_list.dart';
 
 class SearchTab extends StatefulWidget {

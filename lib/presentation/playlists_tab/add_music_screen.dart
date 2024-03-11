@@ -8,7 +8,7 @@ import 'package:vk_music/presentation/cover.dart';
 import '../../domain/models/song.dart';
 import '../../domain/state/music_loader/music_loader_cubit.dart';
 
-final _audiosToAdd = <String>[];
+final _audiosToAdd = <Song>[];
 
 class AddMusicScreen extends StatelessWidget {
   const AddMusicScreen({super.key});
@@ -74,9 +74,9 @@ class _AddTileState extends State<_AddTile> {
       trailing: isSelected ? const Icon(Icons.check_box_rounded) : const Icon(Icons.check_box_outline_blank_rounded),
       onTap: () => setState(() {
         if (isSelected) {
-          _audiosToAdd.remove(widget.song.id);
+          _audiosToAdd.remove(widget.song);
         } else {
-          _audiosToAdd.add(widget.song.id);
+          _audiosToAdd.add(widget.song);
         }
         isSelected = !isSelected;
       }),
