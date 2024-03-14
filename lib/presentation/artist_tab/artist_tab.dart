@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vk_music/domain/const.dart';
 import 'package:vk_music/domain/models/player_playlist.dart';
 import 'package:vk_music/domain/state/artist/artist_cubit.dart';
 import 'package:vk_music/domain/state/music_player/music_player_cubit.dart';
 import 'package:vk_music/presentation/playlists_tab/playlist_widget.dart';
-import 'package:vk_music/presentation/song_list/music_list.dart';
+import 'package:vk_music/presentation/song_list/all_artist_songs.dart';
+import 'package:vk_music/presentation/song_list/horizontal_music_list.dart';
 
 class ArtistTab extends StatelessWidget {
   const ArtistTab(this.artistId, {super.key});
@@ -27,8 +30,8 @@ class _BodyWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const imageBorders = BorderRadius.only(
-        bottomLeft: Radius.circular(8),
-        bottomRight: Radius.circular(8)
+      bottomLeft: Radius.circular(8),
+      bottomRight: Radius.circular(8)
     );
     final cubit = ArtistCubit()
       ..getArtist(id);
@@ -77,31 +80,81 @@ class _BodyWidget extends StatelessWidget {
                   ),
                 )
               ),
-              if (state.artistAlbums != null) ...[
-                const SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text('Релизы', style: TextStyle(fontSize: 26, fontWeight: FontWeight.w600)),
+              SliverList(
+                delegate: SliverChildListDelegate([
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text('Популярное', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 26)),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextButton(
+                          onPressed: () {
+                            navigatorKey.currentState!
+                                .push(MaterialPageRoute(builder: (_) => AllArtistSongs(cubit)));
+                            cubit.loadMoreSongs(cubit.state.artistSongs!.length);
+                          },
+                          child: const Text('Показать все')
+                        ),
+                      )
+                    ],
                   ),
-                ),
-                SliverToBoxAdapter(
-                    child: SingleChildScrollView(
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: HorizontalMusicList(state.artistSongs!),
+                  ),
+                  if (state.artistAlbums != null) ...[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('Релизы', style: TextStyle(fontSize: 26, fontWeight: FontWeight.w600)),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextButton(
+                            onPressed: () {},
+                            child: const Text('Показать все')
+                          ),
+                        )
+                      ],
+                    ),
+                    SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: state.artistAlbums!
                             .map((e) => PlaylistWidget(playlist: e, size: MediaQuery.of(context).size.width * .4)).toList(),
                       ),
-                    )
-                ),
-              ],
-              const SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text('Популярное', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 26)),
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: MusicList(songs: state.artistSongs!, withMenu: true),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('Встречается в плейлистах', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextButton(
+                            onPressed: () {},
+                            child: const Text('Показать все')
+                          ),
+                        ),
+                      ],
+                    ),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: state.artistPlaylists!
+                            .map((e) => PlaylistWidget(playlist: e, size: MediaQuery.of(context).size.width * .4)).toList(),
+                      ),
+                    ),
+                  ],
+                ])
               ),
             ]
           );

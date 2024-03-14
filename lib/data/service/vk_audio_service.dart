@@ -127,7 +127,6 @@ class VKAudioService extends VKService {
     final response = await method('audio.getArtistById', [
       Argument('artist_id', artistId)
     ]);
-    log(response.data['response'].toString());
     return Artist.fromMap(response.data['response']);
   }
 
@@ -158,7 +157,6 @@ class VKAudioService extends VKService {
       Argument.count(count),
       Argument.offset(offset),
     ]);
-    log(response.data.toString());
     late dynamic data;
     if (response.data == null) {
       data = response.data['error']['error_msg'];
@@ -168,13 +166,12 @@ class VKAudioService extends VKService {
           .map((e) => Playlist.fromMap(e))
           .toList();
     }
-
     log('User playlists loaded.');
     return data;
   }
 
   /// Get suggest audios
-  Future<List<Song>?> getRecommendations({int count = 200, int? offset}) async {
+  Future<List<Song>?> getRecommendations({int count = 50, int? offset}) async {
     final response = await method('audio.getRecommendations', [
       Argument.count(count),
       Argument.offset(offset)
@@ -235,7 +232,7 @@ class VKAudioService extends VKService {
   }
 
   /// Search audios by name
-  Future<dynamic> search(String q, {int count = 200, int? offset}) async {
+  Future<dynamic> search(String q, {int count = 50, int? offset}) async {
     final response = await method('audio.search', [
       Argument('q', q),
       Argument.count(count),
@@ -247,7 +244,7 @@ class VKAudioService extends VKService {
   }
 
   /// Search albums by name
-  Future<dynamic> searchAlbum(String q, {int count = 200, int? offset}) async {
+  Future<dynamic> searchAlbum(String q, {int count = 100, int? offset}) async {
     final response = await method('audio.searchAlbums', [
       Argument('q', q),
       Argument.count(count),
@@ -258,7 +255,7 @@ class VKAudioService extends VKService {
         .toList();
   }
 
-  Future<dynamic> searchPlaylists(String q, {int count = 200, int? offset}) async {
+  Future<dynamic> searchPlaylists(String q, {int count = 100, int? offset}) async {
     final response = await method('audio.searchPlaylists', [
       Argument('q', q),
       Argument.count(count),

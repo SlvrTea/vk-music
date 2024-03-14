@@ -1,13 +1,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vk_music/domain/models/player_playlist.dart';
 import 'package:vk_music/domain/state/search/search_cubit.dart';
 import 'package:vk_music/presentation/playlists_tab/playlist_widget.dart';
-import 'package:vk_music/presentation/song_list/song_tile.dart';
+import 'package:vk_music/presentation/song_list/horizontal_music_list.dart';
 
 import '../../domain/models/playlist.dart';
-import '../../domain/models/song.dart';
 
 class SearchResult extends StatelessWidget {
   const SearchResult({super.key});
@@ -18,6 +16,7 @@ class SearchResult extends StatelessWidget {
     return SliverList(
       delegate: SliverChildListDelegate(
         [
+          const _SearchSongsWidget(),
           if (state.albumResult.isNotEmpty) ...[
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
@@ -32,7 +31,6 @@ class SearchResult extends StatelessWidget {
             ),
             _SearchAlbumsWidget(state.playlistsResult),
           ],
-          _SearchSongsWidget(state.searchResult),
         ]
       )
     );
@@ -48,7 +46,6 @@ class _SearchAlbumsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      physics: const BouncingScrollPhysics(),
       child: Row(
         children: playlists.map((e) => PlaylistWidget(playlist: e)).toList(),
       ),
@@ -57,14 +54,12 @@ class _SearchAlbumsWidget extends StatelessWidget {
 }
 
 class _SearchSongsWidget extends StatelessWidget {
-  const _SearchSongsWidget(this.songs, {super.key});
-  final List<Song> songs;
+  const _SearchSongsWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: songs.map((e) => SongTile(song: e, playlist: PlayerPlaylist.formSongList(songs), withMenu: true)).toList(),
-    );
+    final songs = (context.watch<SearchCubit>().state as SearchFinishedState).searchResult;
+    return HorizontalMusicList(songs);
   }
 }
 

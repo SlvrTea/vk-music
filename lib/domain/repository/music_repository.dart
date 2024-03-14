@@ -15,7 +15,7 @@ abstract class MusicRepository {
 
   Future<dynamic> getAlbumsByArtist(Artist artist);
 
-  Future<dynamic> getAudiosByArtist(Artist artist);
+  Future<dynamic> getAudiosByArtist(Artist artist, {int count = 200, int? offset});
 
   Future<void> deleteAudio(Song song);
 
@@ -33,13 +33,13 @@ abstract class MusicRepository {
 
   Future<dynamic> addAudiosToPlaylist(Playlist playlist, List<Song> audiosToAdd);
 
-  Future<dynamic> search(String q, {int count = 200, int? offset});
+  Future<dynamic> search(String q, {int count = 50, int? offset});
 
   Future<dynamic> searchAlbum(String q);
 
   Future<dynamic> searchPlaylist(String q);
 
-  Future<dynamic> getRecommendations({int? offset});
+  Future<dynamic> getRecommendations({int count = 50, int? offset});
 
   Future<void> followPlaylist(Playlist playlist);
 

@@ -28,7 +28,7 @@ class MusicDataRepository implements MusicRepository {
   Future getAlbumsByArtist(Artist artist) => _api.getAlbumsByArtist(artist);
 
   @override
-  Future getAudiosByArtist(Artist artist) => _api.getAudiosByArtist(artist);
+  Future getAudiosByArtist(Artist artist, {int count = 200, int? offset}) => _api.getAudiosByArtist(artist, count: count, offset: offset);
 
   @override
   Future<void> deleteAudio(Song song) => _api.delete(song);
@@ -58,7 +58,7 @@ class MusicDataRepository implements MusicRepository {
   Future<dynamic> addAudiosToPlaylist(Playlist playlist, List<Song> audiosToAdd) => _api.addToPlaylist(playlist, audiosToAdd);
 
   @override
-  Future search(String q, {int count = 200, int? offset}) => _api.search(q, count: count, offset: offset);
+  Future search(String q, {int count = 50, int? offset}) => _api.search(q, count: count, offset: offset);
 
   @override
   Future searchAlbum(String q) => _api.searchAlbum(q);
@@ -67,7 +67,7 @@ class MusicDataRepository implements MusicRepository {
   Future searchPlaylist(String q) => _api.searchPlaylists(q);
 
   @override
-  Future getRecommendations({int? offset}) => _api.getRecommendations(offset: offset);
+  Future getRecommendations({int count = 50, int? offset}) => _api.getRecommendations(count: count, offset: offset);
 
   @override
   Future<void> followPlaylist(Playlist playlist) => _api.followPlaylist(playlist);

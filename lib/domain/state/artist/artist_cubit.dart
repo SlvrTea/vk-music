@@ -15,7 +15,16 @@ class ArtistCubit extends Cubit<ArtistState> {
   void getArtist(String id) async {
     final artist = await musicRepository.getArtist(id);
     final albums = await musicRepository.getAlbumsByArtist(artist);
-    final songs = await musicRepository.getAudiosByArtist(artist);
-    emit(ArtistState(artist: artist, artistAlbums: albums, artistSongs: songs));
+    final playlists = await musicRepository.searchPlaylist(artist.name);
+    final songs = await musicRepository.getAudiosByArtist(artist, count: 30);
+    emit(ArtistState(artist: artist, artistAlbums: albums, artistSongs: songs, artistPlaylists: playlists));
+  }
+
+  void loadMoreSongs(int offset) async {
+    assert(state.artist != null);
+    print('load more');
+    final songs = await musicRepository.getAudiosByArtist(state.artist!, count: 20);
+    state.artistSongs!.addAll(songs);
+    emit(state.copyWith(artistSongs: state.artistSongs));
   }
 }

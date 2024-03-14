@@ -8,19 +8,22 @@ class SearchInitial extends SearchState {}
 class SearchProgressState extends SearchState {}
 
 class SearchFinishedState extends SearchState {
+  final String query;
   final List<Song> searchResult;
   final List<Playlist> playlistsResult;
   final List<Playlist> albumResult;
 
   SearchFinishedState({
+    required this.query,
     required this.searchResult,
     required this.playlistsResult,
     required this.albumResult
   });
 
   SearchFinishedState copyWith(
-      {List<Song>? searchResult, List<Playlist>? playlistsResult, List<Playlist>? albumResult}) {
+      {String? query, List<Song>? searchResult, List<Playlist>? playlistsResult, List<Playlist>? albumResult}) {
     return SearchFinishedState(
+      query: query ?? this.query,
       searchResult: searchResult ?? this.searchResult,
       playlistsResult: playlistsResult ?? this.playlistsResult,
       albumResult: albumResult ?? this.albumResult

@@ -20,7 +20,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final navBar = NavBarCubit();
-    final search = SearchCubit();
+    final search = SearchCubit()..getRecommendations();
     final musicLoaderBloc = MusicLoaderCubit();
     final musicPlayerBloc = MusicPlayerCubit(musicPlayer: MusicPlayer());
     final musicProgress = MusicProgressCubit(musicPlayer: musicPlayerBloc.musicPlayer);

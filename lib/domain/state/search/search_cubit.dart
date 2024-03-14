@@ -19,13 +19,13 @@ class SearchCubit extends Cubit<SearchState> {
     final songs = await musicRepository.search(q, count: count, offset: offset);
     final albums = await musicRepository.searchAlbum(q);
     final playlists = await musicRepository.searchPlaylist(q);
-    emit(SearchFinishedState(searchResult: songs, albumResult: albums, playlistsResult: playlists));
+    emit(SearchFinishedState(query: q, searchResult: songs, albumResult: albums, playlistsResult: playlists));
   }
 
   void loadMore(String q, {int? offset}) async {
     final songs = await musicRepository.search(q, offset: offset);
     (state as SearchFinishedState).searchResult.addAll(songs);
-    emit((state as SearchFinishedState).copyWith(searchResult: (state as SearchFinishedState).searchResult));
+    emit((state as SearchFinishedState).copyWith(query: q, searchResult: (state as SearchFinishedState).searchResult));
   }
 
   void getRecommendations({int? offset}) async {

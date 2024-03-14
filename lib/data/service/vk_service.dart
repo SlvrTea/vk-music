@@ -43,7 +43,6 @@ String _argumentsHandler(List<Argument>? args) {
   var s = '';
   for (var element in args) {
     if (element.value == null) continue;
-    if (element == args.last) s += element.toString();
     s += '&$element';
   }
   return s;

@@ -61,7 +61,7 @@ class _BodyWidget extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     playlist.isOwner
-                      ? const _EditPlaylistButton()
+                      ? _EditPlaylistButton(playlist)
                       : const SizedBox.shrink(),
                     playlist.isOwner
                       ? const SizedBox.shrink()
@@ -101,14 +101,17 @@ class _TitleWidget extends StatelessWidget {
 }
 
 class _EditPlaylistButton extends StatelessWidget {
-  const _EditPlaylistButton({super.key});
+  const _EditPlaylistButton(this.playlist, {super.key});
+
+  final Playlist playlist;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
         padding: const EdgeInsets.all(8.0),
         child: ElevatedButton.icon(
-          onPressed: () => navigatorKey.currentState!.push(MaterialPageRoute(builder: (_) => const PlaylistEdit())),
+          onPressed: () => navigatorKey.currentState!
+              .push(MaterialPageRoute(builder: (_) => PlaylistEdit(playlist))),
           icon: const Icon(Icons.edit_rounded),
           label: const Text('Изменить')
       )
