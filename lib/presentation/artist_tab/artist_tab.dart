@@ -1,13 +1,16 @@
+
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vk_music/domain/const.dart';
 import 'package:vk_music/domain/models/player_playlist.dart';
 import 'package:vk_music/domain/state/artist/artist_cubit.dart';
 import 'package:vk_music/domain/state/music_player/music_player_cubit.dart';
+import 'package:vk_music/presentation/artist_tab/all_artist_albums.dart';
 import 'package:vk_music/presentation/playlists_tab/playlist_widget.dart';
-import 'package:vk_music/presentation/song_list/all_artist_songs.dart';
+import 'package:vk_music/presentation/artist_tab/all_artist_songs.dart';
 import 'package:vk_music/presentation/song_list/horizontal_music_list.dart';
+
+import 'all_artist_playlists.dart';
 
 class ArtistTab extends StatelessWidget {
   const ArtistTab(this.artistId, {super.key});
@@ -67,7 +70,7 @@ class _BodyWidget extends StatelessWidget {
                               padding: const EdgeInsets.all(16.0),
                               child: FloatingActionButton(
                                 onPressed: () => context.read<MusicPlayerCubit>()
-                                    .play(song: state.artistSongs!.first, playlist: PlayerPlaylist.formSongList(state.artistSongs!)),
+                                    .play(song: state.songs!.first, playlist: PlayerPlaylist.formSongList(state.songs!)),
                                 backgroundColor: Colors.white,
                                 shape: const CircleBorder(),
                                 child: const Icon(Icons.play_arrow_rounded, size: 42),
@@ -95,7 +98,7 @@ class _BodyWidget extends StatelessWidget {
                           onPressed: () {
                             navigatorKey.currentState!
                                 .push(MaterialPageRoute(builder: (_) => AllArtistSongs(cubit)));
-                            cubit.loadMoreSongs(cubit.state.artistSongs!.length);
+                            cubit.loadMoreSongs(cubit.state.songs!.length);
                           },
                           child: const Text('Показать все')
                         ),
@@ -104,7 +107,7 @@ class _BodyWidget extends StatelessWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: HorizontalMusicList(state.artistSongs!),
+                    child: HorizontalMusicList(state.songs!),
                   ),
                   if (state.artistAlbums != null) ...[
                     Row(
@@ -117,7 +120,10 @@ class _BodyWidget extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              navigatorKey.currentState!
+                                  .push(MaterialPageRoute(builder: (_) => AllArtistAlbums(cubit)));
+                            },
                             child: const Text('Показать все')
                           ),
                         )
@@ -140,7 +146,10 @@ class _BodyWidget extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              navigatorKey.currentState!
+                                  .push(MaterialPageRoute(builder: (_) => AllPlaylists(cubit)));
+                            },
                             child: const Text('Показать все')
                           ),
                         ),
@@ -149,7 +158,7 @@ class _BodyWidget extends StatelessWidget {
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
-                        children: state.artistPlaylists!
+                        children: state.playlists!
                             .map((e) => PlaylistWidget(playlist: e, size: MediaQuery.of(context).size.width * .4)).toList(),
                       ),
                     ),

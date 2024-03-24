@@ -5,6 +5,7 @@ import 'package:vk_music/domain/state/search/search_cubit.dart';
 import 'package:vk_music/presentation/playlists_tab/playlist_widget.dart';
 import 'package:vk_music/presentation/song_list/horizontal_music_list.dart';
 
+import '../../domain/const.dart';
 import '../../domain/models/playlist.dart';
 
 class SearchResult extends StatelessWidget {
@@ -14,25 +15,72 @@ class SearchResult extends StatelessWidget {
   Widget build(BuildContext context) {
     final state = (context.watch<SearchCubit>().state as SearchFinishedState);
     return SliverList(
-      delegate: SliverChildListDelegate(
-        [
-          const _SearchSongsWidget(),
-          if (state.albumResult.isNotEmpty) ...[
+      delegate: SliverChildListDelegate([
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
             const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              child: Text('Альбомы', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+              padding: EdgeInsets.all(8),
+              child: Text('ВСЕ АУДИОЗАПИСИ', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
             ),
-            _SearchAlbumsWidget(state.albumResult),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextButton(
+                onPressed: () {},
+                child: const Text('Показать все')
+              ),
+            )
           ],
-          if (state.playlistsResult.isNotEmpty) ...[
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              child: Text('Плейлисты', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
-            ),
-            _SearchAlbumsWidget(state.playlistsResult),
-          ],
+        ),
+        const Padding(
+          padding: EdgeInsets.all(8.0),
+          child: _SearchSongsWidget(),
+        ),
+        if (state.albumResult.isNotEmpty) ...[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text('Альбомы', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextButton(
+                  onPressed: () {},
+                  child: const Text('Показать все')
+                ),
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: _SearchAlbumsWidget(state.albumResult),
+          ),
+        ],
+        if (state.playlistsResult.isNotEmpty) ...[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                child: Text('Плейлисты', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextButton(
+                  onPressed: () {},
+                  child: const Text('Показать все')
+                ),
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: _SearchAlbumsWidget(state.playlistsResult),
+          ),
         ]
-      )
+      ])
     );
   }
 }

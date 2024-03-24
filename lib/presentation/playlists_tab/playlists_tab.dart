@@ -28,5 +28,5 @@ class PlaylistsTab extends StatelessWidget with PlaylistCoverGetterMixin {
         ),
       ),
     );
-    }
+  }
 }

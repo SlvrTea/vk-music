@@ -60,7 +60,7 @@ class _CustomSongTile extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             SizedBox(
-              width: width * .55,
+              width: width * .5,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,

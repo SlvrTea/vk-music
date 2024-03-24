@@ -1,24 +1,26 @@
 part of 'artist_cubit.dart';
 
-class ArtistState {
+class ArtistState implements IPlaylistsList, ISongsList {
   final Artist? artist;
   final List<Playlist>? artistAlbums;
-  final List<Playlist>? artistPlaylists;
-  final List<Song>? artistSongs;
+  @override
+  final List<Playlist>? playlists;
+  @override
+  final List<Song>? songs;
 
-  ArtistState({this.artist, this.artistAlbums, this.artistSongs, this.artistPlaylists});
+  ArtistState({this.artist, this.artistAlbums, this.songs, this.playlists});
 
   ArtistState copyWith({
     final Artist? artist,
     final List<Playlist>? artistAlbums,
-    final List<Playlist>? artistPlaylists,
-    final List<Song>? artistSongs,
+    final List<Playlist>? playlists,
+    final List<Song>? songs,
   }) {
     return ArtistState(
       artist: artist ?? this.artist,
       artistAlbums: artistAlbums ?? this.artistAlbums,
-      artistPlaylists: artistPlaylists ?? this.artistPlaylists,
-      artistSongs: artistSongs ?? this.artistSongs,
+      playlists: playlists ?? this.playlists,
+      songs: songs ?? this.songs,
     );
   }
 }
