@@ -2,14 +2,49 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vk_music/domain/const.dart';
+import 'package:vk_music/domain/models/music_player.dart';
+import 'package:vk_music/domain/models/song.dart';
 import 'package:vk_music/presentation/cover.dart';
 import 'package:vk_music/presentation/navbar/audio_buttons.dart';
 import 'package:vk_music/presentation/navbar/slider_bar.dart';
+import 'package:vk_music/presentation/song_list/song_tile.dart';
 
 import '../../domain/state/music_player/music_player_cubit.dart';
 
-class AudioDetailBottomSheet extends StatelessWidget {
+class AudioDetailBottomSheet extends StatefulWidget {
   const AudioDetailBottomSheet({super.key});
+
+  @override
+  State<AudioDetailBottomSheet> createState() => _AudioDetailBottomSheetState();
+}
+
+class _AudioDetailBottomSheetState extends State<AudioDetailBottomSheet> {
+  Widget _body = const _MainBody();
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onHorizontalDragUpdate: (details) {
+        if (details.delta.dx <= -1.5) {
+          setState(() {
+            _body = const _MusicList();
+          });
+        } else if (details.delta.dx >= 1.5) {
+          setState(() {
+            _body = const _MainBody();
+          });
+        }
+      },
+      child: AnimatedSwitcher(
+        duration: const Duration(seconds: 1),
+        child: _body,
+      ),
+    );
+  }
+}
+
+class _MainBody extends StatelessWidget {
+  const _MainBody({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -37,13 +72,13 @@ class AudioDetailBottomSheet extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 25, vertical: 16),
           child: SliderBar(),
         ),
-        Spacer(),
+        const Spacer(),
         Text(
-          musicBloc.state.song!.title,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
-            overflow: TextOverflow.ellipsis)),
+            musicBloc.state.song!.title,
+            style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
+                overflow: TextOverflow.ellipsis)),
         Text(musicBloc.state.song!.artist, style: const TextStyle(fontSize: 16)),
         const Spacer(),
         const Row(
@@ -63,6 +98,26 @@ class AudioDetailBottomSheet extends StatelessWidget {
           ],
         )
       ],
+    );
+  }
+}
+
+class _MusicList extends StatelessWidget {
+  const _MusicList({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final musicBloc = context.watch<MusicPlayerCubit>();
+    return SafeArea(
+      child: ListView(
+        children: musicBloc.getShuffle()
+            ? musicBloc.musicPlayer.player.shuffleIndices!.map((e) => SongTile(
+                song: musicBloc.state.playlist!.songs[e],
+                playlist: musicBloc.state.playlist!)).toList()
+            : musicBloc.state.playlist!.songs.map((e) => SongTile(
+                song: e,
+                playlist: musicBloc.state.playlist!)).toList()
+      ),
     );
   }
 }

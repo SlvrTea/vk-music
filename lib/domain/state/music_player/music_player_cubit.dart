@@ -47,7 +47,6 @@ class MusicPlayerCubit extends Cubit<MusicPlayerState> {
     } else if (state.processingState == ProcessingState.ready) {
       seek(state.playlist!.songs.indexOf(song));
       emit(state.copyWith(song: song, playStatus: PlayStatus.trackPlaying));
-      if (state.playStatus == PlayStatus.trackInPause) musicPlayer.resume();
     }
   }
 

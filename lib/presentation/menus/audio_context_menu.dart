@@ -76,7 +76,7 @@ class MyAudiosMenu extends StatelessWidget {
                 onTap: () {
                   navigatorKey.currentState!.pop();
                   context.read<NavBarCubit>().changeTab(1);
-                  context.read<SearchCubit>().search(song.artist);
+                  context.read<SearchCubit>().search(song.artist, count: 20);
                 }
             ),
           state.songs.contains(song)

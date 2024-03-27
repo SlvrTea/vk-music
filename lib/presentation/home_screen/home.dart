@@ -97,8 +97,13 @@ class _MainTab extends StatelessWidget {
                 final item = state.songs.removeAt(oldIndex);
                 state.songs.insert(newIndex, item);
                 cubit.reorder(item, before: oldSongId);
-              } else {
+              } else if (newIndex < oldIndex) {
                 final oldSongId = state.songs[newIndex - 1].shortId;
+                final item = state.songs.removeAt(oldIndex);
+                state.songs.insert(newIndex, item);
+                cubit.reorder(item, after: oldSongId);
+              } else {
+                final oldSongId = state.songs[newIndex].shortId;
                 final item = state.songs.removeAt(oldIndex);
                 state.songs.insert(newIndex, item);
                 cubit.reorder(item, after: oldSongId);
@@ -108,7 +113,7 @@ class _MainTab extends StatelessWidget {
         ],
       ),
     );
-    }
+  }
 }
 
 class _PlaylistsSection extends StatelessWidget with PlaylistCoverGetterMixin {
