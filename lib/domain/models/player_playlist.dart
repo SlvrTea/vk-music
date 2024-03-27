@@ -12,13 +12,13 @@ class PlayerPlaylist {
   factory PlayerPlaylist.formSongList(List<Song> songs) {
     return PlayerPlaylist(
       sources: songs.map((song) => AudioSource.uri(
-          Uri.parse(song.url),
-          tag: MediaItem(
-              id: song.id.toString(),
-              title: song.title,
-              artist: song.artist,
-              artUri: song.photoUrl600 != null ? Uri.tryParse(song.photoUrl600!) : null
-          )
+        Uri.parse(song.url),
+        tag: MediaItem(
+            id: song.id.toString(),
+            title: song.title,
+            artist: song.artist,
+            artUri: song.photoUrl600 != null ? Uri.tryParse(song.photoUrl600!) : null
+        )
       )).toList(),
       songs: songs
     );
