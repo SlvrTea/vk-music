@@ -6,7 +6,6 @@ import '../../domain/const.dart';
 import '../../domain/models/playlist.dart';
 import '../../domain/models/song.dart';
 import '../../domain/state/playlist/playlist_cubit.dart';
-import '../../domain/state/playlists/playlists_cubit.dart';
 
 class SelectPlaylist extends StatelessWidget {
   const SelectPlaylist(this.song, this.ownedPlaylists, {super.key});

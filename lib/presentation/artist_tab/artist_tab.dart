@@ -6,8 +6,8 @@ import 'package:vk_music/domain/models/player_playlist.dart';
 import 'package:vk_music/domain/state/artist/artist_cubit.dart';
 import 'package:vk_music/domain/state/music_player/music_player_cubit.dart';
 import 'package:vk_music/presentation/artist_tab/all_artist_albums.dart';
-import 'package:vk_music/presentation/playlists_tab/playlist_widget.dart';
 import 'package:vk_music/presentation/artist_tab/all_artist_songs.dart';
+import 'package:vk_music/presentation/playlists_tab/playlist_widget.dart';
 import 'package:vk_music/presentation/song_list/horizontal_music_list.dart';
 
 import 'all_artist_playlists.dart';
@@ -148,7 +148,7 @@ class _BodyWidget extends StatelessWidget {
                           child: TextButton(
                             onPressed: () {
                               navigatorKey.currentState!
-                                  .push(MaterialPageRoute(builder: (_) => AllPlaylists(cubit)));
+                                  .push(MaterialPageRoute(builder: (_) => AllArtistPlaylists(cubit)));
                             },
                             child: const Text('Показать все')
                           ),

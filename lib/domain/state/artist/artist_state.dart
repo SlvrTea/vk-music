@@ -1,11 +1,9 @@
 part of 'artist_cubit.dart';
 
-class ArtistState implements IPlaylistsList, ISongsList {
+class ArtistState {
   final Artist? artist;
   final List<Playlist>? artistAlbums;
-  @override
   final List<Playlist>? playlists;
-  @override
   final List<Song>? songs;
 
   ArtistState({this.artist, this.artistAlbums, this.songs, this.playlists});

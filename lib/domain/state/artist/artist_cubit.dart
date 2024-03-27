@@ -1,7 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
-import 'package:vk_music/domain/state/playlists_list.dart';
-import 'package:vk_music/domain/state/song_list.dart';
 import 'package:vk_music/internal/dependencies/repository_module.dart';
 
 import '../../models/artist.dart';
@@ -24,8 +21,7 @@ class ArtistCubit extends Cubit<ArtistState> {
 
   void loadMoreSongs(int offset) async {
     assert(state.artist != null);
-    print('load more');
-    final songs = await musicRepository.getAudiosByArtist(state.artist!, count: 20);
+    final songs = await musicRepository.getAudiosByArtist(state.artist!, count: 20, offset: offset);
     state.songs!.addAll(songs);
     emit(state.copyWith(songs: state.songs));
   }

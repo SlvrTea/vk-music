@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:vk_music/data/service/vk_service.dart';
+
 import '../../domain/models/artist.dart';
 import '../../domain/models/playlist.dart';
 import '../../domain/models/song.dart';
@@ -82,7 +83,7 @@ class VKAudioService extends VKService {
   }
 
   /// Get current user audios
-  Future<List<Song>?> getCurrentUserAudios({int count = 2000, int? offset}) async {
+  Future<List<Song>?> getCurrentUserAudios({int count = 2000, int? offset = 50}) async {
     final audios = get([
       Argument.count(count),
       Argument.offset(offset)
@@ -102,7 +103,7 @@ class VKAudioService extends VKService {
     return audios;
   }
 
-  /// Get albums by artist
+  /// Get albums by [Artist]
   Future<List<Playlist>?> getAlbumsByArtist(Artist artist, {int count = 200, int? offset}) async {
     final response = await method('audio.getAlbumsByArtist', [
       Argument('artist_id', artist.id),
@@ -122,7 +123,7 @@ class VKAudioService extends VKService {
     return data;
   }
 
-  /// Get information about artist by id
+  /// Get information about [Artist] by id
   Future<Artist?> getArtistById(String artistId) async {
     final response = await method('audio.getArtistById', [
       Argument('artist_id', artistId)
@@ -195,40 +196,41 @@ class VKAudioService extends VKService {
   ///
   /// One of [before] or [after] arguments must not be null.
   Future<void> reorder(Song song, {String? before, String? after}) async {
-    assert(before != null && after != null);
+    assert(!(before != null && after != null));
     final User user = Hive.box('userBox').get('user');
-    method('audio.reorder', [
+    final response = await method('audio.reorder', [
       Argument.owner(user.userId),
+      Argument('audio_id', song.shortId),
       Argument('after', after),
       Argument('before', before)
     ]);
     log('Reorder action: ${song.toString()} now ${before ?? after}');
+    log(response.data.toString());
   }
 
   Future<dynamic> savePlaylist(
       {required Playlist playlist, String? title, String? description, List<Song>? songsToAdd, List? reorder}) async {
-    // String reorderFormat = '';
-    // if (reorder != null && reorder.isNotEmpty) {
-    //   reorderFormat += '[';
-    //   for (List element in reorder) {
-    //     if (element != reorder.last) {
-    //       reorderFormat += '[${element.join(',')}],';
-    //     } else {
-    //       reorderFormat += '[${element.join(',')}]';
-    //     }
-    //   }
-    //   reorderFormat += ']';
-    // }
-    // final response = await method('execute.savePlaylist',
-    //     'owner_id=${playlist.ownerId}'
-    //         '&playlist_id=${playlist.id}'
-    //         '&title=${title ?? playlist.title}'
-    //         '&description=${description ?? playlist.description}'
-    //         '${songsToAdd == null ? '' : '&audio_ids_to_add=${songsToAdd.map((e) => e.id).toList().join(',')}'}'
-    //         '${reorder == null ? '' : '&reorder_actions=$reorderFormat'}'
-    // );
-    //
-    // return Playlist.fromMap(response.data['response']);
+    String reorderFormat = '';
+    if (reorder != null && reorder.isNotEmpty) {
+      reorderFormat += '[';
+      for (List element in reorder) {
+        if (element != reorder.last) {
+          reorderFormat += '[${element.join(',')}],';
+        } else {
+          reorderFormat += '[${element.join(',')}]';
+        }
+      }
+      reorderFormat += ']';
+    }
+
+    final response = await method('execute.savePlaylist', [
+      Argument.owner(playlist.ownerId),
+      Argument('playlist_id', playlist.id),
+      Argument('title', title ?? playlist.title),
+      Argument('description', description ?? playlist.description),
+      Argument('audio_ids_to_add', songsToAdd?.map((e) => e.id).toList().join(','))
+    ]);
+    return Playlist.fromMap(response.data['response']);
   }
 
   /// Search audios by name

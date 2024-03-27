@@ -3,17 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vk_music/domain/state/search/search_cubit.dart';
 import 'package:vk_music/presentation/playlists_tab/playlist_widget.dart';
+import 'package:vk_music/presentation/search_tab/all_albums.dart';
+import 'package:vk_music/presentation/search_tab/all_songs.dart';
 import 'package:vk_music/presentation/song_list/horizontal_music_list.dart';
 
 import '../../domain/const.dart';
 import '../../domain/models/playlist.dart';
+import 'all_playlists.dart';
 
 class SearchResult extends StatelessWidget {
   const SearchResult({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final state = (context.watch<SearchCubit>().state as SearchFinishedState);
+    final cubit = context.watch<SearchCubit>();
+    final state = (cubit.state as SearchFinishedState);
     return SliverList(
       delegate: SliverChildListDelegate([
         Row(
@@ -26,7 +30,10 @@ class SearchResult extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  navigatorKey.currentState!
+                      .push(MaterialPageRoute(builder: (_) => AllSongs(cubit)));
+                },
                 child: const Text('Показать все')
               ),
             )
@@ -36,7 +43,7 @@ class SearchResult extends StatelessWidget {
           padding: EdgeInsets.all(8.0),
           child: _SearchSongsWidget(),
         ),
-        if (state.albumResult.isNotEmpty) ...[
+        if (state.albumResult != null && state.albumResult!.isNotEmpty) ...[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -47,7 +54,10 @@ class SearchResult extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    navigatorKey.currentState!
+                        .push(MaterialPageRoute(builder: (_) => AllAlbums(cubit)));
+                  },
                   child: const Text('Показать все')
                 ),
               ),
@@ -55,10 +65,10 @@ class SearchResult extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.all(8),
-            child: _SearchAlbumsWidget(state.albumResult),
+            child: _SearchAlbumsWidget(state.albumResult!),
           ),
         ],
-        if (state.playlistsResult.isNotEmpty) ...[
+        if (state.playlistsResult!.isNotEmpty) ...[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -69,7 +79,10 @@ class SearchResult extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    navigatorKey.currentState!
+                        .push(MaterialPageRoute(builder: (_) => AllPlaylists(cubit)));
+                  },
                   child: const Text('Показать все')
                 ),
               ),
@@ -77,7 +90,7 @@ class SearchResult extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.all(8),
-            child: _SearchAlbumsWidget(state.playlistsResult),
+            child: _SearchAlbumsWidget(state.playlistsResult!),
           ),
         ]
       ])
