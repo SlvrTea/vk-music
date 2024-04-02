@@ -25,8 +25,6 @@ abstract class MusicRepository {
 
   Future<dynamic> getPlaylists({int count = 200, int? offset});
 
-  Future<dynamic> getPlaylistMusic(Playlist playlist);
-
   Future<void> deleteFromPlaylist({required Playlist playlist, required List<Song> songsToDelete});
 
   Future<dynamic> savePlaylist({required Playlist playlist, String? title, String? description, List<Song>? songsToAdd, List? reorder});

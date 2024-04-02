@@ -16,7 +16,7 @@ class PlaylistCubit extends Cubit<PlaylistState> {
 
   void loadPlaylist(Playlist playlist) async {
     emit(PlaylistLoadingState());
-    final playlistSongs = await musicRepository.getPlaylistMusic(playlist);
+    final playlistSongs = await musicRepository.getPlaylistAudios(playlist);
     emit(PlaylistLoadedState(songs: playlistSongs, playlist: playlist));
   }
 

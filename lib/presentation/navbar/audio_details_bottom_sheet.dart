@@ -26,17 +26,13 @@ class _AudioDetailBottomSheetState extends State<AudioDetailBottomSheet> {
     return GestureDetector(
       onHorizontalDragUpdate: (details) {
         if (details.delta.dx <= -1.5) {
-          setState(() {
-            _body = const _MusicList();
-          });
+          setState(() => _body = const _MusicList());
         } else if (details.delta.dx >= 1.5) {
-          setState(() {
-            _body = const _MainBody();
-          });
+          setState(() => _body = const _MainBody());
         }
       },
       child: AnimatedSwitcher(
-        duration: const Duration(seconds: 1),
+        duration: const Duration(microseconds: 750),
         child: _body,
       ),
     );

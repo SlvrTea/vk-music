@@ -21,7 +21,7 @@ class VKAudioService extends VKService {
     log('${audio.toString()} added to user audios.');
   }
 
-  /// Add audios to the specified playlist
+  /// Add audios to the specified [Playlist]
   Future<Playlist?> addToPlaylist(Playlist playlist, List<Song> audios) async {
     final audioIds = [];
     for (Song element in audios) {
@@ -32,6 +32,7 @@ class VKAudioService extends VKService {
       Argument('playlist_id', playlist.id),
       Argument('audio_ids', audioIds.join(','))
     ]);
+    log(response.data.toString());
     log('${audios.length} songs added to $playlist playlist.');
     return Playlist.fromMap(response.data['response']['playlist']);
   }
@@ -63,9 +64,9 @@ class VKAudioService extends VKService {
     log('$playlist added to user audios.');
   }
 
-  /// Get audios for a specified user, community or playlist.
+  /// Get audios for a specified [User], community or [Playlist].
   /// If both owner_id and album_id are not specified,
-  /// this method returns current user audios (for which the token was obtained).
+  /// this method returns current [User] audios (for which the token was obtained).
   /// It's strongly recommend to use some other methods like
   /// [getCurrentUserAudios] or [getPlaylistAudios]
   Future<List<Song>?> get(List<Argument>? args) async {
@@ -82,7 +83,7 @@ class VKAudioService extends VKService {
     return data;
   }
 
-  /// Get current user audios
+  /// Get current [User] audios
   Future<List<Song>?> getCurrentUserAudios({int count = 2000, int? offset = 50}) async {
     final audios = get([
       Argument.count(count),
@@ -96,6 +97,7 @@ class VKAudioService extends VKService {
   Future<List<Song>?> getPlaylistAudios(Playlist playlist, {int count = 200, int? offset}) async {
     final audios = get([
       Argument.owner(playlist.ownerId),
+      Argument('album_id', playlist.id),
       Argument.count(count),
       Argument.offset(offset)
     ]);
@@ -151,7 +153,7 @@ class VKAudioService extends VKService {
     return data;
   }
 
-  /// Get user playlists
+  /// Get [User] playlists
   Future<List<Playlist>?> getPlaylists({int count = 200, int? offset}) async {
     final response = await method('audio.getPlaylists', [
       Argument.owner(user.userId),
@@ -230,7 +232,7 @@ class VKAudioService extends VKService {
       Argument('description', description ?? playlist.description),
       Argument('audio_ids_to_add', songsToAdd?.map((e) => e.id).toList().join(','))
     ]);
-    return Playlist.fromMap(response.data['response']);
+    return Playlist.fromMap(response.data['response']['playlist']);
   }
 
   /// Search audios by name

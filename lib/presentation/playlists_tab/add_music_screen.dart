@@ -8,15 +8,16 @@ import 'package:vk_music/presentation/cover.dart';
 import '../../domain/models/song.dart';
 import '../../domain/state/music_loader/music_loader_cubit.dart';
 
-final _audiosToAdd = <Song>[];
 
 class AddMusicScreen extends StatelessWidget {
-  const AddMusicScreen({super.key});
+  AddMusicScreen(this.playlistCubit, {super.key});
+
+  final PlaylistCubit playlistCubit;
+  final audioToAdd = <Song>[];
 
   @override
   Widget build(BuildContext context) {
     final musicLoaderState = context.watch<MusicLoaderCubit>().state;
-    final playlistCubit = context.read<PlaylistCubit>();
     final playlistState = (playlistCubit.state as PlaylistLoadedState);
     final playlistSongs = playlistState.songs;
     if (musicLoaderState is MusicLoadedState) {
@@ -26,8 +27,8 @@ class AddMusicScreen extends StatelessWidget {
           actions: [
             IconButton(
               onPressed: () {
-                if (_audiosToAdd.isNotEmpty) {
-                  playlistCubit.addAudiosToPlaylist(playlistState.playlist, _audiosToAdd);
+                if (audioToAdd.isNotEmpty) {
+                  playlistCubit.savePlaylist(playlist: playlistState.playlist, songsToAdd: audioToAdd);
                 }
                 navigatorKey.currentState!.pop();
               },
@@ -41,7 +42,7 @@ class AddMusicScreen extends StatelessWidget {
           itemBuilder: (context, index) {
             final song = musicLoaderState.songs[index];
             if (!playlistSongs.contains(song)) {
-              return _AddTile(song);
+              return _AddTile(song, audioToAdd);
             } else {
               return const SizedBox();
             }
@@ -54,9 +55,10 @@ class AddMusicScreen extends StatelessWidget {
 }
 
 class _AddTile extends StatefulWidget {
-  const _AddTile(this.song, {super.key});
+  const _AddTile(this.song, this.audioToAdd, {super.key});
 
   final Song song;
+  final List<Song> audioToAdd;
 
   @override
   State<_AddTile> createState() => _AddTileState();
@@ -74,9 +76,9 @@ class _AddTileState extends State<_AddTile> {
       trailing: isSelected ? const Icon(Icons.check_box_rounded) : const Icon(Icons.check_box_outline_blank_rounded),
       onTap: () => setState(() {
         if (isSelected) {
-          _audiosToAdd.remove(widget.song);
+          widget.audioToAdd.remove(widget.song);
         } else {
-          _audiosToAdd.add(widget.song);
+          widget.audioToAdd.add(widget.song);
         }
         isSelected = !isSelected;
       }),
