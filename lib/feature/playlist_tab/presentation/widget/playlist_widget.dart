@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:vk_music/core/presentation/cover.dart';
 import 'package:vk_music/feature/playlist_tab/presentation/playlist_tab.dart';
 
@@ -18,11 +19,7 @@ class PlaylistWidget extends StatelessWidget {
       width: size + 16,
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: () {
-          navigatorKey.currentState!.push(
-            MaterialPageRoute(builder: (_) => PlaylistTab(playlist))
-          );
-        },
+        onTap: () => context.go('/playlist', extra: playlist),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

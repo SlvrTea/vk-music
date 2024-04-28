@@ -4,11 +4,13 @@ part of 'navigation_bar.dart';
 class NavBarItem {
   NavBarItem({
     required this.icon,
+    required this.route,
     this.activeColor,
     this.inactiveColor
   });
 
   final Widget icon;
+  final String route;
   Color? inactiveColor;
   Color? activeColor;
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:vk_music/core/presentation/cover.dart';
 
 import '../../../../core/domain/const.dart';
@@ -40,7 +41,7 @@ class SelectPlaylist extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                     onTap: () {
                       playlistCubit.addAudiosToPlaylist(e, [song]);
-                      navigatorKey.currentState!.pop();
+                      context.pop();
                       final snackBar = SnackBar(
                         content: Text(
                             'Аудиозапись добавлена в плейлист ${e.title}'),

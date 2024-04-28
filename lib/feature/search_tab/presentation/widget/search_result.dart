@@ -31,8 +31,9 @@ class SearchResult extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: TextButton(
                 onPressed: () {
-                  navigatorKey.currentState!
-                      .push(MaterialPageRoute(builder: (_) => AllSongs(cubit)));
+                  //TODO: fix
+                  // navigatorKey.currentState!
+                  //     .push(MaterialPageRoute(builder: (_) => AllSongs(cubit)));
                 },
                 child: const Text('Показать все')
               ),
@@ -55,8 +56,9 @@ class SearchResult extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: TextButton(
                   onPressed: () {
-                    navigatorKey.currentState!
-                        .push(MaterialPageRoute(builder: (_) => AllAlbums(cubit)));
+                    //TODO: fix
+                    // navigatorKey.currentState!
+                    //     .push(MaterialPageRoute(builder: (_) => AllAlbums(cubit)));
                   },
                   child: const Text('Показать все')
                 ),
@@ -80,8 +82,9 @@ class SearchResult extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: TextButton(
                   onPressed: () {
-                    navigatorKey.currentState!
-                        .push(MaterialPageRoute(builder: (_) => AllPlaylists(cubit)));
+                    // TODO: fix
+                    // navigatorKey.currentState!
+                    //     .push(MaterialPageRoute(builder: (_) => AllPlaylists(cubit)));
                   },
                   child: const Text('Показать все')
                 ),

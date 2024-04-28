@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:vk_music/core/presentation/cover.dart';
 
 import '../../../../core/domain/const.dart';
@@ -29,7 +30,7 @@ class AddMusicScreen extends StatelessWidget {
                 if (audioToAdd.isNotEmpty) {
                   playlistCubit.savePlaylist(playlist: playlistState.playlist, songsToAdd: audioToAdd);
                 }
-                navigatorKey.currentState!.pop();
+                context.pop();
               },
               icon: const Icon(Icons.check)
             )

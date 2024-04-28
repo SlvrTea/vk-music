@@ -4,15 +4,13 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart' show Bloc, Emitter;
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:just_audio/just_audio.dart';
 
 import '../../../../core/data/service/vk_auth_service.dart';
-import '../../../../core/domain/const.dart';
 import '../../../../core/domain/models/user.dart';
 import '../../../../core/domain/state/music_loader/music_loader_cubit.dart';
-import '../../../tfa/tfa.dart';
-import '../../presentation/widget/captcha.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -20,9 +18,11 @@ part 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final VKAuthService auth = VKAuthService();
   final MusicLoaderCubit musicLoader;
+  final BuildContext context;
   final userBox = Hive.box('userBox');
   AuthBloc({
-    required this.musicLoader
+    required this.musicLoader,
+    required this.context
   }) : super(AuthInitial()) {
     on<AuthUserEvent>(_onAuthUserEvent);
     on<UserLogoutEvent>(_onUserLogoutEvent);
@@ -46,12 +46,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthFailed(errorMessage: 'Нет интернет подключения'));
       }
       if (e.response!.data['redirect_uri'] != null) {
-        log('Tfa needed');
-        navigatorKey.currentState!.pushReplacement(
-            MaterialPageRoute(builder: (_) => Tfa(
-              redirect: e.response!.data,
-              query: e.requestOptions.queryParameters,
-            ))
+        log('Tfa requested by server');
+        log('Redirecting user to tfa page. Redirect url: ${e.response!.data}');
+        context.go(
+          'redirect/${e.response!.data}',
+          extra: e.requestOptions.queryParameters
         );
       } else {
         emit(AuthFailed(errorMessage: e.response!.data['error_description']));
@@ -87,22 +86,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
       if (e.response!.data['error'] == 'need_captcha') {
         log('Captcha needed. Captcha seed: ${e.response!.data['captcha_sid']}. Captcha img url: ${e.response!.data['captcha_img']}');
-        navigatorKey.currentState!.pushReplacement(
-            MaterialPageRoute(builder: (_) => Capcha(
-              capchaUrl: e.response!.data['captcha_img'],
-              capchaSId: e.response!.data['captcha_sid'],
-              query: e.requestOptions.queryParameters,
-            )
-          )
-        );
+        // TODO: исправить работу капчи
+        // navigatorKey.currentState!.pushReplacement(
+        //     MaterialPageRoute(builder: (_) => Capcha(
+        //       capchaUrl: e.response!.data['captcha_img'],
+        //       capchaSId: e.response!.data['captcha_sid'],
+        //       query: e.requestOptions.queryParameters,
+        //     )
+        //   )
+        // );
       }
       if (e.response!.data['redirect_uri'] != null) {
-        log('Tfa needed');
-        navigatorKey.currentState!.pushReplacement(
-          MaterialPageRoute(builder: (_) => Tfa(
-            redirect: e.response!.data['redirect_uri'],
-            query: e.requestOptions.queryParameters,
-          ))
+        log('Tfa requested by server');
+        log('Redirecting user to tfa page. Redirect url: ${e.response!.data}');
+        context.go(
+            'redirect/${e.response!.data}',
+            extra: e.requestOptions.queryParameters
         );
       } else {
         emit(AuthFailed(errorMessage: e.response!.data['error_description']));

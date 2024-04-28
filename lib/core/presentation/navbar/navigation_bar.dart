@@ -34,7 +34,7 @@ class NavBar extends StatelessWidget {
   final double height;
   final double iconSize;
   final List<NavBarItem> items;
-  final ValueChanged<int> onItemSelected;
+  final void Function(NavBarItem, int) onItemSelected;
   final int selectedIndex;
   final List<BoxShadow> shadows;
 
@@ -44,10 +44,9 @@ class NavBar extends StatelessWidget {
       ? size * 0.6
       : 0;
 
-@override
+  @override
   Widget build(BuildContext context) {
     final musicBloc = context.watch<MusicPlayerCubit>();
-
     final background = backgroundColor ?? Theme.of(context).bottomNavigationBarTheme.backgroundColor;
     return Container(
       decoration: BoxDecoration(
@@ -71,7 +70,7 @@ class NavBar extends StatelessWidget {
                   final index = items.indexOf(item);
                   return Expanded(
                       child: GestureDetector(
-                        onTap: () => onItemSelected(index),
+                        onTap: () => onItemSelected(item, index),
                         child: _NavBarItem(
                             item: item,
                             isSelected: index == selectedIndex,

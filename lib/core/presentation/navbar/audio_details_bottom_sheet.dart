@@ -1,11 +1,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:vk_music/core/presentation/cover.dart';
 import 'package:vk_music/core/presentation/navbar/slider_bar.dart';
 
 import '../../../feature/song_list/song_tile.dart';
-import '../../domain/const.dart';
 import '../../domain/state/music_player/music_player_cubit.dart';
 import 'audio_buttons.dart';
 
@@ -50,7 +50,7 @@ class _MainBody extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: IconButton(
               icon: const Icon(Icons.keyboard_arrow_down_rounded),
-              onPressed: () => navigatorKey.currentState!.pop(),
+              onPressed: () => context.pop(),
             ),
           )
         ),

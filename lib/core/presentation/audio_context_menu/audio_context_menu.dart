@@ -1,12 +1,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
-import '../../../feature/artist_tab/presentation/artist_tab.dart';
-import '../../../feature/playlist_tab/presentation/widget/select_playlist.dart';
 import '../../../feature/playlists_tab/domain/state/playlists_cubit.dart';
 import '../../../feature/search_tab/domain/state/search_cubit.dart';
-import '../../domain/const.dart';
 import '../../domain/models/song.dart';
 import '../../domain/state/music_loader/music_loader_cubit.dart';
 import '../../domain/state/nav_bar/nav_bar_cubit.dart';
@@ -40,7 +38,7 @@ class MyAudiosMenu extends StatelessWidget {
                 title: const Text('Добавить в мою музыку'),
                 onTap: () {
                   cubit.addAudio(song);
-                  navigatorKey.currentState!.pop();
+                  context.pop();
                   const snackBar = SnackBar(
                     content: Text('Аудиозапись добавлена')
                   );
@@ -54,9 +52,11 @@ class MyAudiosMenu extends StatelessWidget {
               final ownedPlaylists = (context.read<PlaylistsCubit>().state as PlaylistsLoadedState)
                   .playlists.where((element) => element.isOwner).toList();
               if (ownedPlaylists.isNotEmpty) {
-                navigatorKey.currentState!.pop();
-                navigatorKey.currentState!
-                    .push(MaterialPageRoute(builder: (_) => SelectPlaylist(song, ownedPlaylists)));
+                context.pop();
+                context.go(
+                    '/select_playlist',
+                    extra: {'song': song, 'owned_playlists': ownedPlaylists}
+                );
               }
             },
           ),
@@ -65,16 +65,15 @@ class MyAudiosMenu extends StatelessWidget {
                 title: const Text('Перейти к музыканту'),
                 leading: const Icon(Icons.person),
                 onTap: () {
-                  navigatorKey.currentState!.pop();
-                  navigatorKey.currentState!
-                      .push(MaterialPageRoute(builder: (_) => ArtistTab(song.mainArtistId!)));
+                  context.pop();
+                  context.go('/artist?artist_id=${song.mainArtistId!}');
                 }
             )
             : _ContextMenuItem(
                 title: const Text('Найти музыканта'),
                 leading: const Icon(Icons.search_rounded),
                 onTap: () {
-                  navigatorKey.currentState!.pop();
+                  context.pop();
                   context.read<NavBarCubit>().changeTab(1);
                   context.read<SearchCubit>().search(song.artist, count: 20);
                 }
@@ -94,7 +93,7 @@ class MyAudiosMenu extends StatelessWidget {
                     showCloseIcon: true,
                   );
                   cubit.audioDelete(song);
-                  navigatorKey.currentState!.pop();
+                  context.pop();
                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
                 }
               )

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:vk_music/feature/home_screen/presentation/home.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -28,9 +29,10 @@ class _TfaState extends State<Tfa> {
             if (url.url!.startsWith('https://oauth.vk.com/blank.html#success=1')) {
               final auth = BlocProvider.of<AuthBloc>(context);
               auth.add(AuthUserEvent(password: widget.query['password'], login: widget.query['login'], url: url.url));
-              navigatorKey.currentState!.push(
-                  MaterialPageRoute(builder: (_) => const HomeTab())
-              );
+              context.go('/audios');
+              // navigatorKey.currentState!.push(
+              //     MaterialPageRoute(builder: (_) => const HomeTab())
+              // );
             }
           }
       ))

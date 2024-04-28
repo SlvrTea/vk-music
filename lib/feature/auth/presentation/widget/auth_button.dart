@@ -1,8 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
-import '../../../home_screen/presentation/home.dart';
 import '../../domain/state/auth_bloc.dart';
 
 class AuthButton extends StatelessWidget {
@@ -25,9 +25,7 @@ class AuthButton extends StatelessWidget {
         if (state is AuthFailed) {
           ScaffoldMessenger.of(context).showSnackBar(snackBar(state.errorMessage));
         } else if (state is UserLoadedState) {
-          Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => const HomeTab())
-          );
+          context.go('/audios');
         }
       },
       builder: (context, state) {

@@ -1,9 +1,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:vk_music/core/presentation/cover.dart';
 
-import '../../../../core/domain/const.dart';
 import '../../../../core/domain/models/playlist.dart';
 import '../../../../core/domain/models/song.dart';
 import '../../domain/state/playlist_cubit.dart';
@@ -66,7 +66,7 @@ class _PlaylistEditState extends State<PlaylistEdit> {
                       description: newDescription,
                       reorder: _reorder
                     );
-                    navigatorKey.currentState!.pop();
+                    context.pop();
                   },
                   icon: const Icon(Icons.check)
                 )
@@ -109,7 +109,8 @@ class _PlaylistEditState extends State<PlaylistEdit> {
                       ),
                     ),
                     ListTile(
-                      onTap: () => navigatorKey.currentState!.push(MaterialPageRoute(builder: (_) => AddMusicScreen(cubit))),
+                      //TODO: fix
+                      onTap: () => null, //navigatorKey.currentState!.push(MaterialPageRoute(builder: (_) => AddMusicScreen(cubit))),
                       titleTextStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                       title: const Text('Добавить музыку'),
                       leading: Container(
