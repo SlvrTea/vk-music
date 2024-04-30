@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:vk_music/core/router/router.dart';
 import 'package:vk_music/core/styles/main_theme.dart';
 
@@ -14,11 +13,6 @@ import '../domain/state/music_loader/music_loader_cubit.dart';
 import '../domain/state/music_player/music_player_cubit.dart';
 import '../domain/state/music_progress/music_progress_cubit.dart';
 import '../domain/state/nav_bar/nav_bar_cubit.dart';
-
-final _router = GoRouter.routingConfig(
-  routingConfig: routerConfig,
-  initialLocation: '/'
-);
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -63,7 +57,7 @@ class App extends StatelessWidget {
         scrollBehavior: const MaterialScrollBehavior()
             .copyWith(dragDevices: PointerDeviceKind.values.toSet(), physics: const BouncingScrollPhysics()),
         theme: MainTheme.themeData,
-        routerConfig: _router,
+        routerConfig: router,
       ),
     );
   }

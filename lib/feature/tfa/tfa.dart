@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:vk_music/feature/home_screen/presentation/home.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-import '../../core/domain/const.dart';
 import '../auth/domain/state/auth_bloc.dart';
 
 class Tfa extends StatefulWidget {
@@ -29,7 +27,7 @@ class _TfaState extends State<Tfa> {
             if (url.url!.startsWith('https://oauth.vk.com/blank.html#success=1')) {
               final auth = BlocProvider.of<AuthBloc>(context);
               auth.add(AuthUserEvent(password: widget.query['password'], login: widget.query['login'], url: url.url));
-              context.go('/audios');
+              context.replace('/audios');
               // navigatorKey.currentState!.push(
               //     MaterialPageRoute(builder: (_) => const HomeTab())
               // );

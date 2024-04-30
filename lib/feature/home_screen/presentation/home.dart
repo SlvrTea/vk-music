@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vk_music/core/presentation/scaffold_with_navbar.dart';
 import 'package:vk_music/feature/home_screen/presentation/widget/body.dart';
 
 import '../../auth/domain/state/auth_bloc.dart';
@@ -11,7 +12,10 @@ class HomeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const HomeTabBody();
+    return ScaffoldWithNavigationBar(
+      appBar: AppBar(title: const Text('VKMusic')),
+      child: const HomeTabBody()
+    );
   }
 }
 

@@ -27,12 +27,13 @@ class SongTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final musicBloc = context.watch<MusicPlayerCubit>();
     final duration = int.parse(song.duration);
+    final formatDuration = '${duration ~/ 60}:${duration % 60 < 10 ? '0${duration % 60}' : duration % 60}';
     return ListTile(
       trailing: withMenu
           ? Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('${duration ~/ 60}:${duration % 60 < 10 ? '0${duration % 60}' : duration % 60}'),
+              Text(formatDuration),
               IconButton(
                 onPressed: () {
                   showModalBottomSheet(
@@ -44,7 +45,7 @@ class SongTile extends StatelessWidget {
               )
             ]
           )
-          : Text('${duration ~/ 60}:${duration % 60 == 0 ? '00' : duration % 60}'),
+          : Text(formatDuration),
       leading: CoverWidget(
           photoUrl: song.photoUrl270,
           child: musicBloc.state.song == song

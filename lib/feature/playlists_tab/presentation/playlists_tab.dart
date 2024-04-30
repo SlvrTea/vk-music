@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:vk_music/core/presentation/scaffold_with_navbar.dart';
 import 'package:vk_music/feature/playlists_tab/presentation/widget/body.dart';
 
 class PlaylistsTab extends StatelessWidget {
@@ -7,6 +8,9 @@ class PlaylistsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const PlaylistsTabBody();
+    return ScaffoldWithNavigationBar(
+      appBar: AppBar(title: const Text('VKMusic')),
+      child: const PlaylistsTabBody()
+    );
   }
 }

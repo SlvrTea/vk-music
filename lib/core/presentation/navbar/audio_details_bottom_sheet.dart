@@ -9,30 +9,38 @@ import '../../../feature/song_list/song_tile.dart';
 import '../../domain/state/music_player/music_player_cubit.dart';
 import 'audio_buttons.dart';
 
-class AudioDetailBottomSheet extends StatefulWidget {
+class AudioDetailBottomSheet extends StatelessWidget {
   const AudioDetailBottomSheet({super.key});
 
   @override
-  State<AudioDetailBottomSheet> createState() => _AudioDetailBottomSheetState();
-}
-
-class _AudioDetailBottomSheetState extends State<AudioDetailBottomSheet> {
-  Widget _body = const _MainBody();
-
-  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onHorizontalDragUpdate: (details) {
-        if (details.delta.dx <= -1.5) {
-          setState(() => _body = const _MusicList());
-        } else if (details.delta.dx >= 1.5) {
-          setState(() => _body = const _MainBody());
-        }
-      },
-      child: AnimatedSwitcher(
-        duration: const Duration(microseconds: 750),
-        child: _body,
-      ),
+    return Column(
+      children: [
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: IconButton(
+              icon: const Icon(Icons.keyboard_arrow_down_rounded),
+              onPressed: () => context.pop(),
+            ),
+          )
+        ),
+        DefaultTabController(
+          initialIndex: 0,
+          length: 2,
+          child: SafeArea(
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height - 80,
+              child: const TabBarView(
+                children: [
+                  _MainBody(),
+                  _MusicList()
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -45,15 +53,6 @@ class _MainBody extends StatelessWidget {
     final musicBloc = context.watch<MusicPlayerCubit>();
     return Column(
       children: [
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: IconButton(
-              icon: const Icon(Icons.keyboard_arrow_down_rounded),
-              onPressed: () => context.pop(),
-            ),
-          )
-        ),
         Padding(
           padding: const EdgeInsets.all(24.0),
           child: CoverWidget(
@@ -102,17 +101,14 @@ class _MusicList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final musicBloc = context.watch<MusicPlayerCubit>();
-    return SafeArea(
-      child: ListView(
-        children: musicBloc.getShuffle()
-            ? musicBloc.musicPlayer.player.shuffleIndices!.map((e) => SongTile(
-                song: musicBloc.state.playlist!.songs[e],
-                playlist: musicBloc.state.playlist!)).toList()
-            : musicBloc.state.playlist!.songs.map((e) => SongTile(
-                song: e,
-                playlist: musicBloc.state.playlist!)).toList()
-      ),
+    return ListView(
+      children: musicBloc.getShuffle()
+          ? musicBloc.musicPlayer.player.shuffleIndices!.map((e) => SongTile(
+              song: musicBloc.state.playlist!.songs[e],
+              playlist: musicBloc.state.playlist!)).toList()
+          : musicBloc.state.playlist!.songs.map((e) => SongTile(
+              song: e,
+              playlist: musicBloc.state.playlist!)).toList()
     );
   }
 }
-

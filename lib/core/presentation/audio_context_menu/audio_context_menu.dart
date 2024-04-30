@@ -53,7 +53,7 @@ class MyAudiosMenu extends StatelessWidget {
                   .playlists.where((element) => element.isOwner).toList();
               if (ownedPlaylists.isNotEmpty) {
                 context.pop();
-                context.go(
+                context.push(
                     '/select_playlist',
                     extra: {'song': song, 'owned_playlists': ownedPlaylists}
                 );
@@ -66,7 +66,7 @@ class MyAudiosMenu extends StatelessWidget {
                 leading: const Icon(Icons.person),
                 onTap: () {
                   context.pop();
-                  context.go('/artist?artist_id=${song.mainArtistId!}');
+                  context.push('/artist?artist_id=${song.mainArtistId!}');
                 }
             )
             : _ContextMenuItem(
