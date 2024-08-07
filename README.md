@@ -1,5 +1,5 @@
 <h1 align="center">Бесплатный музыкальный клиент</h1>
-<img src="https://cdn.discordapp.com/attachments/962704803765583922/1204695263688659005/github.png?ex=65e81fe5&is=65d5aae5&hm=bf21d4338b45995ba97e7b4a82f2592871b581ec974a0acb8286d0b1f6681d81&">
+<img src="https://imgur.com/FUbi1f5">
 <h2>Возможности:</h2>
 <ul>
   <li>Прослушивание музыки без рекламы</li>
