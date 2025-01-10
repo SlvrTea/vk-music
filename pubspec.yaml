@@ -40,6 +40,7 @@ dependencies:
   just_audio_background: ^0.0.1-beta.14
   audio_service: ^0.18.16
   webview_flutter: ^4.4.4
+  dynamic_color: ^1.6.9
 
 dependency_overrides:
   win32: ^5.5.3

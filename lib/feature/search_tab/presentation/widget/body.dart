@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vk_music/feature/search_tab/presentation/widget/recs_widget.dart';
@@ -47,32 +46,49 @@ class _SearchTabBodyState extends State<SearchTabBody> {
       child: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
+            // Add this first
+            child: Container(
+              height: MediaQuery.of(context).padding.top,
+              color: Theme.of(context).colorScheme.background,
+            ),
+          ),
+          SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: SearchBar(
                 controller: _controller,
                 leading: IconButton(
-                  onPressed: () => search.search(_controller.text),
-                  icon: const Icon(Icons.search_rounded, color: Colors.white)
-                ),
-                onSubmitted: (text) => search.search(_controller.text, count: 30),
+                    onPressed: () => search.search(_controller.text),
+                    icon:
+                        const Icon(Icons.search_rounded, color: Colors.white)),
+                onSubmitted: (text) =>
+                    search.search(_controller.text, count: 30),
                 trailing: [
                   IconButton(
                     onPressed: () {
-                      if (_controller.text.isNotEmpty) search.getRecommendations();
+                      if (_controller.text.isNotEmpty)
+                        search.getRecommendations();
                       _controller.clear();
                     },
                     icon: const Icon(Icons.clear_rounded, color: Colors.white),
                   )
                 ],
-                backgroundColor: const MaterialStatePropertyAll(
-                  Colors.transparent
-                ),
+                backgroundColor:
+                    const MaterialStatePropertyAll(Colors.transparent),
               ),
             ),
           ),
-          if (state.query == null) const SliverToBoxAdapter(child: RecsWidget()),
+          if (state.query == null)
+            const SliverToBoxAdapter(child: RecsWidget()),
           if (state.query != null && state.songs != null) const SearchResult(),
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: kToolbarHeight +
+                  (MediaQuery.of(context)
+                      .padding
+                      .bottom), // For navbar + safe area
+            ),
+          ),
         ],
       ),
     );
