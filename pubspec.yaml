@@ -36,9 +36,14 @@ dependencies:
   flutter_svg: ^2.0.9
   hive: ^2.2.3
   hive_flutter: ^1.1.0
-  just_audio: ^0.9.36
-  just_audio_background: ^0.0.1-beta.11
+  just_audio: ^0.9.42
+  just_audio_background: ^0.0.1-beta.14
+  audio_service: ^0.18.16
   webview_flutter: ^4.4.4
+  dynamic_color: ^1.6.9
+
+dependency_overrides:
+  win32: ^5.5.3
 
 dev_dependencies:
   flutter_test:

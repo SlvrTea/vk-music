@@ -1,12 +1,7 @@
-
 part of 'navigation_bar.dart';
 
 class NavBarItem {
-  NavBarItem({
-    required this.icon,
-    this.activeColor,
-    this.inactiveColor
-  });
+  NavBarItem({required this.icon, this.activeColor, this.inactiveColor});
 
   final Widget icon;
   Color? inactiveColor;
@@ -14,16 +9,15 @@ class NavBarItem {
 }
 
 class _NavBarItem extends StatelessWidget {
-  const _NavBarItem({
-    super.key,
-    required this.item,
-    required this.isSelected,
-    required this.navHeight,
-    required this.backgroundColor,
-    required this.animationDuration,
-    required this.animationCurve,
-    required this.iconSize
-  });
+  const _NavBarItem(
+      {super.key,
+      required this.item,
+      required this.isSelected,
+      required this.navHeight,
+      required this.backgroundColor,
+      required this.animationDuration,
+      required this.animationCurve,
+      required this.iconSize});
 
   final Curve animationCurve;
   final Duration animationDuration;
@@ -35,31 +29,31 @@ class _NavBarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedColor = item.activeColor ?? Theme.of(context).bottomNavigationBarTheme.selectedItemColor;
-    final unselectedColor = item.inactiveColor ?? Theme.of(context).bottomNavigationBarTheme.unselectedItemColor;
+    final selectedColor = item.activeColor ??
+        Theme.of(context).bottomNavigationBarTheme.selectedItemColor;
+    final unselectedColor = item.inactiveColor ??
+        Theme.of(context).bottomNavigationBarTheme.unselectedItemColor;
     return Container(
-      color: backgroundColor,
+      color: Colors.transparent,
       height: double.maxFinite,
       child: Stack(
         alignment: Alignment.center,
         children: [
           AnimatedAlign(
-            alignment: isSelected ? const Alignment(0, -0.3) : Alignment.center,
-            duration: animationDuration,
-            child: AnimatedOpacity(
-              opacity: isSelected ? 1.0 : 1.0,
+              alignment:
+                  isSelected ? const Alignment(0, -0.3) : Alignment.center,
               duration: animationDuration,
-              child: IconTheme(
-                data: IconThemeData(
-                  size: iconSize,
-                  color: isSelected
-                      ? selectedColor!.withOpacity(1)
-                      : unselectedColor
-                ),
-                child: item.icon,
-              )
-            )
-          ),
+              child: AnimatedOpacity(
+                  opacity: isSelected ? 1.0 : 1.0,
+                  duration: animationDuration,
+                  child: IconTheme(
+                    data: IconThemeData(
+                        size: iconSize,
+                        color: isSelected
+                            ? selectedColor!.withOpacity(1)
+                            : unselectedColor),
+                    child: item.icon,
+                  ))),
           Align(
             alignment: Alignment.bottomCenter,
             child: AnimatedOpacity(

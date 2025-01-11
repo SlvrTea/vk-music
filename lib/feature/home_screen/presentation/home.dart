@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vk_music/feature/home_screen/presentation/widget/body.dart';
@@ -10,21 +9,45 @@ import '../../auth/presentation/login_screen.dart';
 import '../../playlists_tab/presentation/playlists_tab.dart';
 import '../../search_tab/presentation/search_tab.dart';
 
+import 'dart:ui'; // For ImageFilter
+
 class HomeTab extends StatelessWidget {
   const HomeTab({super.key});
 
-  final tabs = const [
-    HomeTabBody(),
-    SearchTab(),
-    PlaylistsTab()
-  ];
+  final tabs = const [HomeTabBody(), SearchTab(), PlaylistsTab()];
+
+  String _getTitle(int index) {
+    switch (index) {
+      case 0:
+        return 'VK Music';
+      case 1:
+        return 'Поиск';
+      case 2:
+        return 'Плейлисты';
+      default:
+        return 'VK Music';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final navBarCubit = context.watch<NavBarCubit>();
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('VK Music'),
+      extendBodyBehindAppBar: true,
+      extendBody: true,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: ClipRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: AppBar(
+              scrolledUnderElevation: 0, // Add this
+              surfaceTintColor: Colors.transparent, // Add this
+              title: Text(_getTitle(navBarCubit.state)),
+              backgroundColor: Colors.black.withAlpha(179),
+            ),
+          ),
+        ),
       ),
       body: tabs[navBarCubit.state],
       drawer: const _Drawer(),
@@ -55,8 +78,7 @@ class _Drawer extends StatelessWidget {
             onPressed: () {
               context.read<AuthBloc>().add(UserLogoutEvent());
               Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => const LoginScreen())
-              );
+                  MaterialPageRoute(builder: (_) => const LoginScreen()));
             },
           )
         ],
@@ -64,4 +86,3 @@ class _Drawer extends StatelessWidget {
     );
   }
 }
-
