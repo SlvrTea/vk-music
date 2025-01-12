@@ -1,0 +1,9 @@
+version: '3'
+
+tasks:
+  build:gen:
+    desc: Runs all code generators
+    silent: true
+    cmds:
+      - echo "[build:gen] Running dart build_runner..."
+      - dart run build_runner build --delete-conflicting-outputs

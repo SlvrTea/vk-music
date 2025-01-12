@@ -23,7 +23,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "com.silvertea.vk_music.vk_music"
+    namespace "com.silvertea.vk_music"
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
