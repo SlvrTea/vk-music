@@ -140,6 +140,104 @@ class AlbumsTab extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [AllArtistSongsScreen]
+class AllArtistSongsRoute extends PageRouteInfo<AllArtistSongsRouteArgs> {
+  AllArtistSongsRoute({
+    Key? key,
+    required String artistId,
+    required List<PlayerAudio> initialAudios,
+    List<PageRouteInfo>? children,
+  }) : super(
+          AllArtistSongsRoute.name,
+          args: AllArtistSongsRouteArgs(
+            key: key,
+            artistId: artistId,
+            initialAudios: initialAudios,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'AllArtistSongsRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<AllArtistSongsRouteArgs>();
+      return AllArtistSongsScreen(
+        key: args.key,
+        artistId: args.artistId,
+        initialAudios: args.initialAudios,
+      );
+    },
+  );
+}
+
+class AllArtistSongsRouteArgs {
+  const AllArtistSongsRouteArgs({
+    this.key,
+    required this.artistId,
+    required this.initialAudios,
+  });
+
+  final Key? key;
+
+  final String artistId;
+
+  final List<PlayerAudio> initialAudios;
+
+  @override
+  String toString() {
+    return 'AllArtistSongsRouteArgs{key: $key, artistId: $artistId, initialAudios: $initialAudios}';
+  }
+}
+
+/// generated route for
+/// [AllPlaylistsScreen]
+class AllPlaylistsRoute extends PageRouteInfo<AllPlaylistsRouteArgs> {
+  AllPlaylistsRoute({
+    Key? key,
+    required List<Playlist> playlists,
+    List<PageRouteInfo>? children,
+  }) : super(
+          AllPlaylistsRoute.name,
+          args: AllPlaylistsRouteArgs(
+            key: key,
+            playlists: playlists,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'AllPlaylistsRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<AllPlaylistsRouteArgs>();
+      return AllPlaylistsScreen(
+        key: args.key,
+        playlists: args.playlists,
+      );
+    },
+  );
+}
+
+class AllPlaylistsRouteArgs {
+  const AllPlaylistsRouteArgs({
+    this.key,
+    required this.playlists,
+  });
+
+  final Key? key;
+
+  final List<Playlist> playlists;
+
+  @override
+  String toString() {
+    return 'AllPlaylistsRouteArgs{key: $key, playlists: $playlists}';
+  }
+}
+
+/// generated route for
 /// [AllSongsScreen]
 class AllSongsRoute extends PageRouteInfo<AllSongsRouteArgs> {
   AllSongsRoute({

@@ -1,8 +1,10 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:elementary/elementary.dart';
 import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
 import 'package:vk_music/common/utils/extensions/widget_model_extension.dart';
+import 'package:vk_music/common/utils/router/app_router.dart';
 import 'package:vk_music/domain/audio_player/audio_player_controller.dart';
 
 import '../../../data/models/playlist/playlist.dart';
@@ -34,6 +36,10 @@ abstract interface class ISearchScreenWidgetModel implements IWidgetModel {
   EntityValueListenable<SearchState> get state;
 
   TextEditingController get searchController;
+
+  void onAllAlbumsTap();
+
+  void onAllPlaylistsTap();
 
   Future<void> getRecommendations();
 
@@ -173,4 +179,10 @@ class SearchScreenWidgetModel extends WidgetModel<SearchScreen, ISearchScreenMod
     _albumsEntity.content(res.items);
     _albumsCountEntity.content(res.count);
   }
+
+  @override
+  void onAllAlbumsTap() => context.router.push(AllPlaylistsRoute(playlists: _albumsEntity.value.data!));
+
+  @override
+  void onAllPlaylistsTap() => context.router.push(AllPlaylistsRoute(playlists: _playlistsEntity.value.data!));
 }
