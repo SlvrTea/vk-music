@@ -5,10 +5,10 @@ import 'package:vk_music/data/models/response/search/search_response/search_resp
 import 'package:vk_music/domain/audio/audio_repository.dart';
 
 import '../../../data/models/response/search/search_artists_response/search_artists_response.dart';
-import '../../../data/models/song/song.dart';
+import '../../../domain/model/player_audio.dart';
 
 abstract interface class ISearchScreenModel extends ElementaryModel {
-  Future<List<Song>> getRecommendations({int? count, int? offset});
+  Future<List<PlayerAudio>> getRecommendations({int? count, int? offset});
 
   Future<SearchResponse> search({required String query});
 
@@ -27,7 +27,7 @@ class SearchScreenModel extends ISearchScreenModel {
   final AudioRepository _audioRepository;
 
   @override
-  Future<List<Song>> getRecommendations({int? count, int? offset}) async {
+  Future<List<PlayerAudio>> getRecommendations({int? count, int? offset}) async {
     try {
       final res = await _audioRepository.getRecommendations(offset: offset, count: count);
       return res.items;

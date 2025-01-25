@@ -1,18 +1,24 @@
 import 'package:elementary/elementary.dart';
 import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:vk_music/common/styles/app_theme.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
+import 'package:vk_music/common/utils/extensions/widget_model_extension.dart';
 import 'package:vk_music/data/models/artist/artist.dart';
 
 import '../../../data/models/playlist/playlist.dart';
-import '../../../data/models/song/song.dart';
+import '../../../domain/model/player_audio.dart';
 import 'artist_screen.dart';
 import 'artist_screen_model.dart';
 
 abstract interface class IArtistScreenWidgetModel implements IWidgetModel {
+  AppTheme get appTheme;
+
+  MediaQueryData get mediaQuery;
+
   EntityValueListenable<Artist> get artist;
 
-  EntityValueListenable<List<Song>> get audios;
+  EntityValueListenable<List<PlayerAudio>> get audios;
 
   EntityValueListenable<List<Playlist>> get albums;
 
@@ -28,15 +34,21 @@ class ArtistScreenWidgetModel extends WidgetModel<ArtistScreen, IArtistScreenMod
     implements IArtistScreenWidgetModel {
   ArtistScreenWidgetModel(super.model);
 
+  @override
+  AppTheme get appTheme => context.global.theme;
+
+  @override
+  MediaQueryData get mediaQuery => wmMediaQuery;
+
   final _artistEntity = EntityStateNotifier<Artist>();
 
   @override
   EntityValueListenable<Artist> get artist => _artistEntity;
 
-  final _audiosEntity = EntityStateNotifier<List<Song>>();
+  final _audiosEntity = EntityStateNotifier<List<PlayerAudio>>();
 
   @override
-  EntityValueListenable<List<Song>> get audios => _audiosEntity;
+  EntityValueListenable<List<PlayerAudio>> get audios => _audiosEntity;
 
   final _albumsEntity = EntityStateNotifier<List<Playlist>>();
 

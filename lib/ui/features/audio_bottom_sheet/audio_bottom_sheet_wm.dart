@@ -6,26 +6,33 @@ import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
 import 'package:vk_music/common/utils/router/app_router.dart';
+import 'package:vk_music/domain/audio_player/audio_player_controller.dart';
 import 'package:vk_music/ui/features/audio_bottom_sheet/audio_bottom_sheet_widget.dart';
 
 import '../../../data/models/playlist/playlist.dart';
-import '../../../data/models/song/song.dart';
+import '../../../domain/model/player_audio.dart';
 import 'audio_bottom_sheet_model.dart';
 
 abstract interface class IAudioBottomSheetWidgetModel implements IWidgetModel {
-  EntityValueListenable<List<Song>> get audios;
+  AppAudioPlayer get player;
+
+  EntityValueListenable<List<PlayerAudio>> get audios;
 
   EntityValueListenable<List<Playlist>> get ownedPlaylists;
 
-  Future<void> onAddAudioTap(Song audio);
+  Future<void> onAddAudioTap(PlayerAudio audio);
 
-  Future<void> onDeleteAudioTap(Song audio);
+  Future<void> onDeleteAudioTap(PlayerAudio audio);
 
   void onGoToArtistTap(String artistId);
 
   void onAddToPlaylistTap();
 
-  void onFindArtistTap(Song audio);
+  void onFindArtistTap(PlayerAudio audio);
+
+  void onGoToAlbumTap(PlayerAudio audio);
+
+  void onPlayNextTap(PlayerAudio audio);
 }
 
 AudioBottomSheetWidgetModel defaultAudioBottomSheetWidgetModelFactory(BuildContext context) =>
@@ -35,12 +42,15 @@ class AudioBottomSheetWidgetModel extends WidgetModel<AudioBottomSheetWidget, IA
     implements IAudioBottomSheetWidgetModel {
   AudioBottomSheetWidgetModel(super.model);
 
-  final _audiosEntity = EntityStateNotifier<List<Song>>();
+  @override
+  AppAudioPlayer get player => context.global.audioPlayer;
+
+  final _audiosEntity = EntityStateNotifier<List<PlayerAudio>>();
 
   final _playlistsEntity = EntityStateNotifier<List<Playlist>>();
 
   @override
-  EntityValueListenable<List<Song>> get audios => _audiosEntity;
+  EntityValueListenable<List<PlayerAudio>> get audios => _audiosEntity;
 
   @override
   EntityValueListenable<List<Playlist>> get ownedPlaylists => _playlistsEntity;
@@ -58,7 +68,7 @@ class AudioBottomSheetWidgetModel extends WidgetModel<AudioBottomSheetWidget, IA
   }
 
   @override
-  Future<void> onAddAudioTap(Song audio) async {
+  Future<void> onAddAudioTap(PlayerAudio audio) async {
     try {
       await model.addAudio(audio);
       if (context.mounted) {
@@ -72,7 +82,7 @@ class AudioBottomSheetWidgetModel extends WidgetModel<AudioBottomSheetWidget, IA
   }
 
   @override
-  Future<void> onDeleteAudioTap(Song audio) async {
+  Future<void> onDeleteAudioTap(PlayerAudio audio) async {
     try {
       await model.deleteAudio(audio);
       if (context.mounted) {
@@ -93,26 +103,36 @@ class AudioBottomSheetWidgetModel extends WidgetModel<AudioBottomSheetWidget, IA
       ));
 
   @override
-  void onGoToArtistTap(String artistId) => context.router.popAndPush(ArtistRoute(artistId: artistId));
+  void onGoToArtistTap(String artistId) => context.router.push(ArtistRoute(artistId: artistId));
 
-  Future<void> _addToPlaylist(Playlist playlist) async {
+  @override
+  void onFindArtistTap(PlayerAudio audio) {
+    context.router
+      ..maybePop()
+      ..navigate(SearchRoute(initialQuery: audio.artist));
+  }
+
+  Future<void> _addToPlaylist(Playlist playlist, PlayerAudio audio) async {
     try {
-      await model.addToPlaylist(playlist, widget.audio);
-      if (context.mounted) {
-        final snackBar = SnackBar(
-          content: Text('Аудиозапись добавлена в плейлист ${playlist.title}'),
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      }
+      await model.addToPlaylist(playlist, audio);
     } on Exception catch (e) {
       rethrow;
     }
   }
 
   @override
-  void onFindArtistTap(Song audio) {
-    context.router
-      ..maybePop()
-      ..navigate(SearchRoute(initialQuery: audio.artist));
+  Future<void> onGoToAlbumTap(PlayerAudio audio) async {
+    final playlist = await model.getPlaylist(audio);
+    if (context.mounted) {
+      context.router
+        ..push(AlbumRoute(playlist: playlist))
+        ..maybePop();
+    }
+  }
+
+  @override
+  void onPlayNextTap(PlayerAudio audio) {
+    player.playNext(audio);
+    context.maybePop();
   }
 }

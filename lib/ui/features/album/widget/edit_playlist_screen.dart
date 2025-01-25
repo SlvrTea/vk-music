@@ -1,6 +1,9 @@
 import 'package:auto_route/annotations.dart';
 import 'package:elementary/elementary.dart';
+import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:vk_music/domain/model/player_playlist.dart';
+import 'package:vk_music/ui/features/album/widget/audio_edit_tile.dart';
 
 import '../../../../data/models/playlist/playlist.dart';
 import '../../../widgets/common/media_cover.dart';
@@ -65,13 +68,57 @@ class EditPlaylistScreen extends ElementaryWidget<IEditPlaylistWidgetModel> {
                 child: Text('Описание'),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                padding: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
                 child: TextField(
                   controller: wm.descriptionController,
                   maxLines: 4,
                 ),
-              )
+              ),
+              ListTile(
+                title: const Text('Добавить музыку'),
+                leading: Container(
+                  width: 55,
+                  height: 55,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
+                    Icons.add_rounded,
+                    size: 40,
+                  ),
+                ),
+                onTap: wm.onAddAudioTap,
+              ),
             ]),
+          ),
+          EntityStateNotifierBuilder(
+            listenableEntityState: wm.audios,
+            loadingBuilder: (_, __) => const Center(child: CircularProgressIndicator()),
+            builder: (context, audios) {
+              if (audios == null) return const SliverToBoxAdapter(child: SizedBox.shrink());
+              final p = PlayerPlaylist(children: audios);
+              return SliverReorderableList(
+                itemBuilder: (context, index) {
+                  return ReorderableDelayedDragStartListener(
+                    key: ValueKey(index),
+                    index: index,
+                    child: AudioEditTile(
+                      audio: audios[index],
+                      onIconTap: () => wm.onIconsTap(audios[index]),
+                      isAdded: wm.isAdded(audios[index]),
+                    ),
+                  );
+                },
+                itemCount: audios.length,
+                onReorder: (currentIndex, newIndex) {
+                  wm.onReorder(audios[currentIndex], newIndex);
+                },
+              );
+            },
+          ),
+          SliverToBoxAdapter(
+            child: SizedBox(height: wm.mediaQuery.padding.bottom),
           ),
         ],
       ),

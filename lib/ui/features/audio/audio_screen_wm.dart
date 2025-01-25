@@ -3,25 +3,33 @@ import 'dart:async';
 import 'package:elementary/elementary.dart';
 import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
+import 'package:vk_music/common/utils/extensions/widget_model_extension.dart';
 import 'package:vk_music/data/models/playlist/playlist.dart';
 import 'package:vk_music/data/models/user/user.dart';
+import 'package:vk_music/domain/audio_player/audio_player_controller.dart';
 import 'package:vk_music/domain/model/player_playlist.dart';
-import 'package:vk_music/domain/state/music_player/music_player_cubit.dart';
 
-import '../../../data/models/song/song.dart';
+import '../../../domain/model/player_audio.dart';
 import 'audio_screen_model.dart';
 import 'audio_screen_widget.dart';
 
 abstract interface class IAudioScreenWidgetModel implements IWidgetModel {
   User get user;
 
-  EntityValueListenable<List<Song>> get audios;
+  AppAudioPlayer get player;
+
+  MediaQueryData get mediaQuery;
+
+  EntityValueListenable<List<PlayerAudio>> get audios;
 
   EntityValueListenable<List<Playlist>> get playlists;
 
   void onAudioTileTap(int index);
+
+  void onReorder({required int audioId, int? before, int? after});
+
+  void moveAudio(int currentIndex, int newIndex);
 
   Future<void> loadPlaylists();
 
@@ -37,14 +45,18 @@ class AudioScreenWidgetModel extends WidgetModel<AudioScreen, IAudioScreenModel>
   @override
   User get user => context.global.user!;
 
-  late final MusicPlayerCubit playerCubit;
+  @override
+  AppAudioPlayer get player => context.global.audioPlayer;
 
-  final _audiosEntity = EntityStateNotifier<List<Song>>();
+  @override
+  MediaQueryData get mediaQuery => wmMediaQuery;
+
+  final _audiosEntity = EntityStateNotifier<List<PlayerAudio>>();
 
   final _playlistsEntity = EntityStateNotifier<List<Playlist>>();
 
   @override
-  EntityValueListenable<List<Song>> get audios => _audiosEntity;
+  EntityValueListenable<List<PlayerAudio>> get audios => _audiosEntity;
 
   @override
   EntityValueListenable<List<Playlist>> get playlists => _playlistsEntity;
@@ -52,7 +64,19 @@ class AudioScreenWidgetModel extends WidgetModel<AudioScreen, IAudioScreenModel>
   @override
   void onAudioTileTap(int index) {
     final audios = _audiosEntity.value.data ?? [];
-    playerCubit.play(song: audios[index], playlist: PlayerPlaylist.formSongList(audios));
+    context.global.audioPlayer.playFrom(initialIndex: index, playlist: PlayerPlaylist(children: audios));
+  }
+
+  @override
+  void moveAudio(int currentIndex, int newIndex) {
+    final audios = [..._audiosEntity.value.data!];
+    audios.insert(newIndex, audios.removeAt(currentIndex));
+    _audiosEntity.content(audios);
+  }
+
+  @override
+  void onReorder({required int audioId, int? before, int? after}) {
+    model.reorder(audioId: audioId, before: before, after: after);
   }
 
   @override
@@ -60,7 +84,6 @@ class AudioScreenWidgetModel extends WidgetModel<AudioScreen, IAudioScreenModel>
     model.userAudiosNotifier.addListener(_listenAudioChanges);
     model.userPlaylistsNotifier.addListener(_listenPlaylistsChanges);
 
-    playerCubit = context.watch<MusicPlayerCubit>();
     _initAsync();
     super.initWidgetModel();
   }

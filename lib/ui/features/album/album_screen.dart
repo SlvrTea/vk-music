@@ -4,18 +4,16 @@ import 'package:auto_route/auto_route.dart';
 import 'package:elementary/elementary.dart';
 import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vk_music/common/styles/app_theme.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
 import 'package:vk_music/common/utils/extensions/widget_model_extension.dart';
 import 'package:vk_music/common/utils/router/app_router.dart';
 import 'package:vk_music/data/models/playlist/playlist.dart';
 import 'package:vk_music/domain/audio/audio_repository.dart';
+import 'package:vk_music/domain/model/player_audio.dart';
 
-import '../../../data/models/song/song.dart';
 import '../../../data/models/user/user.dart';
 import '../../../domain/model/player_playlist.dart';
-import '../../../domain/state/music_player/music_player_cubit.dart';
 import '../../widgets/common/audio_tile.dart';
 
 part 'album_screen_model.dart';
@@ -49,9 +47,12 @@ class AlbumScreen extends ElementaryWidget<IAlbumScreenWidgetModel> {
                     background: Stack(
                       alignment: Alignment.center,
                       children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(16),
-                          child: Image.network(album.data!.photo!.photo270!),
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: Image.network(album.data!.photo!.photo270!),
+                          ),
                         ),
                         BackdropFilter(
                           filter: ImageFilter.blur(sigmaY: 30, sigmaX: 30),
@@ -103,10 +104,10 @@ class AlbumScreen extends ElementaryWidget<IAlbumScreenWidgetModel> {
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: ElevatedButton.icon(
                           onPressed: () {
-                            context.read<MusicPlayerCubit>().play(
-                                  song: items.data!.first,
-                                  playlist: PlayerPlaylist.formSongList(items.data!),
-                                );
+                            //TODO: extract to wm
+                            context.global.audioPlayer.playFrom(
+                              playlist: PlayerPlaylist(children: items.data!),
+                            );
                           },
                           label: const Text('Слушать'),
                           icon: const Icon(Icons.play_arrow_rounded),
@@ -139,16 +140,12 @@ class AlbumScreen extends ElementaryWidget<IAlbumScreenWidgetModel> {
                 const SliverToBoxAdapter(child: Divider()),
                 ...items.data!.map((e) => SliverToBoxAdapter(
                       child: AudioTile(
-                        song: e,
-                        playlist: PlayerPlaylist.formSongList(items.data!),
+                        audio: e,
+                        playlist: PlayerPlaylist(children: items.data!),
                         withMenu: true,
                       ),
                     )),
-                SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: context.global.audioPlayer.audioSource != null ? kToolbarHeight + 40 : kToolbarHeight,
-                  ),
-                ),
+                SliverToBoxAdapter(child: SizedBox(height: wm.mediaQuery.padding.bottom)),
               ],
             );
           }),

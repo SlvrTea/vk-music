@@ -79,7 +79,7 @@ class ArtistScreen extends ElementaryWidget<IArtistScreenWidgetModel> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Популярное'),
+                        Text('Популярное', style: wm.appTheme.t2),
                         TextButton(
                           onPressed: () {},
                           child: const Text('Показать все'),
@@ -100,7 +100,7 @@ class ArtistScreen extends ElementaryWidget<IArtistScreenWidgetModel> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Релизы'),
+                        Text('Релизы', style: wm.appTheme.t2),
                         TextButton(
                           onPressed: () {},
                           child: const Text('Показать все'),
@@ -113,7 +113,12 @@ class ArtistScreen extends ElementaryWidget<IArtistScreenWidgetModel> {
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      children: albums.data!.map((e) => PlaylistWidget(playlist: e)).toList(),
+                      children: albums.data!
+                          .map((e) => PlaylistWidget(
+                                playlist: e,
+                                size: 175,
+                              ))
+                          .toList(),
                     ),
                   ),
                 ),
@@ -131,7 +136,7 @@ class ArtistScreen extends ElementaryWidget<IArtistScreenWidgetModel> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text('Встречается в плейлистах'),
+                                Text('Встречается в плейлистах', style: wm.appTheme.t2),
                                 TextButton(
                                   onPressed: () {},
                                   child: const Text('Показать все'),
@@ -142,7 +147,12 @@ class ArtistScreen extends ElementaryWidget<IArtistScreenWidgetModel> {
                           SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: Row(
-                              children: playlists.map((e) => PlaylistWidget(playlist: e)).toList(),
+                              children: playlists
+                                  .map((e) => PlaylistWidget(
+                                        playlist: e,
+                                        size: 175,
+                                      ))
+                                  .toList(),
                             ),
                           ),
                         ],
@@ -150,6 +160,9 @@ class ArtistScreen extends ElementaryWidget<IArtistScreenWidgetModel> {
                     },
                   ),
                 ),
+                SliverToBoxAdapter(
+                  child: SizedBox(height: wm.mediaQuery.padding.bottom),
+                )
               ],
             );
           },

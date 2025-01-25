@@ -2,12 +2,15 @@ import 'package:elementary/elementary.dart';
 import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
+import 'package:vk_music/common/utils/extensions/widget_model_extension.dart';
 import 'package:vk_music/data/models/playlist/playlist.dart';
 
 import 'albums_screen_model.dart';
 import 'albums_screen_widget.dart';
 
 abstract interface class IAlbumsScreenWidgetModel implements IWidgetModel {
+  MediaQueryData get mediaQuery;
+
   EntityValueListenable<List<Playlist>> get playlists;
 }
 
@@ -19,6 +22,9 @@ AlbumsScreenWidgetModel defaultAlbumsScreenWidgetModelFactory(BuildContext conte
 class AlbumsScreenWidgetModel extends WidgetModel<AlbumsScreen, IAlbumsScreenModel>
     implements IAlbumsScreenWidgetModel {
   AlbumsScreenWidgetModel(super.model);
+
+  @override
+  MediaQueryData get mediaQuery => wmMediaQuery;
 
   final _playlistsEntity = EntityStateNotifier<List<Playlist>>();
 

@@ -1,9 +1,9 @@
-import 'package:auto_route/annotations.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:vk_music/domain/model/player_audio.dart';
 import 'package:vk_music/ui/widgets/common/media_cover.dart';
 
 import '../../../../data/models/playlist/playlist.dart';
-import '../../../../data/models/song/song.dart';
 
 @RoutePage()
 class SelectPlaylistWidget extends StatelessWidget {
@@ -14,9 +14,9 @@ class SelectPlaylistWidget extends StatelessWidget {
     required this.addToPlaylist,
   });
 
-  final Song song;
+  final PlayerAudio song;
   final List<Playlist> ownedPlaylists;
-  final void Function(Playlist song) addToPlaylist;
+  final void Function(Playlist song, PlayerAudio audio) addToPlaylist;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,10 @@ class SelectPlaylistWidget extends StatelessWidget {
             childAspectRatio: 120 / 155,
             children: ownedPlaylists.map((e) {
               return GestureDetector(
-                onTap: () => addToPlaylist(e),
+                onTap: () {
+                  addToPlaylist(e, song);
+                  context.router.maybePop();
+                },
                 child: SizedBox(
                   height: 200,
                   width: 150,

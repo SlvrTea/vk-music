@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:provider/provider.dart';
 import 'package:vk_music/common/styles/app_theme.dart';
@@ -16,6 +15,7 @@ import 'package:vk_music/domain/audio/audio_repository.dart';
 import 'package:vk_music/domain/auth/auth_repository.dart';
 
 import '../../../../data/models/user/user.dart';
+import '../../../../domain/audio_player/audio_player_controller.dart';
 
 class AppGlobalDependency extends AppAsyncDependency {
   static String baseUrl = 'https://api.vk.com/method/';
@@ -26,8 +26,6 @@ class AppGlobalDependency extends AppAsyncDependency {
 
   late AppConfig config;
 
-  late AudioPlayer audioPlayer;
-
   late AppTheme theme;
 
   late final AppRouter router;
@@ -37,6 +35,8 @@ class AppGlobalDependency extends AppAsyncDependency {
   late final AuthRepository authRepository;
 
   late final AudioRepository audioRepository;
+
+  late final AppAudioPlayer audioPlayer;
 
   @override
   Future<void> initAsync(BuildContext context) async {
@@ -63,7 +63,7 @@ class AppGlobalDependency extends AppAsyncDependency {
 
     authRepository = AuthRepository();
     audioRepository = AudioRepository(audioService, user);
-    audioPlayer = AudioPlayer();
+    audioPlayer = AppAudioPlayer();
   }
 
   void updateConfig(AppConfig newConfig) async {

@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
-
-import '../../../../../domain/enum/play_status.dart';
-import '../../../../../domain/state/music_player/music_player_cubit.dart';
+import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
 
 class MusicBarPlayButton extends StatelessWidget {
   const MusicBarPlayButton({super.key, this.size});
@@ -12,16 +9,14 @@ class MusicBarPlayButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<MusicPlayerCubit>().state;
-    return GestureDetector(
-        onTap: () {
-          if (state.song != null && state.processingState != ProcessingState.idle) {
-            context.read<MusicPlayerCubit>().play(song: state.song!);
-          }
-        },
-        child: state.playStatus != PlayStatus.trackInPause
-            ? Icon(Icons.pause_rounded, size: size ?? 32)
-            : Icon(Icons.play_arrow_rounded, size: size ?? 32));
+    final player = context.global.audioPlayer;
+    return ValueListenableBuilder(
+      valueListenable: player.isPlaying,
+      builder: (context, playing, child) => GestureDetector(
+        onTap: playing! ? player.pause : player.play,
+        child: playing ? Icon(Icons.pause_rounded, size: size ?? 32) : Icon(Icons.play_arrow_rounded, size: size ?? 32),
+      ),
+    );
   }
 }
 
@@ -32,12 +27,11 @@ class MusicBarNextAudioButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final musicCubit = context.watch<MusicPlayerCubit>();
+    final player = context.global.audioPlayer;
     return IconButton(
-        onPressed: () {
-          musicCubit.seekToNext();
-        },
-        icon: Icon(Icons.fast_forward_rounded, size: size ?? 32));
+      onPressed: player.seekToNext,
+      icon: Icon(Icons.fast_forward_rounded, size: size ?? 32, color: context.global.theme.colors.mainTextColor),
+    );
   }
 }
 
@@ -48,12 +42,15 @@ class MusicBarPreviousAudioButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final musicCubit = context.watch<MusicPlayerCubit>();
+    final player = context.global.audioPlayer;
     return IconButton(
-        onPressed: () {
-          musicCubit.seekToPrevious();
-        },
-        icon: Icon(Icons.fast_rewind_rounded, size: size ?? 32));
+      onPressed: player.seekToPrevious,
+      icon: Icon(
+        Icons.fast_rewind_rounded,
+        size: size ?? 32,
+        color: context.global.theme.colors.mainTextColor,
+      ),
+    );
   }
 }
 
@@ -67,14 +64,14 @@ class ShuffleButton extends StatefulWidget {
 class _ShuffleButtonState extends State<ShuffleButton> {
   @override
   Widget build(BuildContext context) {
-    final musicPlayerCubit = context.watch<MusicPlayerCubit>();
+    final player = context.global.audioPlayer;
     return IconButton(
         onPressed: () {
-          musicPlayerCubit.switchShuffleMode();
+          player.switchShuffleMode();
           setState(() {});
         },
         icon: Stack(alignment: Alignment.center, children: [
-          musicPlayerCubit.getShuffle()
+          player.shuffleModeEnabled
               ? Container(
                   decoration:
                       BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.grey.withOpacity(0.3)),
@@ -85,7 +82,7 @@ class _ShuffleButtonState extends State<ShuffleButton> {
           Icon(
             Icons.shuffle_rounded,
             size: 32,
-            color: musicPlayerCubit.getShuffle() ? Colors.white : Colors.grey,
+            color: player.shuffleModeEnabled ? context.global.theme.colors.mainTextColor : Colors.grey,
           )
         ]));
   }
@@ -104,8 +101,8 @@ class _LoopModeButtonState extends State<LoopModeButton> {
 
   @override
   Widget build(BuildContext context) {
-    final musicPlayerCubit = context.read<MusicPlayerCubit>();
-    loopMode = musicPlayerCubit.getLoopMode();
+    final player = context.global.audioPlayer;
+    loopMode = player.loopMode;
     if (loopMode == LoopMode.off) {
       isSelected = false;
     } else {
@@ -128,7 +125,7 @@ class _LoopModeButtonState extends State<LoopModeButton> {
               isSelected = true;
             }
           });
-          musicPlayerCubit.setLoopMode(loopMode);
+          player.setLoopMode(loopMode);
         },
         icon: Stack(alignment: Alignment.center, children: [
           isSelected
@@ -142,7 +139,7 @@ class _LoopModeButtonState extends State<LoopModeButton> {
           Icon(
             loopMode == LoopMode.one ? Icons.repeat_one_rounded : Icons.repeat_rounded,
             size: 32,
-            color: isSelected ? Colors.white : Colors.grey,
+            color: isSelected ? context.global.theme.colors.mainTextColor : Colors.grey,
           )
         ]));
   }
