@@ -2,17 +2,19 @@ import 'package:elementary/elementary.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:vk_music/data/models/playlist/playlist.dart';
 
-import '../../../data/models/song/song.dart';
 import '../../../domain/audio/audio_repository.dart';
+import '../../../domain/model/player_audio.dart';
 
 abstract interface class IAudioScreenModel extends ElementaryModel {
-  ValueNotifier<List<Song>?> get userAudiosNotifier;
+  ValueNotifier<List<PlayerAudio>?> get userAudiosNotifier;
 
   ValueNotifier<List<Playlist>?> get userPlaylistsNotifier;
 
   Future<List<Playlist>> getPlaylists({int? count, int? offset});
 
-  Future<List<Song>> getAudios(String ownerId);
+  Future<List<PlayerAudio>> getAudios(String ownerId);
+
+  Future<void> reorder({required int audioId, int? before, int? after});
 }
 
 class AudioScreenModel extends IAudioScreenModel {
@@ -21,7 +23,7 @@ class AudioScreenModel extends IAudioScreenModel {
   final AudioRepository _audioRepository;
 
   @override
-  ValueNotifier<List<Song>?> get userAudiosNotifier => _audioRepository.userAudiosNotifier;
+  ValueNotifier<List<PlayerAudio>?> get userAudiosNotifier => _audioRepository.userAudiosNotifier;
 
   @override
   ValueNotifier<List<Playlist>?> get userPlaylistsNotifier => _audioRepository.userAlbumsNotifier;
@@ -33,8 +35,17 @@ class AudioScreenModel extends IAudioScreenModel {
   }
 
   @override
-  Future<List<Song>> getAudios(String ownerId) async {
+  Future<List<PlayerAudio>> getAudios(String ownerId) async {
     final res = await _audioRepository.getAudios(ownerId: ownerId, isUserAudios: true);
     return res.items;
+  }
+
+  @override
+  Future<void> reorder({required int audioId, int? before, int? after}) async {
+    try {
+      await _audioRepository.reorder(audioId: audioId, before: before, after: after);
+    } on Exception catch (e) {
+      rethrow;
+    }
   }
 }

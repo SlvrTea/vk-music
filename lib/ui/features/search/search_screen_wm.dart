@@ -3,9 +3,10 @@ import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
 import 'package:vk_music/common/utils/extensions/widget_model_extension.dart';
+import 'package:vk_music/domain/audio_player/audio_player_controller.dart';
 
 import '../../../data/models/playlist/playlist.dart';
-import '../../../data/models/song/song.dart';
+import '../../../domain/model/player_audio.dart';
 import 'search_screen_model.dart';
 import 'search_screen_widget.dart';
 
@@ -14,9 +15,11 @@ enum SearchState { recommendations, search }
 abstract interface class ISearchScreenWidgetModel implements IWidgetModel {
   MediaQueryData get mediaQuery;
 
-  EntityValueListenable<List<Song>> get recommendations;
+  AppAudioPlayer get player;
 
-  EntityValueListenable<List<Song>> get audios;
+  EntityValueListenable<List<PlayerAudio>> get recommendations;
+
+  EntityValueListenable<List<PlayerAudio>> get audios;
 
   EntityValueListenable<int> get audiosCount;
 
@@ -57,9 +60,12 @@ class SearchScreenWidgetModel extends WidgetModel<SearchScreen, ISearchScreenMod
   @override
   MediaQueryData get mediaQuery => wmMediaQuery;
 
-  final _recommendationsEntity = EntityStateNotifier<List<Song>>();
+  @override
+  AppAudioPlayer get player => context.global.audioPlayer;
 
-  final _audiosEntity = EntityStateNotifier<List<Song>>();
+  final _recommendationsEntity = EntityStateNotifier<List<PlayerAudio>>();
+
+  final _audiosEntity = EntityStateNotifier<List<PlayerAudio>>();
 
   final _audiosCountEntity = EntityStateNotifier<int>();
 
@@ -76,10 +82,10 @@ class SearchScreenWidgetModel extends WidgetModel<SearchScreen, ISearchScreenMod
   final _searchController = TextEditingController();
 
   @override
-  EntityValueListenable<List<Song>> get recommendations => _recommendationsEntity;
+  EntityValueListenable<List<PlayerAudio>> get recommendations => _recommendationsEntity;
 
   @override
-  EntityValueListenable<List<Song>> get audios => _audiosEntity;
+  EntityValueListenable<List<PlayerAudio>> get audios => _audiosEntity;
 
   @override
   EntityValueListenable<int> get audiosCount => _audiosCountEntity;

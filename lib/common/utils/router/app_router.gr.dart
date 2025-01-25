@@ -10,6 +10,52 @@
 part of 'app_router.dart';
 
 /// generated route for
+/// [AddAudioScreen]
+class AddAudioRoute extends PageRouteInfo<AddAudioRouteArgs> {
+  AddAudioRoute({
+    Key? key,
+    required List<PlayerAudio> playlistAudios,
+    List<PageRouteInfo>? children,
+  }) : super(
+          AddAudioRoute.name,
+          args: AddAudioRouteArgs(
+            key: key,
+            playlistAudios: playlistAudios,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'AddAudioRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<AddAudioRouteArgs>();
+      return AddAudioScreen(
+        key: args.key,
+        playlistAudios: args.playlistAudios,
+      );
+    },
+  );
+}
+
+class AddAudioRouteArgs {
+  const AddAudioRouteArgs({
+    this.key,
+    required this.playlistAudios,
+  });
+
+  final Key? key;
+
+  final List<PlayerAudio> playlistAudios;
+
+  @override
+  String toString() {
+    return 'AddAudioRouteArgs{key: $key, playlistAudios: $playlistAudios}';
+  }
+}
+
+/// generated route for
 /// [AlbumScreen]
 class AlbumRoute extends PageRouteInfo<AlbumRouteArgs> {
   AlbumRoute({
@@ -99,7 +145,7 @@ class AllSongsRoute extends PageRouteInfo<AllSongsRouteArgs> {
   AllSongsRoute({
     Key? key,
     required String query,
-    required List<Song> initialAudios,
+    required List<PlayerAudio> initialAudios,
     List<PageRouteInfo>? children,
   }) : super(
           AllSongsRoute.name,
@@ -137,7 +183,7 @@ class AllSongsRouteArgs {
 
   final String query;
 
-  final List<Song> initialAudios;
+  final List<PlayerAudio> initialAudios;
 
   @override
   String toString() {
@@ -387,9 +433,12 @@ class SearchTab extends PageRouteInfo<void> {
 class SelectPlaylistRoute extends PageRouteInfo<SelectPlaylistRouteArgs> {
   SelectPlaylistRoute({
     Key? key,
-    required Song song,
+    required PlayerAudio song,
     required List<Playlist> ownedPlaylists,
-    required void Function(Playlist) addToPlaylist,
+    required void Function(
+      Playlist,
+      PlayerAudio,
+    ) addToPlaylist,
     List<PageRouteInfo>? children,
   }) : super(
           SelectPlaylistRoute.name,
@@ -428,11 +477,14 @@ class SelectPlaylistRouteArgs {
 
   final Key? key;
 
-  final Song song;
+  final PlayerAudio song;
 
   final List<Playlist> ownedPlaylists;
 
-  final void Function(Playlist) addToPlaylist;
+  final void Function(
+    Playlist,
+    PlayerAudio,
+  ) addToPlaylist;
 
   @override
   String toString() {

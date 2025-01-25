@@ -3,10 +3,10 @@ import 'dart:ui';
 import 'package:elementary/elementary.dart';
 import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:vk_music/domain/model/player_audio.dart';
 import 'package:vk_music/ui/features/audio_bottom_sheet/widgets/audio_bottom_sheet_item.dart';
 import 'package:vk_music/ui/widgets/common/media_cover.dart';
 
-import '../../../data/models/song/song.dart';
 import 'audio_bottom_sheet_wm.dart';
 
 class AudioBottomSheetWidget extends ElementaryWidget<IAudioBottomSheetWidgetModel> {
@@ -15,7 +15,7 @@ class AudioBottomSheetWidget extends ElementaryWidget<IAudioBottomSheetWidgetMod
     required this.audio,
   }) : super(defaultAudioBottomSheetWidgetModelFactory);
 
-  final Song audio;
+  final PlayerAudio audio;
 
   @override
   Widget build(IAudioBottomSheetWidgetModel wm) {
@@ -34,7 +34,7 @@ class AudioBottomSheetWidget extends ElementaryWidget<IAudioBottomSheetWidgetMod
                     const SizedBox(height: 4),
                     ListTile(
                       leading: CoverWidget(
-                        photoUrl: audio.album?.thumb.photo135,
+                        photoUrl: audio.album?.thumb?.photo135,
                       ),
                       titleTextStyle: const TextStyle(fontWeight: FontWeight.bold),
                       title: Text(
@@ -60,6 +60,11 @@ class AudioBottomSheetWidget extends ElementaryWidget<IAudioBottomSheetWidgetMod
                       title: const Text('Добавить в плейлист'),
                       onTap: wm.onAddToPlaylistTap,
                     ),
+                    AudioBottomSheetItem(
+                      title: const Text('Слушать далее'),
+                      leading: const Icon(Icons.playlist_play_rounded),
+                      onTap: () => wm.onPlayNextTap(audio),
+                    ),
                     if (audio.mainArtists != null)
                       AudioBottomSheetItem(
                         title: const Text('Перейти к исполнителю'),
@@ -71,6 +76,12 @@ class AudioBottomSheetWidget extends ElementaryWidget<IAudioBottomSheetWidgetMod
                         title: const Text('Найти исполнителя'),
                         leading: const Icon(Icons.search_rounded),
                         onTap: () => wm.onFindArtistTap(audio),
+                      ),
+                    if (audio.album != null)
+                      AudioBottomSheetItem(
+                        title: const Text('Перейти к альбому'),
+                        leading: const Icon(Icons.album_rounded),
+                        onTap: () => wm.onGoToAlbumTap(audio),
                       ),
                     if (audios.contains(audio))
                       AudioBottomSheetItem(

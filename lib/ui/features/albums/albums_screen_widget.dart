@@ -22,21 +22,21 @@ class AlbumsScreen extends ElementaryWidget<IAlbumsScreenWidgetModel> {
       extendBodyBehindAppBar: true,
       drawer: const AppDrawer(),
       body: EntityStateNotifierBuilder(
-          listenableEntityState: wm.playlists,
-          loadingBuilder: (_, __) => const Center(child: CircularProgressIndicator()),
-          builder: (context, playlists) {
-            return GridView.count(
-              padding: EdgeInsets.only(
-                top: MediaQuery.of(context).padding.top + 8,
-                bottom: kToolbarHeight,
-              ),
-              crossAxisCount: 3,
-              crossAxisSpacing: 4,
-              mainAxisSpacing: 4,
-              childAspectRatio: 120 / 155,
-              children: playlists!.map((e) => PlaylistWidget(playlist: e)).toList(),
-            );
-          }),
+        listenableEntityState: wm.playlists,
+        loadingBuilder: (_, __) => const Center(child: CircularProgressIndicator()),
+        builder: (context, playlists) {
+          return GridView.count(
+            crossAxisCount: 3,
+            crossAxisSpacing: 4,
+            mainAxisSpacing: 4,
+            childAspectRatio: 120 / 155,
+            children: [
+              ...playlists!.map((e) => PlaylistWidget(playlist: e)),
+              SizedBox(height: wm.mediaQuery.padding.bottom)
+            ],
+          );
+        },
+      ),
     );
   }
 }

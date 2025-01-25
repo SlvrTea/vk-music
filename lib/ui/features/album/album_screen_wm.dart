@@ -5,7 +5,9 @@ abstract interface class IAlbumScreenWidgetModel implements IWidgetModel {
 
   AppTheme get theme;
 
-  EntityValueListenable<List<Song>> get albumItems;
+  MediaQueryData get mediaQuery;
+
+  EntityValueListenable<List<PlayerAudio>> get albumItems;
 
   EntityValueListenable<Playlist> get album;
 
@@ -30,10 +32,13 @@ class AlbumScreenWidgetModel extends WidgetModel<AlbumScreen, IAlbumScreenModel>
   @override
   AppTheme get theme => wmTheme;
 
-  final _albumItemsEntity = EntityStateNotifier<List<Song>>();
+  @override
+  MediaQueryData get mediaQuery => wmMediaQuery;
+
+  final _albumItemsEntity = EntityStateNotifier<List<PlayerAudio>>();
 
   @override
-  EntityValueListenable<List<Song>> get albumItems => _albumItemsEntity;
+  EntityValueListenable<List<PlayerAudio>> get albumItems => _albumItemsEntity;
 
   final _albumEntity = EntityStateNotifier<Playlist>();
 
@@ -75,10 +80,8 @@ class AlbumScreenWidgetModel extends WidgetModel<AlbumScreen, IAlbumScreenModel>
 
   @override
   Future<void> onEditPlaylistTap() async {
-    final res = await context.router.push<Playlist?>(EditPlaylistRoute(playlist: _albumEntity.value.data!));
-    if (res != null) {
-      _albumEntity.content(res);
-      _albumItemsEntity.loading();
+    final res = await context.router.push<bool?>(EditPlaylistRoute(playlist: _albumEntity.value.data!));
+    if (res == true) {
       await _loadItems();
     }
   }

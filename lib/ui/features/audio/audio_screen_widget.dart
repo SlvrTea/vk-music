@@ -52,19 +52,43 @@ class AudioScreen extends ElementaryWidget<IAudioScreenWidgetModel> {
                   listenableEntityState: wm.audios,
                   builder: (context, audios) => SliverReorderableList(
                     itemBuilder: (context, index) {
-                      final playlist = PlayerPlaylist.formSongList(audios);
+                      final playlist = PlayerPlaylist(children: audios);
                       return ReorderableDelayedDragStartListener(
-                          key: ValueKey(index),
-                          index: index,
-                          child: AudioTile(
-                            song: audios[index],
-                            playlist: playlist,
-                            withMenu: true,
-                          ));
+                        key: ValueKey(index),
+                        index: index,
+                        child: AudioTile(
+                          audio: audios[index],
+                          playlist: playlist,
+                          withMenu: true,
+                        ),
+                      );
                     },
                     itemCount: audios!.length,
-                    onReorder: (oldIndex, newIndex) {},
+                    onReorder: (currentIndex, newIndex) {
+                      if (currentIndex < newIndex) {
+                        newIndex -= 1;
+                      }
+                      if (newIndex == 0) {
+                        final oldSong = wm.audios.value.data![0];
+                        wm.onReorder(audioId: wm.audios.value.data![currentIndex].id, before: oldSong.id);
+                        wm.player.move(currentIndex, newIndex);
+                        wm.moveAudio(currentIndex, newIndex);
+                      } else if (newIndex < currentIndex) {
+                        final oldSong = wm.audios.value.data![newIndex - 1];
+                        wm.onReorder(audioId: wm.audios.value.data![currentIndex].id, after: oldSong.id);
+                        wm.player.move(currentIndex, newIndex);
+                        wm.moveAudio(currentIndex, newIndex);
+                      } else {
+                        final oldSong = wm.audios.value.data![newIndex];
+                        wm.onReorder(audioId: wm.audios.value.data![currentIndex].id, after: oldSong.id);
+                        wm.player.move(currentIndex, newIndex);
+                        wm.moveAudio(currentIndex, newIndex);
+                      }
+                    },
                   ),
+                ),
+                SliverToBoxAdapter(
+                  child: SizedBox(height: wm.mediaQuery.padding.bottom),
                 )
               ],
             );

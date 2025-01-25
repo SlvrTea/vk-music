@@ -2,13 +2,14 @@ import 'package:elementary/elementary.dart';
 import 'package:logger/logger.dart';
 import 'package:vk_music/data/models/artist/artist.dart';
 import 'package:vk_music/data/models/playlist/playlist.dart';
-import 'package:vk_music/data/models/song/song.dart';
 import 'package:vk_music/domain/audio/audio_repository.dart';
+
+import '../../../domain/model/player_audio.dart';
 
 abstract interface class IArtistScreenModel extends ElementaryModel {
   Future<Artist> getArtist(String artistId);
 
-  Future<List<Song>> getAudiosByArtist(String artistId, {int? count, int? offset});
+  Future<List<PlayerAudio>> getAudiosByArtist(String artistId, {int? count, int? offset});
 
   Future<List<Playlist>> getAlbumsByArtist(String artistId, {int? count, int? offset});
 
@@ -34,7 +35,7 @@ class ArtistScreenModel extends IArtistScreenModel {
   }
 
   @override
-  Future<List<Song>> getAudiosByArtist(String artistId, {int? count, int? offset}) async {
+  Future<List<PlayerAudio>> getAudiosByArtist(String artistId, {int? count, int? offset}) async {
     try {
       final res = await _audioRepository.getAudiosByArtist(artistId: artistId, count: count, offset: offset);
       return res.items;

@@ -1,7 +1,7 @@
 part of 'album_screen.dart';
 
 abstract interface class IAlbumScreenModel extends ElementaryModel {
-  Future<List<Song>> loadAlbumAudios(Playlist album);
+  Future<List<PlayerAudio>> loadAlbumAudios(Playlist album);
 
   Future<void> followPlaylist(Playlist playlist);
 
@@ -14,7 +14,7 @@ class AlbumScreenModel extends IAlbumScreenModel {
   final AudioRepository _audioRepository;
 
   @override
-  Future<List<Song>> loadAlbumAudios(Playlist album) async {
+  Future<List<PlayerAudio>> loadAlbumAudios(Playlist album) async {
     final res = await _audioRepository.getAudios(
       ownerId: album.ownerId.toString(),
       albumId: album.id,

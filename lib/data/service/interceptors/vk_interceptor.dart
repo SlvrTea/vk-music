@@ -15,7 +15,6 @@ class VKInterceptor extends Interceptor {
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     final deviceId = _getRandomString(16);
 
-    print(user?.accessToken);
     final url = '/method/${options.path}?v=$apiVersion&access_token=${user?.accessToken}&device_id=$deviceId&'
         '${options.uri.queryParameters.entries.map((e) => '${e.key}=${e.value}').join('&')}';
     final hash = crypto.md5.convert(utf8.encode(url + (user?.secret ?? '')));

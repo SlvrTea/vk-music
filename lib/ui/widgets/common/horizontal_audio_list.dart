@@ -1,21 +1,20 @@
+import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
+import 'package:vk_music/domain/model/player_audio.dart';
 import 'package:vk_music/ui/features/audio_bottom_sheet/audio_bottom_sheet_widget.dart';
 
-import '../../../data/models/song/song.dart';
-import '../../../domain/enum/play_status.dart';
 import '../../../domain/model/player_playlist.dart';
-import '../../../domain/state/music_player/music_player_cubit.dart';
 import 'media_cover.dart';
 
 class HorizontalMusicList extends StatelessWidget {
-  const HorizontalMusicList(this.songs, {super.key});
+  const HorizontalMusicList(this.audios, {super.key});
 
-  final List<Song> songs;
+  final List<PlayerAudio> audios;
 
   @override
   Widget build(BuildContext context) {
-    final playlist = PlayerPlaylist.formSongList(songs);
+    final playlist = PlayerPlaylist(children: audios);
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height * .21,
@@ -25,36 +24,46 @@ class HorizontalMusicList extends StatelessWidget {
         crossAxisSpacing: 8,
         crossAxisCount: 3,
         scrollDirection: Axis.horizontal,
-        children: songs.map((e) => _CustomSongTile(song: e, playlist: playlist)).toList(),
+        children: audios.map((e) => _CustomSongTile(audio: e, playlist: playlist)).toList(),
       ),
     );
   }
 }
 
 class _CustomSongTile extends StatelessWidget {
-  const _CustomSongTile({super.key, required this.song, required this.playlist});
+  const _CustomSongTile({super.key, required this.audio, required this.playlist});
 
-  final Song song;
+  final PlayerAudio audio;
   final PlayerPlaylist playlist;
 
   @override
   Widget build(BuildContext context) {
-    final musicBloc = context.watch<MusicPlayerCubit>();
-    final duration = song.duration;
+    final player = context.global.audioPlayer;
+    final duration = audio.duration!.inSeconds;
     final width = MediaQuery.of(context).size.width * .75;
     return InkWell(
-      onTap: () => musicBloc.play(playlist: playlist, song: song),
+      onTap: () => player.playFrom(playlist: playlist, initialIndex: playlist.children.indexOf(audio)),
       child: SizedBox(
         width: width,
         child: Row(
           children: [
             CoverWidget(
-                photoUrl: song.album?.thumb.photo270,
-                child: musicBloc.state.song == song
-                    ? musicBloc.state.playStatus != PlayStatus.trackInPause
-                        ? const Icon(Icons.pause_rounded, size: 40)
-                        : const Icon(Icons.play_arrow_rounded, size: 40)
-                    : null),
+              photoUrl: audio.album?.thumb?.photo270,
+              child: DoubleValueListenableBuilder(
+                firstValue: player.currentAudioNotifier,
+                secondValue: player.isPlaying,
+                builder: (context, currentAudio, isPlaying) {
+                  if (currentAudio == null || isPlaying == null) return const SizedBox.shrink();
+                  if (currentAudio == audio) {
+                    if (isPlaying) {
+                      return const Icon(Icons.pause_rounded, size: 40);
+                    }
+                    return const Icon(Icons.play_arrow_rounded, size: 40);
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
+            ),
             const SizedBox(width: 8),
             SizedBox(
               width: width * .5,
@@ -62,22 +71,24 @@ class _CustomSongTile extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(song.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
-                  Text(song.artist, maxLines: 1, overflow: TextOverflow.ellipsis),
+                  Text(
+                    audio.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text(audio.artist, maxLines: 1, overflow: TextOverflow.ellipsis),
                 ],
               ),
             ),
             const Spacer(),
             Text('${duration ~/ 60}:${duration % 60 < 10 ? '0${duration % 60}' : duration % 60}'),
             IconButton(
-                onPressed: () {
-                  showModalBottomSheet(context: context, builder: (_) => AudioBottomSheetWidget(audio: song));
-                },
-                icon: const Icon(Icons.more_vert_rounded)),
-            const SizedBox(width: 8),
+              onPressed: () {
+                showModalBottomSheet(context: context, builder: (_) => AudioBottomSheetWidget(audio: audio));
+              },
+              icon: const Icon(Icons.more_vert_rounded),
+            ),
           ],
         ),
       ),

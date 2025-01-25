@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:elementary/elementary.dart';
 import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
 import 'package:vk_music/common/utils/router/app_router.dart';
 import 'package:vk_music/ui/widgets/common/app_drawer.dart';
 import 'package:vk_music/ui/widgets/common/horizontal_audio_list.dart';
@@ -64,10 +65,10 @@ class SearchScreen extends ElementaryWidget<ISearchScreenWidgetModel> {
                     return EntityStateNotifierBuilder(
                       listenableEntityState: wm.recommendations,
                       builder: (context, recs) {
-                        final playlist = PlayerPlaylist.formSongList(recs!);
+                        final playlist = PlayerPlaylist(children: recs!);
                         return SingleChildScrollView(
                           child: Column(
-                            children: [...recs.map((e) => AudioTile(song: e, playlist: playlist, withMenu: true))],
+                            children: [...recs.map((e) => AudioTile(audio: e, playlist: playlist, withMenu: true))],
                           ),
                         );
                       },
@@ -91,7 +92,7 @@ class SearchScreen extends ElementaryWidget<ISearchScreenWidgetModel> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    const Text('ВСЕ ТРЕКИ'),
+                                    Text('Все треки', style: context.global.theme.t2),
                                     TextButton(
                                       onPressed: () => context.router.push(AllSongsRoute(
                                         initialAudios: audios.data!,
@@ -113,7 +114,7 @@ class SearchScreen extends ElementaryWidget<ISearchScreenWidgetModel> {
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      const Text('ВСЕ ПЛЕЙЛИСТЫ'),
+                                      Text('Все плейлисты', style: context.global.theme.t2),
                                       TextButton(onPressed: () {}, child: const Text('Показать все')),
                                     ],
                                   ),
@@ -137,7 +138,7 @@ class SearchScreen extends ElementaryWidget<ISearchScreenWidgetModel> {
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      const Text('АЛЬБОМЫ'),
+                                      Text('Альбомы', style: context.global.theme.t2),
                                       TextButton(onPressed: () {}, child: const Text('Показать все')),
                                     ],
                                   ),
@@ -153,6 +154,7 @@ class SearchScreen extends ElementaryWidget<ISearchScreenWidgetModel> {
                                         .toList(),
                                   ),
                                 ),
+                                SizedBox(height: wm.mediaQuery.padding.bottom),
                               ],
                             ],
                           ),

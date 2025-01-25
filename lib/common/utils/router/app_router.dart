@@ -2,8 +2,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
 import '../../../data/models/playlist/playlist.dart';
-import '../../../data/models/song/song.dart';
+import '../../../domain/model/player_audio.dart';
 import '../../../ui/features/album/album_screen.dart';
+import '../../../ui/features/album/widget/add_audio_screen.dart';
 import '../../../ui/features/album/widget/edit_playlist_screen.dart';
 import '../../../ui/features/albums/albums_screen_widget.dart';
 import '../../../ui/features/artist/artist_screen.dart';
@@ -56,6 +57,10 @@ class AppRouter extends RootStackRouter {
                   page: EditPlaylistRoute.page,
                   path: '',
                 ),
+                AutoRoute(
+                  page: AddAudioRoute.page,
+                  path: '',
+                ),
               ],
             ),
             AutoRoute(
@@ -79,6 +84,10 @@ class AppRouter extends RootStackRouter {
                   page: AllSongsRoute.page,
                   path: '',
                 ),
+                AutoRoute(
+                  page: AddAudioRoute.page,
+                  path: '',
+                ),
               ],
             ),
             AutoRoute(
@@ -99,6 +108,10 @@ class AppRouter extends RootStackRouter {
                 ),
                 AutoRoute(
                   page: EditPlaylistRoute.page,
+                  path: '',
+                ),
+                AutoRoute(
+                  page: AddAudioRoute.page,
                   path: '',
                 ),
               ],

@@ -2,7 +2,7 @@ import 'package:auto_route/annotations.dart';
 import 'package:elementary/elementary.dart';
 import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:vk_music/data/models/song/song.dart';
+import 'package:vk_music/domain/model/player_audio.dart';
 import 'package:vk_music/domain/model/player_playlist.dart';
 import 'package:vk_music/ui/widgets/common/audio_tile.dart';
 
@@ -17,7 +17,7 @@ class AllSongsScreen extends ElementaryWidget<IAllSongsWidgetModel> {
   }) : super(defaultAllSongsWidgetModelFactory);
 
   final String query;
-  final List<Song> initialAudios;
+  final List<PlayerAudio> initialAudios;
 
   @override
   Widget build(IAllSongsWidgetModel wm) {
@@ -35,12 +35,12 @@ class AllSongsScreen extends ElementaryWidget<IAllSongsWidgetModel> {
           listenableEntityState: wm.audios,
           loadingBuilder: (_, __) => const Center(child: CircularProgressIndicator()),
           builder: (context, audios) {
-            final playlist = PlayerPlaylist.formSongList(audios!);
+            final playlist = PlayerPlaylist(children: audios!);
             return SingleChildScrollView(
               child: Column(
                 children: audios
                     .map((e) => AudioTile(
-                          song: e,
+                          audio: e,
                           playlist: playlist,
                           withMenu: true,
                         ))

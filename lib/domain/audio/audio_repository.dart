@@ -9,9 +9,9 @@ import 'package:vk_music/data/models/response/search/search_playlists_response/s
 import 'package:vk_music/data/models/response/search/search_response/search_response.dart';
 
 import '../../data/models/response/search/search_artists_response/search_artists_response.dart';
-import '../../data/models/song/song.dart';
 import '../../data/models/user/user.dart';
 import '../../data/provider/audio/audio_service.dart';
+import '../model/player_audio.dart';
 
 class AudioRepository {
   AudioRepository(this._audioService, this._user);
@@ -20,7 +20,7 @@ class AudioRepository {
 
   final User? _user;
 
-  final userAudiosNotifier = ValueNotifier<List<Song>?>(null);
+  final userAudiosNotifier = ValueNotifier<List<PlayerAudio>?>(null);
 
   final userAlbumsNotifier = ValueNotifier<List<Playlist>?>(null);
 
@@ -38,17 +38,20 @@ class AudioRepository {
     return res;
   }
 
-  Future<void> add(Song audio) async {
+  Future<void> add(PlayerAudio audio) async {
     _audioService.add(ownerId: audio.ownerId, shortId: audio.id);
     userAudiosNotifier.value = [audio, ...userAudiosNotifier.value!];
   }
 
-  Future<Playlist> addToPlaylist(Playlist playlist, List<Song> audios) => _audioService.addToPlaylist(
-      ownerId: _user!.userId, playlistId: playlist.id, audioIds: audios.map((e) => e.id).join(','));
+  Future<void> addToPlaylist(Playlist playlist, List<PlayerAudio> audios) => _audioService.addToPlaylist(
+        ownerId: playlist.ownerId.toString(),
+        playlistId: playlist.id,
+        audioIds: audios.map((e) => '${e.ownerId}_${e.id}').join(','),
+      );
 
   Future<Playlist> createPlaylist(String title) => _audioService.createPlaylist(ownerId: _user!.userId, title: title);
 
-  Future<void> delete(Song audio) async {
+  Future<void> delete(PlayerAudio audio) async {
     _audioService.delete(ownerId: _user!.userId, shortId: audio.id);
     final newContent = [...userAudiosNotifier.value!];
     newContent.remove(audio);
@@ -64,7 +67,7 @@ class AudioRepository {
 
   Future<void> followPlaylist(Playlist playlist) async {
     _audioService.followPlaylist(ownerId: playlist.ownerId.toString(), playlistId: playlist.id);
-    userAlbumsNotifier.value = [playlist, ...userAlbumsNotifier.value!];
+    userAlbumsNotifier.value = [playlist.copyWith(isFollowing: true), ...userAlbumsNotifier.value!];
   }
 
   Future<GetPlaylistsResponse> getPlaylists({int? count, int? offset}) async {
@@ -95,4 +98,34 @@ class AudioRepository {
 
   Future<GetPlaylistsResponse> getAlbumsByArtist({required String artistId, int? count, int? offset}) =>
       _audioService.getAlbumsByArtist(artistId: artistId, count: count, offset: offset);
+
+  Future<void> reorder({required int audioId, int? before, int? after}) =>
+      _audioService.reorder(ownerId: _user!.userId, audioId: audioId.toString(), before: before, after: after);
+
+  Future<Playlist> getPlaylistById({required int ownerId, required int playlistId}) =>
+      _audioService.getPlaylistById(ownerId: ownerId, playlistId: playlistId);
+
+  Future savePlaylist({
+    required int playlistId,
+    required int ownerId,
+    required String title,
+    required String description,
+    List<String>? audiosToAdd,
+    List<List<int>>? reorder,
+  }) =>
+      _audioService.savePlaylist(
+        playlistId: playlistId,
+        ownerId: ownerId,
+        title: title,
+        description: description,
+        audiosToAdd: audiosToAdd?.join(','),
+        reorder: reorder?.join(','),
+      );
+
+  Future<void> removeFromPlaylist({
+    required int playlistId,
+    required int ownerId,
+    required List<String> audioIds,
+  }) =>
+      _audioService.removeFromPlaylist(playlistId: playlistId, ownerId: ownerId, audioIds: audioIds.join(','));
 }

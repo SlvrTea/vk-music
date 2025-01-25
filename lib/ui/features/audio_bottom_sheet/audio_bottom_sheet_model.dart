@@ -4,32 +4,34 @@ import 'package:logger/logger.dart';
 import 'package:vk_music/data/models/playlist/playlist.dart';
 import 'package:vk_music/domain/audio/audio_repository.dart';
 
-import '../../../data/models/song/song.dart';
+import '../../../domain/model/player_audio.dart';
 
 abstract interface class IAudioBottomSheetModel extends ElementaryModel {
-  ValueNotifier<List<Song>?> get userAudiosNotifier;
+  ValueNotifier<List<PlayerAudio>?> get userAudiosNotifier;
 
-  Future<void> addAudio(Song audio);
+  Future<void> addAudio(PlayerAudio audio);
 
-  Future<void> deleteAudio(Song audio);
+  Future<void> deleteAudio(PlayerAudio audio);
 
-  Future<void> addToPlaylist(Playlist playlist, Song audio);
+  Future<void> addToPlaylist(Playlist playlist, PlayerAudio audio);
 
   Future<List<Playlist>> getPlaylists();
+
+  Future<Playlist> getPlaylist(PlayerAudio audio);
 }
 
 class AudioBottomSheetModel extends IAudioBottomSheetModel {
   AudioBottomSheetModel(this._audioRepository);
 
   @override
-  ValueNotifier<List<Song>?> get userAudiosNotifier => _audioRepository.userAudiosNotifier;
+  ValueNotifier<List<PlayerAudio>?> get userAudiosNotifier => _audioRepository.userAudiosNotifier;
 
-  final _logger = Logger();
+  final _logger = Logger(printer: PrettyPrinter(methodCount: 4));
 
   final AudioRepository _audioRepository;
 
   @override
-  Future<void> addAudio(Song audio) async {
+  Future<void> addAudio(PlayerAudio audio) async {
     try {
       await _audioRepository.add(audio);
     } on Exception catch (e) {
@@ -38,7 +40,7 @@ class AudioBottomSheetModel extends IAudioBottomSheetModel {
   }
 
   @override
-  Future<void> deleteAudio(Song audio) async {
+  Future<void> deleteAudio(PlayerAudio audio) async {
     try {
       await _audioRepository.delete(audio);
     } on Exception catch (e) {
@@ -47,7 +49,7 @@ class AudioBottomSheetModel extends IAudioBottomSheetModel {
   }
 
   @override
-  Future<void> addToPlaylist(Playlist playlist, Song audio) async {
+  Future<void> addToPlaylist(Playlist playlist, PlayerAudio audio) async {
     try {
       await _audioRepository.addToPlaylist(playlist, [audio]);
     } on Exception catch (e) {
@@ -60,6 +62,17 @@ class AudioBottomSheetModel extends IAudioBottomSheetModel {
     try {
       final res = await _audioRepository.getPlaylists();
       return res.items;
+    } on Exception catch (e) {
+      _logger.e(e);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<Playlist> getPlaylist(PlayerAudio audio) async {
+    try {
+      final res = await _audioRepository.getPlaylistById(ownerId: audio.album!.ownerId, playlistId: audio.album!.id);
+      return res;
     } on Exception catch (e) {
       _logger.e(e);
       rethrow;

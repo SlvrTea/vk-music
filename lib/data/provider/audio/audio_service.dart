@@ -16,36 +16,38 @@ part 'audio_service.g.dart';
 abstract class AudioService {
   factory AudioService(Dio dio, {String? baseUrl}) = _AudioService;
 
-  @GET('audio.add')
+  @POST('audio.add')
   Future<void> add({
     @Query('owner_id') required int ownerId,
     @Query('audio_id') required int shortId,
   });
 
-  @GET('audio.addToPlaylist')
-  Future<Playlist> addToPlaylist({
+  @POST('audio.addToPlaylist')
+  Future<void> addToPlaylist({
     @Query('owner_id') required String ownerId,
     @Query('playlist_id') required int playlistId,
     @Query('audio_ids') required String audioIds,
   });
 
-  @GET('audio.createPlaylist')
+  @POST('audio.createPlaylist')
   Future<Playlist> createPlaylist({
     @Query('owner_id') required String ownerId,
     @Query('title') required String title,
   });
 
-  @GET('audio.delete')
+  @POST('audio.delete')
   Future<void> delete({
     @Query('owner_id') required String ownerId,
     @Query('audio_id') required int shortId,
   });
 
-  @GET('audio.deletePlaylist')
-  Future<void> deletePlaylist(
-      {@Query('owner_id') required String ownerId, @Query('playlist_id') required int playlistId});
+  @POST('audio.deletePlaylist')
+  Future<void> deletePlaylist({
+    @Query('owner_id') required String ownerId,
+    @Query('playlist_id') required int playlistId,
+  });
 
-  @GET('audio.followPlaylist')
+  @POST('audio.followPlaylist')
   Future<void> followPlaylist({
     @Query('owner_id') required String ownerId,
     @Query('playlist_id') required int playlistId,
@@ -119,5 +121,36 @@ abstract class AudioService {
   @GET('audio.getArtistById')
   Future<Artist> getArtistById({
     @Query('artist_id') required String artistId,
+  });
+
+  @GET('audio.reorder')
+  Future<void> reorder({
+    @Query('owner_id') required String ownerId,
+    @Query('audio_id') required String audioId,
+    @Query('before') int? before,
+    @Query('after') int? after,
+  });
+
+  @GET('audio.getPlaylistById')
+  Future<Playlist> getPlaylistById({
+    @Query('owner_id') required int ownerId,
+    @Query('playlist_id') required int playlistId,
+  });
+
+  @POST('execute.savePlaylist')
+  Future savePlaylist({
+    @Query('playlist_id') required int playlistId,
+    @Query('owner_id') required int ownerId,
+    @Query('title') required String title,
+    @Query('description') required String description,
+    @Query('audio_ids_to_add') String? audiosToAdd,
+    @Query('reorder_actions') String? reorder,
+  });
+
+  @POST('audio.removeFromPlaylist')
+  Future<void> removeFromPlaylist({
+    @Query('playlist_id') required int playlistId,
+    @Query('owner_id') required int ownerId,
+    @Query('audio_ids') required String audioIds,
   });
 }
