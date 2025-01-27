@@ -72,7 +72,7 @@ class AppAudioPlayer extends AudioPlayer {
   Future<void> move(int currentIndex, int newIndex) async {
     try {
       if (audioSource == null) return;
-      await (audioSource as PlayerPlaylist).move(currentIndex, newIndex);
+      await (audioSource as PlayerPlaylist).move(currentIndex, newIndex > currentIndex ? newIndex - 1 : newIndex);
       currentPlaylist.value = audioSource as PlayerPlaylist;
     } on Exception catch (e) {
       _logger.e(e);
