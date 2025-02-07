@@ -99,9 +99,12 @@ class AppAudioPlayer extends AudioPlayer {
         if (nextIndex != null && index != -1) {
           move(index, index < nextIndex! ? nextIndex! - 1 : nextIndex!);
         } else {
-          (audioSource as PlayerPlaylist)
-              .children
-              .insert(nextIndex ?? (audioSource as PlayerPlaylist).children.length, audio);
+          await (audioSource as PlayerPlaylist).add(audio);
+          if (nextIndex != null) {
+            await (audioSource as PlayerPlaylist)
+                .move(((audioSource as PlayerPlaylist).children.length - 1), nextIndex!);
+          }
+          currentPlaylist.value = audioSource as PlayerPlaylist;
         }
       } else {
         final playlist = PlayerPlaylist(children: [audio]);
