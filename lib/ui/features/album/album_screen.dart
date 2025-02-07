@@ -4,13 +4,13 @@ import 'package:auto_route/auto_route.dart';
 import 'package:elementary/elementary.dart';
 import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:vk_music/common/styles/app_theme.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
 import 'package:vk_music/common/utils/extensions/widget_model_extension.dart';
 import 'package:vk_music/common/utils/router/app_router.dart';
 import 'package:vk_music/data/models/playlist/playlist.dart';
 import 'package:vk_music/domain/audio/audio_repository.dart';
 import 'package:vk_music/domain/model/player_audio.dart';
+import 'package:vk_music/ui/theme/app_theme.dart';
 
 import '../../../data/models/user/user.dart';
 import '../../../domain/model/player_playlist.dart';

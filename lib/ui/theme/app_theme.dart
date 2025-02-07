@@ -10,7 +10,7 @@ class AppTheme {
 
   factory AppTheme.fromConfig(AppConfig config) => AppTheme(
         colors: config.isDarkMode ? AppColors.dark() : AppColors.light(),
-        accentColor: Color(config.accentColor),
+        accentColor: config.accentColor,
         brightness: config.isDarkMode ? Brightness.dark : Brightness.light,
       );
 

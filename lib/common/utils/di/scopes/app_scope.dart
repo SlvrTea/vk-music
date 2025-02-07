@@ -5,7 +5,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:provider/provider.dart';
-import 'package:vk_music/common/styles/app_theme.dart';
+import 'package:system_theme/system_theme.dart';
 import 'package:vk_music/common/utils/config/app_config.dart';
 import 'package:vk_music/common/utils/di/app_async_dependency.dart';
 import 'package:vk_music/common/utils/router/app_router.dart';
@@ -13,6 +13,7 @@ import 'package:vk_music/data/provider/audio/audio_service.dart';
 import 'package:vk_music/data/service/interceptors/vk_interceptor.dart';
 import 'package:vk_music/domain/audio/audio_repository.dart';
 import 'package:vk_music/domain/auth/auth_repository.dart';
+import 'package:vk_music/ui/theme/app_theme.dart';
 
 import '../../../../data/models/user/user.dart';
 import '../../../../domain/audio_player/audio_player_controller.dart';
@@ -28,6 +29,8 @@ class AppGlobalDependency extends AppAsyncDependency {
 
   late AppTheme theme;
 
+  late Color systemColor;
+
   late final AppRouter router;
 
   late final Dio dio;
@@ -41,6 +44,7 @@ class AppGlobalDependency extends AppAsyncDependency {
   @override
   Future<void> initAsync(BuildContext context) async {
     final AppConfig? cfg = Hive.box('config').get('main');
+    systemColor = SystemTheme.accentColor.accent;
 
     if (cfg != null) {
       config = cfg;
@@ -51,7 +55,8 @@ class AppGlobalDependency extends AppAsyncDependency {
           : AppTheme.light();
       config = AppConfig(
         isDarkMode: SchedulerBinding.instance.platformDispatcher.platformBrightness == Brightness.dark ? true : false,
-        accentColor: theme.accentColor.value,
+        accentColor: systemColor,
+        isSystem: true,
       );
     }
 
@@ -66,11 +71,11 @@ class AppGlobalDependency extends AppAsyncDependency {
     audioPlayer = AppAudioPlayer();
   }
 
-  void updateConfig(AppConfig newConfig) async {
+  Future<void> updateConfig(AppConfig newConfig) async {
     config = newConfig;
-    theme = AppTheme.fromConfig(newConfig);
-    await Hive.box('config').put('main', newConfig);
-
+    theme = AppTheme.fromConfig(config);
+    await Hive.box('config').delete('main');
+    await Hive.box('config').put('main', config);
     notifyListeners();
   }
 

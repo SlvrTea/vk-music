@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
 
 class App extends StatefulWidget {
@@ -18,24 +19,12 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-  ThemeData? _theme;
-
-  @override
-  void initState() {
-    context.global.addListener(() {
-      setState(() {
-        _theme = context.global.theme.themeData;
-      });
-    });
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
-    final global = context.global;
+    final global = context.watch<AppGlobalDependency>();
     return MaterialApp.router(
       scrollBehavior: ScrollConfiguration.of(context).copyWith(physics: const BouncingScrollPhysics()),
-      theme: _theme ?? global.theme.themeData,
+      theme: global.theme.themeData,
       routerDelegate: global.router.delegate(),
       routeInformationParser: global.router.defaultRouteParser(),
     );
