@@ -8,6 +8,7 @@ import '../../../ui/features/album/widget/add_audio_screen.dart';
 import '../../../ui/features/album/widget/edit_playlist_screen.dart';
 import '../../../ui/features/albums/albums_screen_widget.dart';
 import '../../../ui/features/artist/artist_screen.dart';
+import '../../../ui/features/artist/widget/all_audios/all_songs_screen.dart';
 import '../../../ui/features/audio/audio_screen_widget.dart';
 import '../../../ui/features/audio_bottom_sheet/widgets/select_playlist.dart';
 import '../../../ui/features/auth/auth_screen_widget.dart';
@@ -16,6 +17,7 @@ import '../../../ui/features/search/search_screen_widget.dart';
 import '../../../ui/features/search/widget/all_audios/all_songs_screen.dart';
 import '../../../ui/features/settings/settings_screen.dart';
 import '../../../ui/features/tfa/tfa_screen.dart';
+import '../../../ui/widgets/common/all_playlists_screen.dart';
 import 'app_tabs.dart';
 
 part 'app_router.gr.dart';
@@ -61,6 +63,14 @@ class AppRouter extends RootStackRouter {
                   page: AddAudioRoute.page,
                   path: '',
                 ),
+                AutoRoute(
+                  page: AllPlaylistsRoute.page,
+                  path: '',
+                ),
+                AutoRoute(
+                  page: AllArtistSongsRoute.page,
+                  path: '',
+                ),
               ],
             ),
             AutoRoute(
@@ -88,6 +98,14 @@ class AppRouter extends RootStackRouter {
                   page: AddAudioRoute.page,
                   path: '',
                 ),
+                AutoRoute(
+                  page: AllPlaylistsRoute.page,
+                  path: '',
+                ),
+                AutoRoute(
+                  page: AllArtistSongsRoute.page,
+                  path: '',
+                ),
               ],
             ),
             AutoRoute(
@@ -112,6 +130,14 @@ class AppRouter extends RootStackRouter {
                 ),
                 AutoRoute(
                   page: AddAudioRoute.page,
+                  path: '',
+                ),
+                AutoRoute(
+                  page: AllPlaylistsRoute.page,
+                  path: '',
+                ),
+                AutoRoute(
+                  page: AllArtistSongsRoute.page,
                   path: '',
                 ),
               ],

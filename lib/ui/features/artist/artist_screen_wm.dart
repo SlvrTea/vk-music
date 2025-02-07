@@ -1,10 +1,12 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:elementary/elementary.dart';
 import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:vk_music/common/styles/app_theme.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
 import 'package:vk_music/common/utils/extensions/widget_model_extension.dart';
+import 'package:vk_music/common/utils/router/app_router.dart';
 import 'package:vk_music/data/models/artist/artist.dart';
+import 'package:vk_music/ui/theme/app_theme.dart';
 
 import '../../../data/models/playlist/playlist.dart';
 import '../../../domain/model/player_audio.dart';
@@ -23,6 +25,12 @@ abstract interface class IArtistScreenWidgetModel implements IWidgetModel {
   EntityValueListenable<List<Playlist>> get albums;
 
   EntityValueListenable<List<Playlist>> get playlists;
+
+  void onAllAudiosTap();
+
+  void onAllPlaylistsTap();
+
+  void onAllAlbumsTap();
 }
 
 ArtistScreenWidgetModel defaultArtistScreenWidgetModelFactory(BuildContext context) =>
@@ -114,4 +122,14 @@ class ArtistScreenWidgetModel extends WidgetModel<ArtistScreen, IArtistScreenMod
       rethrow;
     }
   }
+
+  @override
+  void onAllAudiosTap() =>
+      context.router.push(AllArtistSongsRoute(artistId: widget.artistId, initialAudios: _audiosEntity.value.data!));
+
+  @override
+  void onAllPlaylistsTap() => context.router.push(AllPlaylistsRoute(playlists: _playlistsEntity.value.data!));
+
+  @override
+  void onAllAlbumsTap() => context.router.push(AllPlaylistsRoute(playlists: _albumsEntity.value.data!));
 }

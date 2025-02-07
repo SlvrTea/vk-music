@@ -81,7 +81,7 @@ class ArtistScreen extends ElementaryWidget<IArtistScreenWidgetModel> {
                       children: [
                         Text('Популярное', style: wm.appTheme.t2),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: wm.onAllAudiosTap,
                           child: const Text('Показать все'),
                         ),
                       ],
@@ -102,7 +102,7 @@ class ArtistScreen extends ElementaryWidget<IArtistScreenWidgetModel> {
                       children: [
                         Text('Релизы', style: wm.appTheme.t2),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: wm.onAllAlbumsTap,
                           child: const Text('Показать все'),
                         ),
                       ],
@@ -138,7 +138,7 @@ class ArtistScreen extends ElementaryWidget<IArtistScreenWidgetModel> {
                               children: [
                                 Text('Встречается в плейлистах', style: wm.appTheme.t2),
                                 TextButton(
-                                  onPressed: () {},
+                                  onPressed: wm.onAllPlaylistsTap,
                                   child: const Text('Показать все'),
                                 ),
                               ],

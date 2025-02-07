@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:system_theme/system_theme.dart';
 import 'package:vk_music/common/utils/config/app_config.dart';
 import 'package:vk_music/common/utils/di/app_async_dependency.dart';
 
@@ -19,9 +20,12 @@ void main() async {
 
   Hive.registerAdapter<User>(UserAdapter());
   Hive.registerAdapter<AppConfig>(AppConfigAdapter());
+  Hive.registerAdapter<Color>(ColorAdapter());
   await Hive.initFlutter();
   await Hive.openBox('userBox');
   await Hive.openBox('config');
+
+  SystemTheme.fallbackColor = Colors.cyanAccent;
 
   runApp(
     AsyncDependencyWidget<AppGlobalDependency>(

@@ -27,6 +27,9 @@ class AppDrawer extends StatelessWidget {
                 onPressed: () {
                   Hive.box('userBox').delete('user');
                   context.global.audioPlayer.stop();
+                  context.global.audioRepository
+                    ..userAudiosNotifier.value = []
+                    ..userAlbumsNotifier.value = [];
                   context.router.replace(const AuthRoute());
                 },
                 child: const Row(

@@ -103,7 +103,7 @@ class AudioBottomSheetWidgetModel extends WidgetModel<AudioBottomSheetWidget, IA
       ));
 
   @override
-  void onGoToArtistTap(String artistId) => context.router.push(ArtistRoute(artistId: artistId));
+  void onGoToArtistTap(String artistId) => context.router.popAndPush(ArtistRoute(artistId: artistId));
 
   @override
   void onFindArtistTap(PlayerAudio audio) {

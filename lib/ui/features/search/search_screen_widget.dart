@@ -115,7 +115,7 @@ class SearchScreen extends ElementaryWidget<ISearchScreenWidgetModel> {
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text('Все плейлисты', style: context.global.theme.t2),
-                                      TextButton(onPressed: () {}, child: const Text('Показать все')),
+                                      TextButton(onPressed: wm.onAllPlaylistsTap, child: const Text('Показать все')),
                                     ],
                                   ),
                                 ),
@@ -139,7 +139,7 @@ class SearchScreen extends ElementaryWidget<ISearchScreenWidgetModel> {
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text('Альбомы', style: context.global.theme.t2),
-                                      TextButton(onPressed: () {}, child: const Text('Показать все')),
+                                      TextButton(onPressed: wm.onAllAlbumsTap, child: const Text('Показать все')),
                                     ],
                                   ),
                                 ),
