@@ -65,15 +65,24 @@ class _MainBody extends StatelessWidget {
               ),
             ),
             const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 16),
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               child: SliderBar(),
             ),
             const Spacer(),
-            Text(
-              audio.title,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24, overflow: TextOverflow.ellipsis),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Text(
+                audio.title,
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24, overflow: TextOverflow.ellipsis),
+              ),
             ),
-            Text(player.currentAudioNotifier.value!.artist, style: const TextStyle(fontSize: 16)),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25),
+              child: Text(
+                player.currentAudioNotifier.value!.artist,
+                style: const TextStyle(fontSize: 16),
+              ),
+            ),
             const Spacer(),
             const Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

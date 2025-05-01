@@ -24,7 +24,6 @@ class AudioBar extends StatelessWidget {
             ),
             Expanded(
               child: ListTile(
-                titleAlignment: ListTileTitleAlignment.center,
                 title: Center(
                   child: Text(
                     audio!.title,
@@ -41,8 +40,11 @@ class AudioBar extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(
-              child: MusicBarNextAudioButton(),
+            const Padding(
+              padding: EdgeInsets.only(right: 16),
+              child: SizedBox(
+                child: MusicBarNextAudioButton(),
+              ),
             ),
           ],
         ),
