@@ -22,20 +22,24 @@ class AudioBar extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: SizedBox(child: MusicBarPlayButton()),
             ),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  audio!.title,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                  maxLines: 1,
+            Expanded(
+              child: ListTile(
+                titleAlignment: ListTileTitleAlignment.center,
+                title: Center(
+                  child: Text(
+                    audio!.title,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    maxLines: 1,
+                  ),
                 ),
-                Text(
-                  audio.artist,
-                  style: const TextStyle(overflow: TextOverflow.ellipsis),
-                  maxLines: 1,
+                subtitle: Center(
+                  child: Text(
+                    audio.artist,
+                    style: const TextStyle(overflow: TextOverflow.ellipsis),
+                    maxLines: 1,
+                  ),
                 ),
-              ],
+              ),
             ),
             const SizedBox(
               child: MusicBarNextAudioButton(),

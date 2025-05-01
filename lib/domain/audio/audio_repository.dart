@@ -18,11 +18,13 @@ class AudioRepository {
 
   final AudioService _audioService;
 
-  final User? _user;
+  User? _user;
 
   final userAudiosNotifier = ValueNotifier<List<PlayerAudio>?>(null);
 
   final userAlbumsNotifier = ValueNotifier<List<Playlist>?>(null);
+
+  void updateUser(User? user) => _user = user;
 
   Future<GetResponse> getAudios({
     required String ownerId,

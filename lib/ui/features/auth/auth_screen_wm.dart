@@ -81,7 +81,11 @@ class AuthScreenWidgetModel extends WidgetModel<AuthScreen, IAuthScreenModel> im
       if (userResp == null) {
         return;
       }
-      context.global.user = userResp;
+      if (context.mounted) {
+        context.global
+          ..user = userResp
+          ..audioRepository.updateUser(userResp);
+      }
       _userEntity.content(userResp);
     } on DioException catch (e) {
       if (e.response == null) {

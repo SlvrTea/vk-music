@@ -1,4 +1,3 @@
-
 import 'package:elementary/elementary.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:logger/logger.dart';
@@ -29,7 +28,7 @@ class AuthScreenModel extends IAuthScreenModel {
   void _cacheUser(User user, {LoopMode loopMode = LoopMode.off, bool shuffle = false}) {
     _logger.i('Write user to cache');
     userBox.put('user', user);
-    userBox.put('loopMode', loopMode);
+    userBox.put('loopMode', loopMode.index);
     userBox.put('shuffle', shuffle);
   }
 
@@ -42,9 +41,19 @@ class AuthScreenModel extends IAuthScreenModel {
       user = res;
     } else {
       user = User(
-        accessToken: url.split('access_token=').last.split('&').first,
-        secret: url.split('secret=').last,
-        userId: url.split('user_id=').last.split('&').first
+          accessToken: url
+              .split('access_token=')
+              .last
+              .split('&')
+              .first,
+          secret: url
+              .split('secret=')
+              .last,
+          userId: url
+              .split('user_id=')
+              .last
+              .split('&')
+              .first
       );
     }
     _cacheUser(user);

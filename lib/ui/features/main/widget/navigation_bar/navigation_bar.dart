@@ -52,7 +52,10 @@ class NavBar extends StatelessWidget {
             final index = items.indexOf(item);
             return Expanded(
               child: GestureDetector(
-                onTap: () => onItemSelected(index),
+                onTap: () {
+                  print(123);
+                  onItemSelected(index);
+                },
                 child: _NavBarItem(
                   item: item,
                   isSelected: index == selectedIndex,
