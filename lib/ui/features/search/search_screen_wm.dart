@@ -156,6 +156,7 @@ class SearchScreenWidgetModel extends WidgetModel<SearchScreen, ISearchScreenMod
 
   @override
   Future<void> search({required String query}) async {
+    _widgetStateEntity.loading();
     await Future.wait([
       searchAudios(query: query),
       searchPlaylists(query: query),
