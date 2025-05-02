@@ -15,11 +15,11 @@ class AudioBar extends StatelessWidget {
           isScrollControlled: true, context: context, builder: (_) => const AudioDetailBottomSheet()),
       child: ValueListenableBuilder(
         valueListenable: player.currentAudioNotifier,
-        builder: (context, audio, child) => Row(
+        builder: (context, audio, _) => Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.only(left: 16),
               child: SizedBox(child: MusicBarPlayButton()),
             ),
             Expanded(
@@ -27,7 +27,7 @@ class AudioBar extends StatelessWidget {
                 title: Center(
                   child: Text(
                     audio!.title,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold, overflow: TextOverflow.ellipsis),
                     maxLines: 1,
                   ),
                 ),
@@ -42,9 +42,7 @@ class AudioBar extends StatelessWidget {
             ),
             const Padding(
               padding: EdgeInsets.only(right: 16),
-              child: SizedBox(
-                child: MusicBarNextAudioButton(),
-              ),
+              child: SizedBox(child: MusicBarNextAudioButton()),
             ),
           ],
         ),
