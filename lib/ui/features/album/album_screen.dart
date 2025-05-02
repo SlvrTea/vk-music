@@ -9,6 +9,7 @@ import 'package:vk_music/common/utils/extensions/widget_model_extension.dart';
 import 'package:vk_music/common/utils/router/app_router.dart';
 import 'package:vk_music/data/models/playlist/playlist.dart';
 import 'package:vk_music/domain/audio/audio_repository.dart';
+import 'package:vk_music/domain/audio_player/audio_player_controller.dart';
 import 'package:vk_music/domain/model/player_audio.dart';
 import 'package:vk_music/ui/theme/app_theme.dart';
 
@@ -30,6 +31,9 @@ class AlbumScreen extends ElementaryWidget<IAlbumScreenWidgetModel> {
 
   @override
   Widget build(IAlbumScreenWidgetModel wm) {
+    final buttonStyle = ElevatedButton.styleFrom(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    );
     return Scaffold(
       body: DoubleValueListenableBuilder(
           firstValue: wm.albumItems,
@@ -103,14 +107,10 @@ class AlbumScreen extends ElementaryWidget<IAlbumScreenWidgetModel> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: ElevatedButton.icon(
-                          onPressed: () {
-                            //TODO: extract to wm
-                            context.global.audioPlayer.playFrom(
-                              playlist: PlayerPlaylist(children: items.data!),
-                            );
-                          },
+                          onPressed: wm.playFrom,
                           label: const Text('Слушать'),
                           icon: const Icon(Icons.play_arrow_rounded),
+                          style: buttonStyle,
                         ),
                       ),
                       if (album.data!.original == null && album.data!.ownerId.toString() == context.global.user!.userId)
@@ -118,14 +118,24 @@ class AlbumScreen extends ElementaryWidget<IAlbumScreenWidgetModel> {
                           onPressed: wm.onEditPlaylistTap,
                           label: const Text('Изменить'),
                           icon: const Icon(Icons.edit_rounded),
+                          style: buttonStyle,
                         ),
                       if (album.data!.original != null || album.data!.ownerId.toString() != context.global.user!.userId)
                         album.data!.isFollowing
                             ? IconButton.filled(
                                 onPressed: wm.onDeletePlaylistTap,
                                 icon: const Icon(Icons.check_rounded),
+                                constraints: const BoxConstraints(
+                                  minWidth: 90,
+                                ),
+                                style: buttonStyle,
                               )
-                            : ElevatedButton.icon(onPressed: wm.onFollowPlaylistTap, label: const Text('Добавить')),
+                            : ElevatedButton.icon(
+                                onPressed: wm.onFollowPlaylistTap,
+                                icon: const Icon(Icons.add),
+                                label: const Text('Добавить'),
+                                style: buttonStyle,
+                              ),
                     ],
                   ),
                 ),
@@ -138,13 +148,35 @@ class AlbumScreen extends ElementaryWidget<IAlbumScreenWidgetModel> {
                     ),
                   ),
                 const SliverToBoxAdapter(child: Divider()),
-                ...items.data!.map((e) => SliverToBoxAdapter(
-                      child: AudioTile(
-                        audio: e,
-                        playlist: PlayerPlaylist(children: items.data!),
-                        withMenu: true,
-                      ),
-                    )),
+                if (items.data != null)
+                  ...items.data!
+                      .map((e) => SliverToBoxAdapter(
+                            child: AudioTile(
+                              audio: e,
+                              playlist: PlayerPlaylist(children: items.data!),
+                              withMenu: true,
+                            ),
+                          ))
+                      .toList()
+                    ..insert(
+                        0,
+                        SliverToBoxAdapter(
+                          child: ListTile(
+                            leading: SizedBox(
+                              width: 55,
+                              child: Icon(
+                                Icons.shuffle_rounded,
+                                size: 32,
+                                color: wm.theme.accentColor,
+                              ),
+                            ),
+                            title: Text(
+                              'Перемешать все',
+                              style: wm.theme.c3.copyWith(color: wm.theme.accentColor),
+                            ),
+                            onTap: wm.playShuffled,
+                          ),
+                        )),
                 SliverToBoxAdapter(child: SizedBox(height: wm.mediaQuery.padding.bottom)),
               ],
             );

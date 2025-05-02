@@ -16,6 +16,10 @@ abstract interface class IAlbumScreenWidgetModel implements IWidgetModel {
   Future<void> onDeletePlaylistTap();
 
   Future<void> onEditPlaylistTap();
+
+  void playFrom();
+
+  void playShuffled();
 }
 
 AlbumScreenWidgetModel defaultAlbumScreenWidgetModelFactory(BuildContext context) =>
@@ -45,8 +49,12 @@ class AlbumScreenWidgetModel extends WidgetModel<AlbumScreen, IAlbumScreenModel>
   @override
   EntityValueListenable<Playlist> get album => _albumEntity;
 
+  late final AppAudioPlayer _player;
+
   @override
   void initWidgetModel() {
+    _player = context.global.audioPlayer;
+
     _albumEntity.content(widget.playlist);
     _initAsync();
     super.initWidgetModel();
@@ -85,4 +93,12 @@ class AlbumScreenWidgetModel extends WidgetModel<AlbumScreen, IAlbumScreenModel>
       await _loadItems();
     }
   }
+
+  @override
+  void playFrom() => _player.playFrom(playlist: PlayerPlaylist(children: _albumItemsEntity.value.data!));
+
+  @override
+  void playShuffled() => _player
+    ..setShuffleModeEnabled(true)
+    ..playFrom(playlist: PlayerPlaylist(children: _albumItemsEntity.value.data!));
 }
