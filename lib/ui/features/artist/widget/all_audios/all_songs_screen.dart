@@ -23,31 +23,33 @@ class AllArtistSongsScreen extends ElementaryWidget<IAllSongsWidgetModel> {
   Widget build(IAllSongsWidgetModel wm) {
     return Scaffold(
       appBar: AppBar(),
-      body: NotificationListener<ScrollEndNotification>(
-        onNotification: (scrollEnd) {
-          final metric = scrollEnd.metrics;
-          if (metric.pixels + 200 >= metric.maxScrollExtent) {
-            wm.loadMore();
-          }
-          return true;
-        },
-        child: EntityStateNotifierBuilder(
-          listenableEntityState: wm.audios,
-          loadingBuilder: (_, __) => const Center(child: CircularProgressIndicator()),
-          builder: (context, audios) {
-            final playlist = PlayerPlaylist(children: audios!);
-            return SingleChildScrollView(
-              child: Column(
-                children: audios
-                    .map((e) => AudioTile(
-                          audio: e,
-                          playlist: playlist,
-                          withMenu: true,
-                        ))
-                    .toList(),
-              ),
-            );
+      body: SafeArea(
+        child: NotificationListener<ScrollEndNotification>(
+          onNotification: (scrollEnd) {
+            final metric = scrollEnd.metrics;
+            if (metric.pixels + 200 >= metric.maxScrollExtent) {
+              wm.loadMore();
+            }
+            return true;
           },
+          child: EntityStateNotifierBuilder(
+            listenableEntityState: wm.audios,
+            loadingBuilder: (_, __) => const Center(child: CircularProgressIndicator()),
+            builder: (context, audios) {
+              final playlist = PlayerPlaylist(children: audios!);
+              return SingleChildScrollView(
+                child: Column(
+                  children: audios
+                      .map((e) => AudioTile(
+                            audio: e,
+                            playlist: playlist,
+                            withMenu: true,
+                          ))
+                      .toList(),
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
