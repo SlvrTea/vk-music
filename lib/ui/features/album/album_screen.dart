@@ -14,7 +14,6 @@ import 'package:vk_music/domain/model/player_audio.dart';
 import 'package:vk_music/ui/theme/app_theme.dart';
 
 import '../../../data/models/user/user.dart';
-import '../../../domain/model/player_playlist.dart';
 import '../../widgets/common/audio_tile.dart';
 
 part 'album_screen_model.dart';
@@ -153,7 +152,7 @@ class AlbumScreen extends ElementaryWidget<IAlbumScreenWidgetModel> {
                       .map((e) => SliverToBoxAdapter(
                             child: AudioTile(
                               audio: e,
-                              playlist: PlayerPlaylist(children: items.data!),
+                              playlist: items.data!,
                               withMenu: true,
                             ),
                           ))

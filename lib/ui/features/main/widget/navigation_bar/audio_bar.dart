@@ -13,39 +13,42 @@ class AudioBar extends StatelessWidget {
     return GestureDetector(
       onTap: () => showModalBottomSheet(
           isScrollControlled: true, context: context, builder: (_) => const AudioDetailBottomSheet()),
-      child: ValueListenableBuilder(
-        valueListenable: player.currentAudioNotifier,
-        builder: (context, audio, _) => Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Padding(
-              padding: EdgeInsets.only(left: 16),
-              child: SizedBox(child: MusicBarPlayButton()),
-            ),
-            Expanded(
-              child: ListTile(
-                title: Center(
-                  child: Text(
-                    audio!.title,
-                    style: const TextStyle(fontWeight: FontWeight.bold, overflow: TextOverflow.ellipsis),
-                    maxLines: 1,
+      child: ListenableBuilder(
+        listenable: player,
+        builder: (context, _) {
+          final audio = player.currentAudio;
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(left: 16),
+                child: SizedBox(child: MusicBarPlayButton()),
+              ),
+              Expanded(
+                child: ListTile(
+                  title: Center(
+                    child: Text(
+                      audio!.title,
+                      style: const TextStyle(fontWeight: FontWeight.bold, overflow: TextOverflow.ellipsis),
+                      maxLines: 1,
+                    ),
                   ),
-                ),
-                subtitle: Center(
-                  child: Text(
-                    audio.artist,
-                    style: const TextStyle(overflow: TextOverflow.ellipsis),
-                    maxLines: 1,
+                  subtitle: Center(
+                    child: Text(
+                      audio.artist,
+                      style: const TextStyle(overflow: TextOverflow.ellipsis),
+                      maxLines: 1,
+                    ),
                   ),
                 ),
               ),
-            ),
-            const Padding(
-              padding: EdgeInsets.only(right: 16),
-              child: SizedBox(child: MusicBarNextAudioButton()),
-            ),
-          ],
-        ),
+              const Padding(
+                padding: EdgeInsets.only(right: 16),
+                child: SizedBox(child: MusicBarNextAudioButton()),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

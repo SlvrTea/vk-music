@@ -18,7 +18,7 @@ class SliderBar extends StatelessWidget {
               progress: position.data ?? const Duration(),
               buffered: buffered.data ?? const Duration(),
               thumbRadius: 6,
-              total: player.currentAudioNotifier.value!.duration!,
+              total: player.currentAudio!.duration!,
               onSeek: (duration) => player.seek(duration),
             );
           },

@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:provider/provider.dart';
 import 'package:system_theme/system_theme.dart';
@@ -40,7 +39,7 @@ class AppGlobalDependency extends AppAsyncDependency {
 
   late final AudioRepository audioRepository;
 
-  late final AppAudioPlayer audioPlayer;
+  late final AppAudioPlayerController audioPlayer;
 
   @override
   Future<void> initAsync(BuildContext context) async {
@@ -70,9 +69,7 @@ class AppGlobalDependency extends AppAsyncDependency {
 
     authRepository = AuthRepository();
     audioRepository = AudioRepository(audioService, user);
-    audioPlayer = AppAudioPlayer()
-      ..setShuffleModeEnabled(userBox.get('shuffle'))
-      ..setLoopMode(LoopMode.values[userBox.get('loopMode')]);
+    audioPlayer = AppAudioPlayerController();
   }
 
   Future<void> updateConfig(AppConfig newConfig) async {

@@ -17,7 +17,7 @@ enum SearchState { recommendations, search }
 abstract interface class ISearchScreenWidgetModel implements IWidgetModel {
   MediaQueryData get mediaQuery;
 
-  AppAudioPlayer get player;
+  AppAudioPlayerController get player;
 
   EntityValueListenable<List<PlayerAudio>> get recommendations;
 
@@ -67,7 +67,7 @@ class SearchScreenWidgetModel extends WidgetModel<SearchScreen, ISearchScreenMod
   MediaQueryData get mediaQuery => wmMediaQuery;
 
   @override
-  AppAudioPlayer get player => context.global.audioPlayer;
+  AppAudioPlayerController get player => context.global.audioPlayer;
 
   final _recommendationsEntity = EntityStateNotifier<List<PlayerAudio>>();
 

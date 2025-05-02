@@ -8,7 +8,6 @@ import 'package:vk_music/ui/widgets/common/app_drawer.dart';
 import 'package:vk_music/ui/widgets/common/horizontal_audio_list.dart';
 import 'package:vk_music/ui/widgets/common/playlist_widget.dart';
 
-import '../../../domain/model/player_playlist.dart';
 import '../../widgets/common/audio_tile.dart';
 import '../../widgets/common/custom_app_bar.dart';
 import 'search_screen_wm.dart';
@@ -74,10 +73,9 @@ class SearchScreen extends ElementaryWidget<ISearchScreenWidgetModel> {
                       loadingBuilder: (_, __) => const Center(child: CircularProgressIndicator()),
                       listenableEntityState: wm.recommendations,
                       builder: (context, recs) {
-                        final playlist = PlayerPlaylist(children: recs!);
                         return SingleChildScrollView(
                           child: Column(
-                            children: [...recs.map((e) => AudioTile(audio: e, playlist: playlist, withMenu: true))],
+                            children: [...recs!.map((e) => AudioTile(audio: e, playlist: recs, withMenu: true))],
                           ),
                         );
                       },

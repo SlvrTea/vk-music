@@ -3,8 +3,6 @@ import 'dart:ui';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
-import 'package:vk_music/domain/model/player_audio.dart';
-import 'package:vk_music/domain/model/player_playlist.dart';
 import 'package:vk_music/ui/features/main/widget/navigation_bar/slider_bar.dart';
 import 'package:vk_music/ui/widgets/common/audio_tile.dart';
 
@@ -52,9 +50,10 @@ class _MainBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final player = context.global.audioPlayer;
-    return ValueListenableBuilder(
-      valueListenable: player.currentAudioNotifier,
-      builder: (context, audio, _) {
+    return ListenableBuilder(
+      listenable: player,
+      builder: (context, _) {
+        final audio = player.currentAudio;
         return Column(
           children: [
             Padding(
@@ -80,7 +79,7 @@ class _MainBody extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25),
               child: Text(
-                player.currentAudioNotifier.value!.artist,
+                audio.artist,
                 style: const TextStyle(fontSize: 16),
               ),
             ),
@@ -129,9 +128,10 @@ class _MusicList extends StatelessWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          ValueListenableBuilder<PlayerPlaylist?>(
-            valueListenable: player.currentPlaylist,
-            builder: (context, playlist, _) {
+          ListenableBuilder(
+            listenable: player,
+            builder: (context, _) {
+              final playlist = player.currentPlaylist;
               return SliverReorderableList(
                 itemCount: playlist!.length,
                 itemBuilder: (context, index) {
@@ -139,21 +139,13 @@ class _MusicList extends StatelessWidget {
                     key: ValueKey(index),
                     index: index,
                     child: AudioTile(
-                      audio: player.shuffleModeEnabled
-                          ? playlist.children[playlist.shuffleIndices[index]] as PlayerAudio
-                          : playlist.children[index] as PlayerAudio,
+                      audio: player.shuffleModeEnabled ? playlist[player.shuffleIndices[index]] : playlist[index],
                       playlist: playlist,
                       withMenu: true,
                     ),
                   );
                 },
-                onReorder: (currentIndex, newIndex) {
-                  if (player.shuffleModeEnabled) {
-                    player.moveShuffle(currentIndex, newIndex);
-                    return;
-                  }
-                  player.move(currentIndex, newIndex);
-                },
+                onReorder: player.move,
                 proxyDecorator: _proxyDecorator,
               );
             },

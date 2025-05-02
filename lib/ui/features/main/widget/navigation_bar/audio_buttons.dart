@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
 
@@ -11,11 +10,13 @@ class MusicBarPlayButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final player = context.global.audioPlayer;
-    return ValueListenableBuilder(
-      valueListenable: player.isPlaying,
-      builder: (context, playing, child) => GestureDetector(
-        onTap: playing! ? player.pause : player.play,
-        child: playing ? Icon(Icons.pause_rounded, size: size ?? 32) : Icon(Icons.play_arrow_rounded, size: size ?? 32),
+    return ListenableBuilder(
+      listenable: player,
+      builder: (context, _) => GestureDetector(
+        onTap: player.playing! ? player.pause : player.play,
+        child: player.playing!
+            ? Icon(Icons.pause_rounded, size: size ?? 32)
+            : Icon(Icons.play_arrow_rounded, size: size ?? 32),
       ),
     );
   }
@@ -69,14 +70,12 @@ class _ShuffleButtonState extends State<ShuffleButton> {
     return IconButton(
         onPressed: () async {
           player.switchShuffleMode();
-          await Hive.box('userBox').put('shuffle', player.shuffleModeEnabled);
           setState(() {});
         },
         icon: Stack(alignment: Alignment.center, children: [
           player.shuffleModeEnabled
               ? Container(
-                  decoration:
-                      BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.grey.withOpacity(0.3)),
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.grey.withAlpha(75)),
                   width: 46,
                   height: 32,
                 )
@@ -120,7 +119,6 @@ class _LoopModeButtonState extends State<LoopModeButton> {
             case LoopMode.one:
               loopMode = LoopMode.off;
           }
-          await Hive.box('userBox').put('loopMode', loopMode.index);
           setState(() {
             if (loopMode == LoopMode.off) {
               isSelected = false;
@@ -128,13 +126,12 @@ class _LoopModeButtonState extends State<LoopModeButton> {
               isSelected = true;
             }
           });
-          player.setLoopMode(loopMode);
+          player.switchLoopMode(loopMode);
         },
         icon: Stack(alignment: Alignment.center, children: [
           isSelected
               ? Container(
-                  decoration:
-                      BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.grey.withOpacity(0.3)),
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.grey.withAlpha(75)),
                   width: 46,
                   height: 32,
                 )

@@ -14,7 +14,7 @@ import '../../../domain/model/player_audio.dart';
 import 'audio_bottom_sheet_model.dart';
 
 abstract interface class IAudioBottomSheetWidgetModel implements IWidgetModel {
-  AppAudioPlayer get player;
+  AppAudioPlayerController get player;
 
   EntityValueListenable<List<PlayerAudio>> get audios;
 
@@ -43,7 +43,7 @@ class AudioBottomSheetWidgetModel extends WidgetModel<AudioBottomSheetWidget, IA
   AudioBottomSheetWidgetModel(super.model);
 
   @override
-  AppAudioPlayer get player => context.global.audioPlayer;
+  AppAudioPlayerController get player => context.global.audioPlayer;
 
   final _audiosEntity = EntityStateNotifier<List<PlayerAudio>>();
 

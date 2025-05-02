@@ -49,7 +49,7 @@ class AlbumScreenWidgetModel extends WidgetModel<AlbumScreen, IAlbumScreenModel>
   @override
   EntityValueListenable<Playlist> get album => _albumEntity;
 
-  late final AppAudioPlayer _player;
+  late final AppAudioPlayerController _player;
 
   @override
   void initWidgetModel() {
@@ -95,10 +95,10 @@ class AlbumScreenWidgetModel extends WidgetModel<AlbumScreen, IAlbumScreenModel>
   }
 
   @override
-  void playFrom() => _player.playFrom(playlist: PlayerPlaylist(children: _albumItemsEntity.value.data!));
+  void playFrom() => _player.playFrom(playlist: _albumItemsEntity.value.data!);
 
   @override
   void playShuffled() => _player
     ..setShuffleModeEnabled(true)
-    ..playFrom(playlist: PlayerPlaylist(children: _albumItemsEntity.value.data!));
+    ..playFrom(playlist: _albumItemsEntity.value.data!);
 }

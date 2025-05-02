@@ -3,7 +3,6 @@ import 'package:elementary/elementary.dart';
 import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:vk_music/domain/model/player_audio.dart';
-import 'package:vk_music/domain/model/player_playlist.dart';
 import 'package:vk_music/ui/widgets/common/audio_tile.dart';
 
 import 'all_songs_wm.dart';
@@ -36,13 +35,12 @@ class AllSongsScreen extends ElementaryWidget<IAllSongsWidgetModel> {
             listenableEntityState: wm.audios,
             loadingBuilder: (_, __) => const Center(child: CircularProgressIndicator()),
             builder: (context, audios) {
-              final playlist = PlayerPlaylist(children: audios!);
               return SingleChildScrollView(
                 child: Column(
-                  children: audios
+                  children: audios!
                       .map((e) => AudioTile(
                             audio: e,
-                            playlist: playlist,
+                            playlist: audios,
                             withMenu: true,
                           ))
                       .toList(),

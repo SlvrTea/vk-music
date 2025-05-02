@@ -30,9 +30,10 @@ class MainScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: context.global.theme.colors.backgroundColor.withOpacity(0.7),
               ),
-              child: ValueListenableBuilder(
-                  valueListenable: player.currentAudioNotifier,
-                  builder: (context, audio, _) {
+              child: ListenableBuilder(
+                  listenable: player,
+                  builder: (context, _) {
+                    final audio = player.currentAudio;
                     return Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [

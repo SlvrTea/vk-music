@@ -1,17 +1,15 @@
-import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
 import 'package:vk_music/domain/model/player_audio.dart';
 import 'package:vk_music/ui/features/audio_bottom_sheet/audio_bottom_sheet_widget.dart';
 
-import '../../../domain/model/player_playlist.dart';
 import 'media_cover.dart';
 
 class AudioTile extends StatelessWidget {
   final PlayerAudio audio;
   final bool withMenu;
   final int? playlistId;
-  final PlayerPlaylist playlist;
+  final List<PlayerAudio> playlist;
 
   const AudioTile({
     super.key,
@@ -52,10 +50,11 @@ class AudioTile extends StatelessWidget {
           : Text(formatDuration),
       leading: CoverWidget(
         photoUrl: audio.album?.thumb?.photo270,
-        child: DoubleValueListenableBuilder(
-          firstValue: player.currentAudioNotifier,
-          secondValue: player.isPlaying,
-          builder: (context, currentAudio, isPlaying) {
+        child: ListenableBuilder(
+          listenable: player,
+          builder: (context, _) {
+            final isPlaying = player.playing;
+            final currentAudio = player.currentAudio;
             if (currentAudio == null || isPlaying == null) return const SizedBox.shrink();
             if (currentAudio == audio) {
               if (isPlaying) {
@@ -75,7 +74,7 @@ class AudioTile extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
         style: context.global.theme.b1,
       ),
-      onTap: () => player.playFrom(playlist: playlist, initialIndex: playlist.children.indexOf(audio)),
+      onTap: () => player.playFrom(playlist: playlist, initialIndex: playlist.indexOf(audio)),
     );
   }
 }

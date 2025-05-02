@@ -2,7 +2,6 @@ import 'package:auto_route/annotations.dart';
 import 'package:elementary/elementary.dart';
 import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:vk_music/domain/model/player_playlist.dart';
 import 'package:vk_music/ui/features/audio/widget/playlists_section.dart';
 import 'package:vk_music/ui/widgets/common/app_drawer.dart';
 import 'package:vk_music/ui/widgets/common/audio_tile.dart';
@@ -52,13 +51,12 @@ class AudioScreen extends ElementaryWidget<IAudioScreenWidgetModel> {
                   listenableEntityState: wm.audios,
                   builder: (context, audios) => SliverReorderableList(
                     itemBuilder: (context, index) {
-                      final playlist = PlayerPlaylist(children: audios);
                       return ReorderableDelayedDragStartListener(
                         key: ValueKey(index),
                         index: index,
                         child: AudioTile(
                           audio: audios[index],
-                          playlist: playlist,
+                          playlist: audios,
                           withMenu: true,
                         ),
                       );

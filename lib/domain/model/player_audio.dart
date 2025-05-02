@@ -63,4 +63,9 @@ class PlayerAudio extends HlsAudioSource {
       'main_artists': mainArtists?.map((e) => e.toJson()).toList(),
     };
   }
+
+  @override
+  String toString() {
+    return 'Player Audio: $title, $artist';
+  }
 }
