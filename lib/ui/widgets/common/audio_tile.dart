@@ -37,6 +37,7 @@ class AudioTile extends StatelessWidget {
                     showModalBottomSheet(
                       useRootNavigator: true,
                       context: context,
+                      isScrollControlled: true,
                       backgroundColor: context.global.theme.colors.secondaryBackground,
                       builder: (_) => AudioBottomSheetWidget(
                         audio: audio,
