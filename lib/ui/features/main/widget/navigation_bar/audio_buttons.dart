@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
 
@@ -66,8 +67,9 @@ class _ShuffleButtonState extends State<ShuffleButton> {
   Widget build(BuildContext context) {
     final player = context.global.audioPlayer;
     return IconButton(
-        onPressed: () {
+        onPressed: () async {
           player.switchShuffleMode();
+          await Hive.box('userBox').put('shuffle', player.shuffleModeEnabled);
           setState(() {});
         },
         icon: Stack(alignment: Alignment.center, children: [
@@ -109,7 +111,7 @@ class _LoopModeButtonState extends State<LoopModeButton> {
       isSelected = true;
     }
     return IconButton(
-        onPressed: () {
+        onPressed: () async {
           switch (loopMode) {
             case LoopMode.off:
               loopMode = LoopMode.all;
@@ -118,6 +120,7 @@ class _LoopModeButtonState extends State<LoopModeButton> {
             case LoopMode.one:
               loopMode = LoopMode.off;
           }
+          await Hive.box('userBox').put('loopMode', loopMode.index);
           setState(() {
             if (loopMode == LoopMode.off) {
               isSelected = false;
