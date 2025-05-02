@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
 import 'package:vk_music/domain/model/player_audio.dart';
+import 'package:vk_music/domain/model/player_playlist.dart';
 import 'package:vk_music/ui/features/main/widget/navigation_bar/slider_bar.dart';
 import 'package:vk_music/ui/widgets/common/audio_tile.dart';
 
@@ -46,7 +47,7 @@ class AudioDetailBottomSheet extends StatelessWidget {
 }
 
 class _MainBody extends StatelessWidget {
-  const _MainBody({super.key});
+  const _MainBody();
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +106,7 @@ class _MainBody extends StatelessWidget {
 }
 
 class _MusicList extends StatelessWidget {
-  const _MusicList({super.key});
+  const _MusicList();
 
   Widget _proxyDecorator(Widget child, int index, Animation<double> animation) {
     return AnimatedBuilder(
@@ -128,7 +129,7 @@ class _MusicList extends StatelessWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          ValueListenableBuilder(
+          ValueListenableBuilder<PlayerPlaylist?>(
             valueListenable: player.currentPlaylist,
             builder: (context, playlist, _) {
               return SliverReorderableList(

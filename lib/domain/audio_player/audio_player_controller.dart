@@ -40,6 +40,9 @@ class AppAudioPlayer extends AudioPlayer {
     });
   }
 
+  @override
+  PlayerPlaylist? get audioSource => currentPlaylist.value;
+
   final ValueNotifier<int?> currentIndexNotifier = ValueNotifier(null);
   final ValueNotifier<bool?> isPlaying = ValueNotifier(null);
   final ValueNotifier<ProcessingState?> processingStateNotifier = ValueNotifier(null);
@@ -56,10 +59,14 @@ class AppAudioPlayer extends AudioPlayer {
       if (initialIndex != null) {
         if (playerState.playing &&
             initialIndex == currentIndex &&
-            playlist.children[initialIndex] == currentAudioNotifier.value) return pause();
+            playlist.children[initialIndex] == currentAudioNotifier.value) {
+          return pause();
+        }
         if (!playerState.playing &&
             initialIndex == currentIndex &&
-            playlist.children[initialIndex] == currentAudioNotifier.value) return play();
+            playlist.children[initialIndex] == currentAudioNotifier.value) {
+          return play();
+        }
       }
       currentPlaylist.value = playlist;
       await setAudioSource(playlist, initialIndex: initialIndex, initialPosition: Duration.zero);
@@ -72,8 +79,8 @@ class AppAudioPlayer extends AudioPlayer {
   Future<void> move(int currentIndex, int newIndex) async {
     try {
       if (audioSource == null) return;
-      await (audioSource as PlayerPlaylist).move(currentIndex, newIndex > currentIndex ? newIndex - 1 : newIndex);
-      currentPlaylist.value = audioSource as PlayerPlaylist;
+      await audioSource!.move(currentIndex, newIndex > currentIndex ? newIndex - 1 : newIndex);
+      currentPlaylist.value = PlayerPlaylist(children: audioSource!.children as List<PlayerAudio>);
     } on Exception catch (e) {
       _logger.e(e);
     }
@@ -82,7 +89,7 @@ class AppAudioPlayer extends AudioPlayer {
   Future<void> moveShuffle(int currentIndex, int newIndex) async {
     try {
       if (audioSource == null) return;
-      final playlist = audioSource as PlayerPlaylist;
+      final playlist = audioSource;
       //playlist.shuffleIndices.insert(newIndex, playlist.shuffleIndices.removeAt(currentIndex));
       CustomShuffleOrder.pendingMove = (currentIndex, newIndex);
       shuffle();
@@ -94,21 +101,20 @@ class AppAudioPlayer extends AudioPlayer {
 
   Future<void> playNext(PlayerAudio audio) async {
     try {
-      if (currentPlaylist.value != null) {
-        final index = currentPlaylist.value!.children.indexOf(audio);
-        if (nextIndex != null && index != -1) {
-          move(index, index < nextIndex! ? nextIndex! - 1 : nextIndex!);
-        } else {
-          await (audioSource as PlayerPlaylist).add(audio);
-          if (nextIndex != null) {
-            await (audioSource as PlayerPlaylist)
-                .move(((audioSource as PlayerPlaylist).children.length - 1), nextIndex!);
-          }
-          currentPlaylist.value = audioSource as PlayerPlaylist;
-        }
-      } else {
+      if (currentPlaylist.value == null) {
         final playlist = PlayerPlaylist(children: [audio]);
         playFrom(playlist: playlist);
+        return;
+      }
+
+      final index = currentPlaylist.value!.children.indexOf(audio);
+      if (nextIndex != null && index != -1) {
+        await move(index, nextIndex!);
+      } else {
+        await audioSource!.add(audio);
+        if (nextIndex != null) {
+          await audioSource!.move((audioSource!.children.length - 1), nextIndex!);
+        }
       }
     } on Exception catch (e) {
       _logger.e(e);
