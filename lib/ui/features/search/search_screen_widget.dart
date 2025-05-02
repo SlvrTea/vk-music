@@ -53,6 +53,14 @@ class SearchScreen extends ElementaryWidget<ISearchScreenWidgetModel> {
                   onSubmitted: (query) {
                     wm.search(query: query);
                   },
+                  trailing: [
+                    IconButton(
+                      onPressed: () {
+                        wm.getRecommendations();
+                      },
+                      icon: const Icon(Icons.close_rounded),
+                    )
+                  ],
                 ),
               ),
             ),
@@ -63,6 +71,7 @@ class SearchScreen extends ElementaryWidget<ISearchScreenWidgetModel> {
                 builder: (context, state) {
                   if (state == SearchState.recommendations) {
                     return EntityStateNotifierBuilder(
+                      loadingBuilder: (_, __) => const Center(child: CircularProgressIndicator()),
                       listenableEntityState: wm.recommendations,
                       builder: (context, recs) {
                         final playlist = PlayerPlaylist(children: recs!);

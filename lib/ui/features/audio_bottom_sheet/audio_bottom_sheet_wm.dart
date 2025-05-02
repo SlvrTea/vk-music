@@ -110,7 +110,8 @@ class AudioBottomSheetWidgetModel extends WidgetModel<AudioBottomSheetWidget, IA
   @override
   void onFindArtistTap(PlayerAudio audio) => context.router
     ..popUntil((route) => route is! ModalBottomSheetRoute)
-    ..navigate(SearchRoute(initialQuery: audio.artist));
+    ..navigate(SearchRoute(initialQuery: audio.artist))
+    ..notifyAll();
 
   Future<void> _addToPlaylist(Playlist playlist, PlayerAudio audio) async {
     try {

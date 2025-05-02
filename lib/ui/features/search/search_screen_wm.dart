@@ -118,6 +118,13 @@ class SearchScreenWidgetModel extends WidgetModel<SearchScreen, ISearchScreenMod
   void initWidgetModel() {
     _searchController.text = widget.initialQuery ?? '';
     _initAsync();
+    context.router.addListener(() {
+      final router = context.router;
+      if (router.current.pathParams.getString('q') != widget.initialQuery) {
+        search(query: router.current.pathParams.getString('q'));
+        _searchController.text = router.current.pathParams.getString('q');
+      }
+    });
     super.initWidgetModel();
   }
 
@@ -134,9 +141,10 @@ class SearchScreenWidgetModel extends WidgetModel<SearchScreen, ISearchScreenMod
   @override
   Future<void> getRecommendations() async {
     _recommendationsEntity.loading();
+    _widgetStateEntity.content(SearchState.recommendations);
+    _searchController.clear();
     final res = await model.getRecommendations();
     _recommendationsEntity.content(res);
-    _widgetStateEntity.content(SearchState.recommendations);
   }
 
   @override

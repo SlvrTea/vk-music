@@ -75,7 +75,6 @@ class AppRouter extends RootStackRouter {
             ),
             AutoRoute(
               page: SearchTab.page,
-              maintainState: false,
               path: 'search',
               children: [
                 AutoRoute(
