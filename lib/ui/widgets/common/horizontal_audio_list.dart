@@ -14,11 +14,9 @@ class HorizontalMusicList extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * .21,
       child: GridView.count(
-        childAspectRatio: 55 / (MediaQuery.of(context).size.width * .75),
+        childAspectRatio: 63 / (MediaQuery.of(context).size.width * .75),
         mainAxisSpacing: 8,
-        crossAxisSpacing: 8,
         crossAxisCount: 3,
         scrollDirection: Axis.horizontal,
         children: audios.map((e) => _CustomSongTile(audio: e, playlist: audios)).toList(),
@@ -37,7 +35,7 @@ class _CustomSongTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final player = context.global.audioPlayer;
     final duration = audio.duration!.inSeconds;
-    final width = MediaQuery.of(context).size.width * .75;
+    final width = MediaQuery.of(context).size.width * .72;
     return InkWell(
       onTap: () => player.playFrom(playlist: playlist, initialIndex: playlist.indexOf(audio)),
       child: SizedBox(
