@@ -4,13 +4,10 @@ import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
 import 'package:vk_music/common/utils/router/app_router.dart';
-import 'package:vk_music/ui/widgets/common/app_drawer.dart';
 import 'package:vk_music/ui/widgets/common/horizontal_audio_list.dart';
 import 'package:vk_music/ui/widgets/common/playlist_widget.dart';
 
-import '../../../domain/model/player_playlist.dart';
 import '../../widgets/common/audio_tile.dart';
-import '../../widgets/common/custom_app_bar.dart';
 import 'search_screen_wm.dart';
 
 @RoutePage()
@@ -22,12 +19,6 @@ class SearchScreen extends ElementaryWidget<ISearchScreenWidgetModel> {
   @override
   Widget build(ISearchScreenWidgetModel wm) {
     return Scaffold(
-      appBar: const PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight),
-        child: CustomAppBar(),
-      ),
-      extendBodyBehindAppBar: true,
-      drawer: const AppDrawer(),
       body: NotificationListener<ScrollEndNotification>(
         onNotification: (scrollEnd) {
           final metrics = scrollEnd.metrics;
@@ -38,7 +29,7 @@ class SearchScreen extends ElementaryWidget<ISearchScreenWidgetModel> {
         },
         child: CustomScrollView(
           slivers: [
-            const SliverToBoxAdapter(child: SizedBox(height: kToolbarHeight + 16)),
+            SliverToBoxAdapter(child: SizedBox(height: wm.mediaQuery.padding.top)),
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -53,6 +44,14 @@ class SearchScreen extends ElementaryWidget<ISearchScreenWidgetModel> {
                   onSubmitted: (query) {
                     wm.search(query: query);
                   },
+                  trailing: [
+                    IconButton(
+                      onPressed: () {
+                        wm.getRecommendations();
+                      },
+                      icon: const Icon(Icons.close_rounded),
+                    )
+                  ],
                 ),
               ),
             ),
@@ -63,12 +62,12 @@ class SearchScreen extends ElementaryWidget<ISearchScreenWidgetModel> {
                 builder: (context, state) {
                   if (state == SearchState.recommendations) {
                     return EntityStateNotifierBuilder(
+                      loadingBuilder: (_, __) => const Center(child: CircularProgressIndicator()),
                       listenableEntityState: wm.recommendations,
                       builder: (context, recs) {
-                        final playlist = PlayerPlaylist(children: recs!);
                         return SingleChildScrollView(
                           child: Column(
-                            children: [...recs.map((e) => AudioTile(audio: e, playlist: playlist, withMenu: true))],
+                            children: [...recs!.map((e) => AudioTile(audio: e, playlist: recs, withMenu: true))],
                           ),
                         );
                       },

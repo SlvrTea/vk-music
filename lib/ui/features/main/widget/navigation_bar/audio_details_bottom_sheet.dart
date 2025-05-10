@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
-import 'package:vk_music/domain/model/player_audio.dart';
 import 'package:vk_music/ui/features/main/widget/navigation_bar/slider_bar.dart';
 import 'package:vk_music/ui/widgets/common/audio_tile.dart';
 
@@ -20,7 +19,7 @@ class AudioDetailBottomSheet extends StatelessWidget {
         children: [
           Center(
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
+              padding: const EdgeInsets.only(bottom: 8, top: 12),
               child: IconButton(
                 icon: const Icon(Icons.keyboard_arrow_down_rounded),
                 onPressed: () => context.maybePop(),
@@ -46,14 +45,15 @@ class AudioDetailBottomSheet extends StatelessWidget {
 }
 
 class _MainBody extends StatelessWidget {
-  const _MainBody({super.key});
+  const _MainBody();
 
   @override
   Widget build(BuildContext context) {
     final player = context.global.audioPlayer;
-    return ValueListenableBuilder(
-      valueListenable: player.currentAudioNotifier,
-      builder: (context, audio, _) {
+    return ListenableBuilder(
+      listenable: player,
+      builder: (context, _) {
+        final audio = player.currentAudio;
         return Column(
           children: [
             Padding(
@@ -65,15 +65,24 @@ class _MainBody extends StatelessWidget {
               ),
             ),
             const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 16),
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               child: SliderBar(),
             ),
             const Spacer(),
-            Text(
-              audio.title,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24, overflow: TextOverflow.ellipsis),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Text(
+                audio.title,
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24, overflow: TextOverflow.ellipsis),
+              ),
             ),
-            Text(player.currentAudioNotifier.value!.artist, style: const TextStyle(fontSize: 16)),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25),
+              child: Text(
+                audio.artist,
+                style: const TextStyle(fontSize: 16),
+              ),
+            ),
             const Spacer(),
             const Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -96,7 +105,7 @@ class _MainBody extends StatelessWidget {
 }
 
 class _MusicList extends StatelessWidget {
-  const _MusicList({super.key});
+  const _MusicList();
 
   Widget _proxyDecorator(Widget child, int index, Animation<double> animation) {
     return AnimatedBuilder(
@@ -119,9 +128,10 @@ class _MusicList extends StatelessWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          ValueListenableBuilder(
-            valueListenable: player.currentPlaylist,
-            builder: (context, playlist, _) {
+          ListenableBuilder(
+            listenable: player,
+            builder: (context, _) {
+              final playlist = player.currentPlaylist;
               return SliverReorderableList(
                 itemCount: playlist!.length,
                 itemBuilder: (context, index) {
@@ -129,21 +139,13 @@ class _MusicList extends StatelessWidget {
                     key: ValueKey(index),
                     index: index,
                     child: AudioTile(
-                      audio: player.shuffleModeEnabled
-                          ? playlist.children[playlist.shuffleIndices[index]] as PlayerAudio
-                          : playlist.children[index] as PlayerAudio,
+                      audio: player.shuffleModeEnabled ? playlist[player.shuffleIndices[index]] : playlist[index],
                       playlist: playlist,
                       withMenu: true,
                     ),
                   );
                 },
-                onReorder: (currentIndex, newIndex) {
-                  if (player.shuffleModeEnabled) {
-                    player.moveShuffle(currentIndex, newIndex);
-                    return;
-                  }
-                  player.move(currentIndex, newIndex);
-                },
+                onReorder: player.move,
                 proxyDecorator: _proxyDecorator,
               );
             },

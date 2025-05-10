@@ -66,8 +66,16 @@ class _AddAudioTileState extends State<_AddAudioTile> {
   Widget build(BuildContext context) {
     return ListTile(
       leading: CoverWidget(photoUrl: widget.audio.album?.thumb?.photo270),
-      title: Text(widget.audio.title),
-      subtitle: Text(widget.audio.artist),
+      title: Text(
+        widget.audio.title,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+      subtitle: Text(
+        widget.audio.artist,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
       trailing: _isSelected ? const Icon(Icons.check_box_rounded) : const Icon(Icons.check_box_outline_blank_rounded),
       onTap: () {
         widget.onTap(widget.audio);

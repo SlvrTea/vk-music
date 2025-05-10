@@ -1,132 +1,148 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:logger/logger.dart';
-import 'package:vk_music/domain/model/custom_shuffle_order.dart';
 import 'package:vk_music/domain/model/player_audio.dart';
 
-import '../../../domain/model/player_playlist.dart';
-
 class AppAudioPlayer extends AudioPlayer {
-  AppAudioPlayer() {
-    setAutomaticallyWaitsToMinimizeStalling(false);
+  @override
+  List<PlayerAudio> get audioSources => _audioSources;
+  List<PlayerAudio> _audioSources = [];
 
-    setLoopMode(_getLoopMode());
-    setShuffleModeEnabled(_getShuffle());
+  @override
+  Future<Duration?> setAudioSources(
+    List<AudioSource> audioSources, {
+    bool preload = true,
+    int? initialIndex,
+    Duration? initialPosition,
+    ShuffleOrder? shuffleOrder,
+  }) async {
+    assert(audioSources is List<PlayerAudio>);
+    _audioSources = [...audioSources as List<PlayerAudio>];
+    return super.setAudioSources(
+      audioSources,
+      preload: preload,
+      initialIndex: initialIndex,
+      initialPosition: initialPosition,
+      shuffleOrder: shuffleOrder,
+    );
+  }
+}
 
-    _playbackStreamSubscription = playbackEventStream.listen((event) {
-      currentIndexNotifier.value = event.currentIndex;
-      processingStateNotifier.value = event.processingState;
-      if (event.currentIndex != null && audioSource != null) {
-        currentAudioNotifier.value =
-            (audioSource as ConcatenatingAudioSource).children[event.currentIndex!] as PlayerAudio;
-      }
-      if (event.processingState == ProcessingState.completed && nextIndex == null) {
-        currentAudioNotifier.value = null;
-        currentIndexNotifier.value = null;
-        isPlaying.value = false;
-      }
-      if (event.processingState == ProcessingState.idle && playing == false) {
-        currentAudioNotifier.value = null;
-        currentIndexNotifier.value = null;
-        isPlaying.value = false;
-      }
-    });
+class AppAudioPlayerController with ChangeNotifier {
+  AppAudioPlayerController() {
+    _playbackStreamSubscription = _player.playbackEventStream.listen(_listenPlaybackEvent);
+    _playerStateStreamSubscription = _player.playerStateStream.listen(_listenPlayerState);
 
-    _playerStateStreamSubscription = playerStateStream.listen((state) {
-      isPlaying.value = state.playing;
-    });
+    _player
+      ..setAutomaticallyWaitsToMinimizeStalling(false)
+      ..setLoopMode(_getLoopMode())
+      ..setShuffleModeEnabled(_getShuffle());
   }
 
-  final ValueNotifier<int?> currentIndexNotifier = ValueNotifier(null);
-  final ValueNotifier<bool?> isPlaying = ValueNotifier(null);
-  final ValueNotifier<ProcessingState?> processingStateNotifier = ValueNotifier(null);
-  final ValueNotifier<PlayerAudio?> currentAudioNotifier = ValueNotifier(null);
-  final ValueNotifier<PlayerPlaylist?> currentPlaylist = ValueNotifier(null);
+  LoopMode get loopMode => _player.loopMode;
+
+  bool get shuffleModeEnabled => _player.shuffleModeEnabled;
+
+  Stream<Duration> get positionStream => _player.positionStream;
+
+  Stream<Duration> get bufferedPositionStream => _player.bufferedPositionStream;
+
+  List<int> get shuffleIndices => _player.shuffleIndices;
+
+  final _player = AppAudioPlayer();
 
   late final StreamSubscription<PlaybackEvent?> _playbackStreamSubscription;
   late final StreamSubscription<PlayerState?> _playerStateStreamSubscription;
 
-  final _logger = Logger();
+  int? currentIndex;
+  bool? playing;
+  ProcessingState? state;
+  PlayerAudio? currentAudio;
+  List<PlayerAudio>? currentPlaylist;
 
-  Future<void> playFrom({required PlayerPlaylist playlist, int? initialIndex}) async {
-    try {
-      if (initialIndex != null) {
-        if (playerState.playing &&
-            initialIndex == currentIndex &&
-            playlist.children[initialIndex] == currentAudioNotifier.value) return pause();
-        if (!playerState.playing &&
-            initialIndex == currentIndex &&
-            playlist.children[initialIndex] == currentAudioNotifier.value) return play();
+  @override
+  void dispose() {
+    _playbackStreamSubscription.cancel();
+    _playerStateStreamSubscription.cancel();
+    super.dispose();
+  }
+
+  Future<void> play() => _player.play();
+
+  Future<void> pause() => _player.pause();
+
+  Future<void> stop() => _player.stop();
+
+  Future<void> seekToNext() => _player.seekToNext();
+
+  Future<void> seekToPrevious() => _player.seekToPrevious();
+
+  Future<void> seek(Duration position, {int? index}) => _player.seek(position, index: index);
+
+  Future<void> playFrom({required List<PlayerAudio> playlist, int? initialIndex}) async {
+    if (initialIndex != null) {
+      if (_player.playerState.playing && initialIndex == currentIndex && playlist[initialIndex] == currentAudio) {
+        await _player.pause();
+        return notifyListeners();
+      } else if (!_player.playerState.playing &&
+          initialIndex == currentIndex &&
+          playlist[initialIndex] == currentAudio) {
+        await _player.play();
+        return notifyListeners();
       }
-      currentPlaylist.value = playlist;
-      await setAudioSource(playlist, initialIndex: initialIndex, initialPosition: Duration.zero);
-      await play();
-    } on Exception catch (e) {
-      _logger.e(e);
     }
+
+    if (playing ?? false) {
+      await _player.stop();
+    }
+
+    currentPlaylist = [...playlist];
+    await _player.setAudioSources(playlist, initialIndex: initialIndex, initialPosition: Duration.zero);
+    await _player.play();
+    return notifyListeners();
   }
 
   Future<void> move(int currentIndex, int newIndex) async {
-    try {
-      if (audioSource == null) return;
-      await (audioSource as PlayerPlaylist).move(currentIndex, newIndex > currentIndex ? newIndex - 1 : newIndex);
-      currentPlaylist.value = audioSource as PlayerPlaylist;
-    } on Exception catch (e) {
-      _logger.e(e);
-    }
-  }
-
-  Future<void> moveShuffle(int currentIndex, int newIndex) async {
-    try {
-      if (audioSource == null) return;
-      final playlist = audioSource as PlayerPlaylist;
-      //playlist.shuffleIndices.insert(newIndex, playlist.shuffleIndices.removeAt(currentIndex));
-      CustomShuffleOrder.pendingMove = (currentIndex, newIndex);
-      shuffle();
-      currentPlaylist.value = playlist;
-    } on Exception catch (e) {
-      _logger.e(e);
-    }
+    currentPlaylist!.insert(newIndex > currentIndex ? newIndex - 1 : newIndex, currentPlaylist!.removeAt(currentIndex));
+    notifyListeners();
+    await _player.moveAudioSource(currentIndex, newIndex > currentIndex ? newIndex - 1 : newIndex);
   }
 
   Future<void> playNext(PlayerAudio audio) async {
-    try {
-      if (currentPlaylist.value != null) {
-        final index = currentPlaylist.value!.children.indexOf(audio);
-        if (nextIndex != null && index != -1) {
-          move(index, index < nextIndex! ? nextIndex! - 1 : nextIndex!);
-        } else {
-          await (audioSource as PlayerPlaylist).add(audio);
-          if (nextIndex != null) {
-            await (audioSource as PlayerPlaylist)
-                .move(((audioSource as PlayerPlaylist).children.length - 1), nextIndex!);
-          }
-          currentPlaylist.value = audioSource as PlayerPlaylist;
-        }
-      } else {
-        final playlist = PlayerPlaylist(children: [audio]);
-        playFrom(playlist: playlist);
-      }
-    } on Exception catch (e) {
-      _logger.e(e);
+    if (currentPlaylist == null) {
+      return playFrom(playlist: [audio]);
+    }
+
+    final index = currentPlaylist!.indexOf(audio);
+    if (_player.nextIndex != null && index != -1) {
+      return await move(index, _player.nextIndex!);
+    } else if (_player.nextIndex == null) {
+      currentPlaylist!.add(audio);
+      _player.addAudioSource(audio);
+      return notifyListeners();
+    } else if (index == -1 && _player.nextIndex != null) {
+      _player.insertAudioSource(_player.nextIndex!, audio);
+      currentPlaylist!.insert(_player.nextIndex!, audio);
+      return notifyListeners();
+    } else {
+      currentPlaylist!.swap(currentPlaylist!.length - 1, _player.nextIndex!);
+      _player.moveAudioSource(currentPlaylist!.length - 1, _player.nextIndex!);
+      return notifyListeners();
     }
   }
 
-  @override
-  Future<void> dispose() {
-    _playbackStreamSubscription.cancel();
-    _playerStateStreamSubscription.cancel();
-    return super.dispose();
-  }
-
-  void switchShuffleMode() {
+  Future<void> switchShuffleMode() async {
     final mode = !_getShuffle();
     Hive.box('userBox').put('shuffle', mode);
-    setShuffleModeEnabled(mode);
+    await _player.setShuffleModeEnabled(mode);
+    if (mode) _player.shuffle();
+    notifyListeners();
   }
+
+  void setShuffleModeEnabled(bool enabled) => _player.setShuffleModeEnabled(enabled);
 
   void switchLoopMode(LoopMode mode) async {
     switch (mode) {
@@ -137,7 +153,33 @@ class AppAudioPlayer extends AudioPlayer {
       case LoopMode.one:
         Hive.box('userBox').put('loopMode', 2);
     }
-    await setLoopMode(mode);
+    await _player.setLoopMode(mode);
+    notifyListeners();
+  }
+
+  void _listenPlaybackEvent(PlaybackEvent event) {
+    currentIndex = event.currentIndex;
+    state = event.processingState;
+    if (event.currentIndex != null && currentPlaylist != null && (currentPlaylist?.isNotEmpty ?? false)) {
+      currentAudio = currentPlaylist![event.currentIndex!];
+    }
+    if (event.processingState == ProcessingState.completed && _player.nextIndex == null) {
+      currentAudio = null;
+      currentIndex = null;
+      playing = false;
+    }
+    if (event.processingState == ProcessingState.idle && playing == false) {
+      currentAudio = null;
+      currentIndex = null;
+      playing = false;
+    }
+
+    notifyListeners();
+  }
+
+  void _listenPlayerState(PlayerState state) {
+    playing = state.playing;
+    notifyListeners();
   }
 
   bool _getShuffle() => Hive.box('userBox').get('shuffle') ?? false;

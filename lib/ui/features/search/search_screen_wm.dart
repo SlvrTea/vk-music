@@ -17,7 +17,7 @@ enum SearchState { recommendations, search }
 abstract interface class ISearchScreenWidgetModel implements IWidgetModel {
   MediaQueryData get mediaQuery;
 
-  AppAudioPlayer get player;
+  AppAudioPlayerController get player;
 
   EntityValueListenable<List<PlayerAudio>> get recommendations;
 
@@ -67,7 +67,7 @@ class SearchScreenWidgetModel extends WidgetModel<SearchScreen, ISearchScreenMod
   MediaQueryData get mediaQuery => wmMediaQuery;
 
   @override
-  AppAudioPlayer get player => context.global.audioPlayer;
+  AppAudioPlayerController get player => context.global.audioPlayer;
 
   final _recommendationsEntity = EntityStateNotifier<List<PlayerAudio>>();
 
@@ -118,6 +118,13 @@ class SearchScreenWidgetModel extends WidgetModel<SearchScreen, ISearchScreenMod
   void initWidgetModel() {
     _searchController.text = widget.initialQuery ?? '';
     _initAsync();
+    context.router.addListener(() {
+      final router = context.router;
+      if (router.current.pathParams.getString('q') != widget.initialQuery) {
+        search(query: router.current.pathParams.getString('q'));
+        _searchController.text = router.current.pathParams.getString('q');
+      }
+    });
     super.initWidgetModel();
   }
 
@@ -134,9 +141,10 @@ class SearchScreenWidgetModel extends WidgetModel<SearchScreen, ISearchScreenMod
   @override
   Future<void> getRecommendations() async {
     _recommendationsEntity.loading();
+    _widgetStateEntity.content(SearchState.recommendations);
+    _searchController.clear();
     final res = await model.getRecommendations();
     _recommendationsEntity.content(res);
-    _widgetStateEntity.content(SearchState.recommendations);
   }
 
   @override
@@ -148,6 +156,7 @@ class SearchScreenWidgetModel extends WidgetModel<SearchScreen, ISearchScreenMod
 
   @override
   Future<void> search({required String query}) async {
+    _widgetStateEntity.loading();
     await Future.wait([
       searchAudios(query: query),
       searchPlaylists(query: query),

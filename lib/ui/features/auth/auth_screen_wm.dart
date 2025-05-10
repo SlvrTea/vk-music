@@ -102,7 +102,7 @@ class AuthScreenWidgetModel extends WidgetModel<AuthScreen, IAuthScreenModel> im
 
         _userEntity.content(user!);
 
-        context.global.user = user;
+        if (context.mounted) context.global.user = user;
 
         if (!context.mounted) return;
         context.router.push(const MainRoute());

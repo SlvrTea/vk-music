@@ -8,7 +8,6 @@ import 'package:vk_music/common/utils/extensions/widget_model_extension.dart';
 import 'package:vk_music/data/models/playlist/playlist.dart';
 import 'package:vk_music/data/models/user/user.dart';
 import 'package:vk_music/domain/audio_player/audio_player_controller.dart';
-import 'package:vk_music/domain/model/player_playlist.dart';
 
 import '../../../domain/model/player_audio.dart';
 import 'audio_screen_model.dart';
@@ -17,7 +16,7 @@ import 'audio_screen_widget.dart';
 abstract interface class IAudioScreenWidgetModel implements IWidgetModel {
   User get user;
 
-  AppAudioPlayer get player;
+  AppAudioPlayerController get player;
 
   MediaQueryData get mediaQuery;
 
@@ -46,7 +45,7 @@ class AudioScreenWidgetModel extends WidgetModel<AudioScreen, IAudioScreenModel>
   User get user => context.global.user!;
 
   @override
-  AppAudioPlayer get player => context.global.audioPlayer;
+  AppAudioPlayerController get player => context.global.audioPlayer;
 
   @override
   MediaQueryData get mediaQuery => wmMediaQuery;
@@ -64,7 +63,7 @@ class AudioScreenWidgetModel extends WidgetModel<AudioScreen, IAudioScreenModel>
   @override
   void onAudioTileTap(int index) {
     final audios = _audiosEntity.value.data ?? [];
-    context.global.audioPlayer.playFrom(initialIndex: index, playlist: PlayerPlaylist(children: audios));
+    context.global.audioPlayer.playFrom(initialIndex: index, playlist: audios);
   }
 
   @override

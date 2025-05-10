@@ -14,7 +14,7 @@ import '../../../domain/model/player_audio.dart';
 import 'audio_bottom_sheet_model.dart';
 
 abstract interface class IAudioBottomSheetWidgetModel implements IWidgetModel {
-  AppAudioPlayer get player;
+  AppAudioPlayerController get player;
 
   EntityValueListenable<List<PlayerAudio>> get audios;
 
@@ -43,7 +43,7 @@ class AudioBottomSheetWidgetModel extends WidgetModel<AudioBottomSheetWidget, IA
   AudioBottomSheetWidgetModel(super.model);
 
   @override
-  AppAudioPlayer get player => context.global.audioPlayer;
+  AppAudioPlayerController get player => context.global.audioPlayer;
 
   final _audiosEntity = EntityStateNotifier<List<PlayerAudio>>();
 
@@ -103,14 +103,15 @@ class AudioBottomSheetWidgetModel extends WidgetModel<AudioBottomSheetWidget, IA
       ));
 
   @override
-  void onGoToArtistTap(String artistId) => context.router.popAndPush(ArtistRoute(artistId: artistId));
+  void onGoToArtistTap(String artistId) => context.router
+    ..popUntil((route) => route is! ModalBottomSheetRoute)
+    ..push(ArtistRoute(artistId: artistId));
 
   @override
-  void onFindArtistTap(PlayerAudio audio) {
-    context.router
-      ..maybePop()
-      ..navigate(SearchRoute(initialQuery: audio.artist));
-  }
+  void onFindArtistTap(PlayerAudio audio) => context.router
+    ..popUntil((route) => route is! ModalBottomSheetRoute)
+    ..navigate(SearchRoute(initialQuery: audio.artist))
+    ..notifyAll();
 
   Future<void> _addToPlaylist(Playlist playlist, PlayerAudio audio) async {
     try {
@@ -125,8 +126,8 @@ class AudioBottomSheetWidgetModel extends WidgetModel<AudioBottomSheetWidget, IA
     final playlist = await model.getPlaylist(audio);
     if (context.mounted) {
       context.router
-        ..push(AlbumRoute(playlist: playlist))
-        ..maybePop();
+        ..popUntil((route) => route is! ModalBottomSheetRoute)
+        ..push(AlbumRoute(playlist: playlist));
     }
   }
 

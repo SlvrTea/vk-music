@@ -39,7 +39,7 @@ class AppGlobalDependency extends AppAsyncDependency {
 
   late final AudioRepository audioRepository;
 
-  late final AppAudioPlayer audioPlayer;
+  late final AppAudioPlayerController audioPlayer;
 
   @override
   Future<void> initAsync(BuildContext context) async {
@@ -60,7 +60,8 @@ class AppGlobalDependency extends AppAsyncDependency {
       );
     }
 
-    user = Hive.box('userBox').get('user');
+    final userBox = Hive.box('userBox');
+    user = userBox.get('user');
     router = AppRouter();
     dio = _initDio();
 
@@ -68,7 +69,7 @@ class AppGlobalDependency extends AppAsyncDependency {
 
     authRepository = AuthRepository();
     audioRepository = AudioRepository(audioService, user);
-    audioPlayer = AppAudioPlayer();
+    audioPlayer = AppAudioPlayerController();
   }
 
   Future<void> updateConfig(AppConfig newConfig) async {

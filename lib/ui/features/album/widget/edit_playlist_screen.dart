@@ -2,7 +2,6 @@ import 'package:auto_route/annotations.dart';
 import 'package:elementary/elementary.dart';
 import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:vk_music/domain/model/player_playlist.dart';
 import 'package:vk_music/ui/features/album/widget/audio_edit_tile.dart';
 
 import '../../../../data/models/playlist/playlist.dart';
@@ -97,7 +96,6 @@ class EditPlaylistScreen extends ElementaryWidget<IEditPlaylistWidgetModel> {
             loadingBuilder: (_, __) => const Center(child: CircularProgressIndicator()),
             builder: (context, audios) {
               if (audios == null) return const SliverToBoxAdapter(child: SizedBox.shrink());
-              final p = PlayerPlaylist(children: audios);
               return SliverReorderableList(
                 itemBuilder: (context, index) {
                   return ReorderableDelayedDragStartListener(
