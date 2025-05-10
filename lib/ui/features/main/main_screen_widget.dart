@@ -4,6 +4,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
 import 'package:vk_music/ui/features/main/widget/navigation_bar/audio_bar.dart';
+import 'package:vk_music/ui/widgets/common/app_drawer.dart';
+import 'package:vk_music/ui/widgets/common/custom_app_bar.dart';
 
 import '../../../common/utils/router/app_router.dart';
 import 'widget/navigation_bar/navigation_bar.dart';
@@ -17,11 +19,29 @@ class MainScreen extends StatelessWidget {
     final player = context.global.audioPlayer;
     return AutoTabsScaffold(
       extendBody: true,
+      extendBodyBehindAppBar: true,
       routes: [
         const AudioRoute(),
         SearchRoute(),
         const AlbumsRoute(),
       ],
+      drawer: const AppDrawer(),
+      appBarBuilder: (context, router) {
+        if (router.isRouteActive(AudioRoute.name) ||
+            router.isRouteActive(SearchRoute.name) ||
+            router.isRouteActive(AlbumsRoute.name)) {
+          return const PreferredSize(
+            preferredSize: Size.fromHeight(kToolbarHeight),
+            child: CustomAppBar(),
+          );
+        }
+        return PreferredSize(
+          preferredSize: Size.fromHeight(MediaQuery.of(context).viewPadding.top),
+          child: SizedBox(
+            height: MediaQuery.of(context).viewPadding.top,
+          ),
+        );
+      },
       bottomNavigationBuilder: (context, router) {
         return ClipRect(
           child: BackdropFilter(

@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
 
 class CustomAppBar extends StatelessWidget {
-  const CustomAppBar({super.key});
+  const CustomAppBar({super.key, this.actions});
+
+  final List<Widget>? actions;
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +15,8 @@ class CustomAppBar extends StatelessWidget {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaY: 20, sigmaX: 20),
         child: AppBar(
-          backgroundColor: context.global.theme.colors.backgroundColor.withOpacity(0.5),
+          backgroundColor: context.global.theme.colors.backgroundColor.withAlpha(128),
+          actions: actions,
           title: Text(
             'VKMusic',
             style: context.global.theme.h3.copyWith(fontWeight: FontWeight.normal),
