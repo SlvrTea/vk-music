@@ -121,7 +121,11 @@ class AppAudioPlayerController with ChangeNotifier {
       return await move(index, _player.nextIndex!);
     } else if (_player.nextIndex == null) {
       currentPlaylist!.add(audio);
-      _player.setAudioSources(currentPlaylist!);
+      _player.addAudioSource(audio);
+      return notifyListeners();
+    } else if (index == -1 && _player.nextIndex != null) {
+      _player.insertAudioSource(_player.nextIndex!, audio);
+      currentPlaylist!.insert(_player.nextIndex!, audio);
       return notifyListeners();
     } else {
       currentPlaylist!.swap(currentPlaylist!.length - 1, _player.nextIndex!);

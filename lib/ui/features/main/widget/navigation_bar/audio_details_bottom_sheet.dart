@@ -19,7 +19,7 @@ class AudioDetailBottomSheet extends StatelessWidget {
         children: [
           Center(
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
+              padding: const EdgeInsets.only(bottom: 8, top: 12),
               child: IconButton(
                 icon: const Icon(Icons.keyboard_arrow_down_rounded),
                 onPressed: () => context.maybePop(),

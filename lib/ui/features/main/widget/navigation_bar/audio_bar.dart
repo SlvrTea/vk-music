@@ -26,6 +26,8 @@ class AudioBar extends StatelessWidget {
               ),
               Expanded(
                 child: ListTile(
+                  dense: true,
+                  visualDensity: VisualDensity.compact,
                   title: Center(
                     child: Text(
                       audio!.title,

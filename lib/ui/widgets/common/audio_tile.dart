@@ -56,7 +56,7 @@ class AudioTile extends StatelessWidget {
             final isPlaying = player.playing;
             final currentAudio = player.currentAudio;
             if (currentAudio == null || isPlaying == null) return const SizedBox.shrink();
-            if (currentAudio == audio) {
+            if (currentAudio.id == audio.id) {
               if (isPlaying) {
                 return const Icon(Icons.pause_rounded, size: 48);
               }
