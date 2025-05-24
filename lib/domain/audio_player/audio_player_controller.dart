@@ -106,6 +106,9 @@ class AppAudioPlayerController with ChangeNotifier {
   }
 
   Future<void> move(int currentIndex, int newIndex) async {
+    if (_player.shuffleModeEnabled) {
+      return;
+    }
     currentPlaylist!.insert(newIndex > currentIndex ? newIndex - 1 : newIndex, currentPlaylist!.removeAt(currentIndex));
     notifyListeners();
     await _player.moveAudioSource(currentIndex, newIndex > currentIndex ? newIndex - 1 : newIndex);
