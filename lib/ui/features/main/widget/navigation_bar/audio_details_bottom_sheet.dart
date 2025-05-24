@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
+import 'package:vk_music/domain/model/player_audio.dart';
 import 'package:vk_music/ui/features/main/widget/navigation_bar/slider_bar.dart';
 import 'package:vk_music/ui/widgets/common/audio_tile.dart';
 
@@ -15,30 +16,25 @@ class AudioDetailBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 8, top: 12),
-              child: IconButton(
-                icon: const Icon(Icons.keyboard_arrow_down_rounded),
-                onPressed: () => context.maybePop(),
-              ),
+      extendBodyBehindAppBar: true,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 8, top: 12),
+            child: IconButton(
+              icon: const Icon(Icons.keyboard_arrow_down_rounded),
+              onPressed: () => context.maybePop(),
             ),
           ),
-          DefaultTabController(
-            initialIndex: 0,
-            length: 2,
-            child: SafeArea(
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height - 80,
-                child: const TabBarView(
-                  children: [_MainBody(), _MusicList()],
-                ),
-              ),
-            ),
-          ),
-        ],
+        ),
+      ),
+      body: const DefaultTabController(
+        initialIndex: 0,
+        length: 2,
+        child: TabBarView(
+          children: [_MainBody(), _MusicList()],
+        ),
       ),
     );
   }
@@ -49,55 +45,171 @@ class _MainBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return const Column(
+      children: [
+        SizedBox(
+          height: kToolbarHeight,
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 24.0),
+          child: _Cover(),
+        ),
+        _Control(),
+      ],
+    );
+  }
+}
+
+class _Cover extends StatefulWidget {
+  const _Cover();
+
+  @override
+  State<_Cover> createState() => _CoverState();
+}
+
+class _CoverState extends State<_Cover> {
+  bool minimizeCover = false;
+  PlayerAudio? audio;
+
+  void _listenState() =>
+      setState(() {
+        minimizeCover = !context.global.audioPlayer.playing!;
+        audio = context.global.audioPlayer.currentAudio;
+      });
+
+  @override
+  void initState() {
+    minimizeCover = !context.global.audioPlayer.playing!;
+    audio = context.global.audioPlayer.currentAudio;
+    context.global.audioPlayer.addListener(_listenState);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    context.global.audioPlayer.removeListener(_listenState);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        if (audio!.album?.thumb?.photo600 != null && !minimizeCover)
+          CoverWidget(
+            photoUrl: audio!.album?.thumb?.photo600,
+            size: MediaQuery
+                .of(context)
+                .size
+                .width - 32,
+            borderRadius: BorderRadius.circular(16),
+          )
+        else
+          SizedBox.square(dimension: MediaQuery
+              .of(context)
+              .size
+              .width - 32),
+        BackdropFilter(
+          filter: ImageFilter.blur(sigmaY: 30, sigmaX: 30),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  context.global.theme.colors.backgroundColor.withAlpha(179),
+                  context.global.theme.colors.backgroundColor.withAlpha(230),
+                ],
+              ),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 350),
+            curve: Curves.ease,
+            width: minimizeCover ? MediaQuery
+                .of(context)
+                .size
+                .width - 100 : MediaQuery
+                .of(context)
+                .size
+                .width - 50,
+            height: minimizeCover ? MediaQuery
+                .of(context)
+                .size
+                .width - 100 : MediaQuery
+                .of(context)
+                .size
+                .width - 50,
+            child: CoverWidget(
+              photoUrl: audio!.album?.thumb?.photo600,
+              size: minimizeCover ? MediaQuery
+                  .of(context)
+                  .size
+                  .width - 100 : MediaQuery
+                  .of(context)
+                  .size
+                  .width - 50,
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _Control extends StatelessWidget {
+  const _Control();
+
+  @override
+  Widget build(BuildContext context) {
     final player = context.global.audioPlayer;
     return ListenableBuilder(
       listenable: player,
       builder: (context, _) {
-        final audio = player.currentAudio;
-        return Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: CoverWidget(
-                photoUrl: audio!.album?.thumb?.photo600,
-                size: MediaQuery.of(context).size.width - 50,
-                borderRadius: BorderRadius.circular(16),
+        final audio = player.currentAudio!;
+        return Expanded(
+          child: Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                child: SliderBar(),
               ),
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              child: SliderBar(),
-            ),
-            const Spacer(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Text(
-                audio.title,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24, overflow: TextOverflow.ellipsis),
+              const Spacer(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Text(
+                  audio.title,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24, overflow: TextOverflow.ellipsis),
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25),
-              child: Text(
-                audio.artist,
-                style: const TextStyle(fontSize: 16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25),
+                child: Text(
+                  audio.artist,
+                  style: const TextStyle(fontSize: 16),
+                ),
               ),
-            ),
-            const Spacer(),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                MusicBarPreviousAudioButton(size: 48),
-                MusicBarPlayButton(size: 48),
-                MusicBarNextAudioButton(size: 48)
-              ],
-            ),
-            const Spacer(),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [ShuffleButton(), LoopModeButton()],
-            )
-          ],
+              const Spacer(),
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  MusicBarPreviousAudioButton(size: 48),
+                  MusicBarPlayButton(size: 48),
+                  MusicBarNextAudioButton(size: 48)
+                ],
+              ),
+              const Spacer(),
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [ShuffleButton(), LoopModeButton()],
+              ),
+            ],
+          ),
         );
       },
     );
@@ -128,6 +240,7 @@ class _MusicList extends StatelessWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
+          const SliverPadding(padding: EdgeInsets.only(top: kToolbarHeight)),
           ListenableBuilder(
             listenable: player,
             builder: (context, _) {

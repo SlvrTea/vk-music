@@ -54,6 +54,7 @@ dependencies:
   provider: ^6.1.2
   flutter_colorpicker: ^1.1.0
   collection: ^1.19.1
+  super_sliver_list: ^0.4.1
 
 dev_dependencies:
   flutter_test:

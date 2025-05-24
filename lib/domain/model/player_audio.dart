@@ -21,7 +21,7 @@ class PlayerAudio extends HlsAudioSource {
             id: id.toString(),
             title: title,
             artist: artist,
-            artUri: album?.thumb?.photo600 == null ? null : Uri.parse(album!.thumb!.photo600!),
+            artUri: Uri.tryParse(album?.thumb?.photo600 ?? ''),
           ),
         );
 

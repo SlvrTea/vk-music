@@ -12,10 +12,15 @@ class HorizontalMusicList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height * .21;
+    final width = MediaQuery.of(context).size.width;
+    final tileWidth = width * .75;
+    final tileHeight = height / 3;
     return SizedBox(
-      width: MediaQuery.of(context).size.width,
+      width: width,
+      height: height,
       child: GridView.count(
-        childAspectRatio: 63 / (MediaQuery.of(context).size.width * .75),
+        childAspectRatio: tileHeight / tileWidth,
         mainAxisSpacing: 8,
         crossAxisCount: 3,
         scrollDirection: Axis.horizontal,
@@ -40,6 +45,7 @@ class _CustomSongTile extends StatelessWidget {
       onTap: () => player.playFrom(playlist: playlist, initialIndex: playlist.indexOf(audio)),
       child: SizedBox(
         width: width,
+        height: MediaQuery.of(context).size.height * .07,
         child: Row(
           children: [
             CoverWidget(
@@ -81,7 +87,13 @@ class _CustomSongTile extends StatelessWidget {
             Text('${duration ~/ 60}:${duration % 60 < 10 ? '0${duration % 60}' : duration % 60}'),
             IconButton(
               onPressed: () {
-                showModalBottomSheet(context: context, builder: (_) => AudioBottomSheetWidget(audio: audio));
+                showModalBottomSheet(
+                  useRootNavigator: true,
+                  isScrollControlled: true,
+                  backgroundColor: context.global.theme.colors.secondaryBackground,
+                  context: context,
+                  builder: (_) => AudioBottomSheetWidget(audio: audio),
+                );
               },
               icon: const Icon(Icons.more_vert_rounded),
             ),

@@ -16,7 +16,6 @@ class ArtistScreen extends ElementaryWidget<IArtistScreenWidgetModel> {
   @override
   Widget build(IArtistScreenWidgetModel wm) {
     return Scaffold(
-      extendBody: true,
       body: TripleValueListenableBuilder(
         firstValue: wm.artist,
         secondValue: wm.audios,
