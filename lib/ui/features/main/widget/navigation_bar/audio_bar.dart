@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
 
+import '../../../audio_detail_bottom_sheet/audio_detail_bottom_sheet.dart';
 import 'audio_buttons.dart';
-import 'audio_details_bottom_sheet.dart';
 
 class AudioBar extends StatelessWidget {
   const AudioBar({super.key});
