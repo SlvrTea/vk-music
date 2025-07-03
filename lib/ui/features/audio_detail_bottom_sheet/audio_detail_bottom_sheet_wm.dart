@@ -4,6 +4,7 @@ import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
 import 'package:vk_music/common/utils/extensions/widget_model_extension.dart';
+import 'package:vk_music/domain/audio_player/audio_player_controller.dart';
 import 'package:vk_music/domain/model/player_audio.dart';
 import 'package:vk_music/ui/theme/app_theme.dart';
 
@@ -70,19 +71,25 @@ class AudioDetailBottomSheetWidgetModel extends WidgetModel<AudioDetailBottomShe
   EntityValueListenable<int> get currentTabIndex => _currentTabIndexEntity;
   final _currentTabIndexEntity = EntityStateNotifier<int>();
 
+  late final AppAudioPlayerController _player;
+
   @override
   void initWidgetModel() {
+    _player = context.global.audioPlayer;
     _tabController = TabController(length: 2, vsync: this, animationDuration: Duration.zero)..addListener(_listenTab);
     _currentTabIndexEntity.content(_tabController.index);
-    _isPlayingEntity.content(context.global.audioPlayer.playing);
-    _currentAudioEntity.content(context.global.audioPlayer.currentAudio);
-    context.global.audioPlayer.addListener(_listenAudioPlayer);
+    _isPlayingEntity.content(_player.playing);
+    _currentAudioEntity.content(_player.currentAudio);
+    _currentPlaylistEntity.content(_player.currentPlaylist);
+    _player.addListener(_listenAudioPlayer);
     super.initWidgetModel();
   }
 
   @override
   void dispose() {
-    context.global.audioPlayer.removeListener(_listenAudioPlayer);
+    _player.removeListener(_listenAudioPlayer);
+    tapController.removeListener(_listenTab);
+    tapController.dispose();
     super.dispose();
   }
 
@@ -90,21 +97,21 @@ class AudioDetailBottomSheetWidgetModel extends WidgetModel<AudioDetailBottomShe
   void onBackTap() => context.router.maybePop();
 
   @override
-  void onForwardTap() => context.global.audioPlayer.seekToNext();
+  void onForwardTap() => _player.seekToNext();
 
   @override
-  void onPlayTap() => context.global.audioPlayer.play();
+  void onPlayTap() => _player.play();
 
   @override
-  void onRewindTap() => context.global.audioPlayer.seekToPrevious();
+  void onRewindTap() => _player.seekToPrevious();
 
   @override
-  void onPauseTap() => context.global.audioPlayer.pause();
+  void onPauseTap() => _player.pause();
 
   void _listenAudioPlayer() {
-    _isPlayingEntity.content(context.global.audioPlayer.playing);
-    _currentAudioEntity.content(context.global.audioPlayer.currentAudio);
-    _currentPlaylistEntity.content(context.global.audioPlayer.currentPlaylist);
+    _isPlayingEntity.content(_player.playing);
+    _currentAudioEntity.content(_player.currentAudio);
+    _currentPlaylistEntity.content(_player.currentPlaylist);
   }
 
   void _listenTab() => _currentTabIndexEntity.content(_tabController.index);
