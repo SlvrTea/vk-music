@@ -4,8 +4,8 @@ import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:vk_music/ui/features/album/widget/audio_edit_tile.dart';
 
-import '../../../../data/models/playlist/playlist.dart';
-import '../../../widgets/common/media_cover.dart';
+import '../../../../../data/models/playlist/playlist.dart';
+import '../../../../widgets/common/media_cover.dart';
 import 'edit_playlist_wm.dart';
 
 @RoutePage()
@@ -42,7 +42,7 @@ class EditPlaylistScreen extends ElementaryWidget<IEditPlaylistWidgetModel> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(top: 16, left: 16),
-                    child: CoverWidget(photoUrl: playlist.photo!.photo300!, size: 80),
+                    child: CoverWidget(photoUrl: playlist.photo?.photo300, size: 80),
                   ),
                   Expanded(
                     child: Padding(

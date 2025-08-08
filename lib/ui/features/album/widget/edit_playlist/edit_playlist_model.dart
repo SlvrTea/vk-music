@@ -2,7 +2,7 @@ import 'package:elementary/elementary.dart';
 import 'package:vk_music/domain/audio/audio_repository.dart';
 import 'package:vk_music/domain/model/player_audio.dart';
 
-import '../../../../data/models/playlist/playlist.dart';
+import '../../../../../data/models/playlist/playlist.dart';
 
 abstract interface class IEditPlaylistModel extends ElementaryModel {
   Future save(

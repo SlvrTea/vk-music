@@ -4,9 +4,9 @@ import 'package:elementary/elementary.dart';
 import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:vk_music/domain/model/player_audio.dart';
-import 'package:vk_music/ui/features/audio_bottom_sheet/widgets/audio_bottom_sheet_item.dart';
 import 'package:vk_music/ui/widgets/common/media_cover.dart';
 
+import '../../widgets/common/context_menu_item.dart';
 import 'audio_bottom_sheet_wm.dart';
 
 class AudioBottomSheetWidget extends ElementaryWidget<IAudioBottomSheetWidgetModel> {
@@ -50,41 +50,41 @@ class AudioBottomSheetWidget extends ElementaryWidget<IAudioBottomSheetWidgetMod
                     ),
                     const Divider(),
                     if (!audios.contains(audio))
-                      AudioBottomSheetItem(
+                      ContextMenuItem(
                         leading: const Icon(Icons.add_rounded),
                         title: const Text('Добавить в мою музыку'),
                         onTap: () => wm.onAddAudioTap(audio),
                       ),
-                    AudioBottomSheetItem(
+                    ContextMenuItem(
                       leading: const Icon(Icons.playlist_add_rounded),
                       title: const Text('Добавить в плейлист'),
                       onTap: wm.onAddToPlaylistTap,
                     ),
-                    AudioBottomSheetItem(
+                    ContextMenuItem(
                       title: const Text('Слушать далее'),
                       leading: const Icon(Icons.playlist_play_rounded),
                       onTap: () => wm.onPlayNextTap(audio),
                     ),
                     if (audio.mainArtists != null)
-                      AudioBottomSheetItem(
+                      ContextMenuItem(
                         title: const Text('Перейти к исполнителю'),
                         leading: const Icon(Icons.person),
                         onTap: () => wm.onGoToArtistTap(audio.mainArtists!.first.id!),
                       )
                     else
-                      AudioBottomSheetItem(
+                      ContextMenuItem(
                         title: const Text('Найти исполнителя'),
                         leading: const Icon(Icons.search_rounded),
                         onTap: () => wm.onFindArtistTap(audio),
                       ),
                     if (audio.album != null)
-                      AudioBottomSheetItem(
+                      ContextMenuItem(
                         title: const Text('Перейти к альбому'),
                         leading: const Icon(Icons.album_rounded),
                         onTap: () => wm.onGoToAlbumTap(audio),
                       ),
                     if (audios.contains(audio))
-                      AudioBottomSheetItem(
+                      ContextMenuItem(
                         leading: const Icon(Icons.delete_outline_rounded),
                         title: const Text('Удалить из моей музыки'),
                         iconColor: Colors.red,

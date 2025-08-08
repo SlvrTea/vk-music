@@ -11,6 +11,7 @@ import 'package:vk_music/data/models/playlist/playlist.dart';
 import 'package:vk_music/domain/audio/audio_repository.dart';
 import 'package:vk_music/domain/audio_player/audio_player_controller.dart';
 import 'package:vk_music/domain/model/player_audio.dart';
+import 'package:vk_music/ui/features/album/widget/album_more_sheet.dart';
 import 'package:vk_music/ui/theme/app_theme.dart';
 
 import '../../../data/models/user/user.dart';
@@ -45,33 +46,38 @@ class AlbumScreen extends ElementaryWidget<IAlbumScreenWidgetModel> {
                 expandedHeight: MediaQuery.of(context).size.height * .3,
                 pinned: true,
                 stretch: true,
+                actions: [
+                  IconButton(onPressed: wm.onMoreTap, icon: const Icon(Icons.more_vert)),
+                ],
                 flexibleSpace: FlexibleSpaceBar(
                   collapseMode: CollapseMode.pin,
                   background: Stack(
                     alignment: Alignment.center,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(16),
-                          child: Image.network(album.data!.photo!.photo270!),
+                      if (album.data?.photo?.photo270 != null)
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: Image.network(album.data!.photo!.photo270!),
+                          ),
                         ),
-                      ),
-                      BackdropFilter(
-                        filter: ImageFilter.blur(sigmaY: 30, sigmaX: 30),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                wm.theme.colors.backgroundColor.withAlpha(179),
-                                wm.theme.colors.backgroundColor.withAlpha(230),
-                              ],
+                      if (album.data?.photo?.photo270 != null)
+                        BackdropFilter(
+                          filter: ImageFilter.blur(sigmaY: 30, sigmaX: 30),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  wm.theme.colors.backgroundColor.withAlpha(179),
+                                  wm.theme.colors.backgroundColor.withAlpha(230),
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
                       Column(
                         children: [
                           const SizedBox(
@@ -79,17 +85,33 @@ class AlbumScreen extends ElementaryWidget<IAlbumScreenWidgetModel> {
                           ),
                           ClipRRect(
                             borderRadius: BorderRadius.circular(8),
-                            child: Image.network(
-                              album.data!.photo!.photo600!,
-                              width: 160,
-                              height: 160,
-                            ),
+                            child: album.data?.photo?.photo600 != null
+                                ? Image.network(
+                                    album.data!.photo!.photo600!,
+                                    width: 160,
+                                    height: 160,
+                                  )
+                                : SizedBox.square(
+                                    dimension: 160,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: Container(
+                                        color: wm.theme.colors.secondary,
+                                        child: Icon(
+                                          Icons.queue_music_rounded,
+                                          size: 120,
+                                          color: Colors.grey.shade700,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
                               album.data!.title,
                               textAlign: TextAlign.center,
+                              style: wm.theme.h3,
                             ),
                           ),
                           Text('${album.data!.plays} прослушиваний'),
@@ -147,7 +169,7 @@ class AlbumScreen extends ElementaryWidget<IAlbumScreenWidgetModel> {
                   ),
                 ),
               const SliverToBoxAdapter(child: Divider()),
-              if (items.data != null)
+              if (items.data != null && items.data!.isNotEmpty)
                 ...items.data!
                     .map((e) => SliverToBoxAdapter(
                           child: AudioTile(

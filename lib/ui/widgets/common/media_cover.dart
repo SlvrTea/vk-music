@@ -44,8 +44,11 @@ class CoverWidget extends StatelessWidget {
       child: Stack(
         children: [
           ClipRRect(
-              borderRadius: borderRadius ?? BorderRadius.circular(8),
-              child: Container(color: Colors.grey.withAlpha(76))),
+            borderRadius: borderRadius ?? BorderRadius.circular(8),
+            child: Container(
+              color: const Color(0xFF191919),
+            ),
+          ),
           Center(
             child: SvgPicture.asset(
               'assets/note.svg',

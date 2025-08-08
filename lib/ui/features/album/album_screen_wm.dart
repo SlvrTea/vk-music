@@ -20,6 +20,8 @@ abstract interface class IAlbumScreenWidgetModel implements IWidgetModel {
   void playFrom();
 
   void playShuffled();
+
+  Future<void> onMoreTap();
 }
 
 AlbumScreenWidgetModel defaultAlbumScreenWidgetModelFactory(BuildContext context) =>
@@ -83,6 +85,9 @@ class AlbumScreenWidgetModel extends WidgetModel<AlbumScreen, IAlbumScreenModel>
   Future<void> onDeletePlaylistTap() async {
     model.deletePlaylist(widget.playlist);
     final album = _albumEntity.value.data!;
+    if (album.ownerId.toString() == context.global.user?.userId) {
+      context.maybePop();
+    }
     _albumEntity.content(album.copyWith(isFollowing: false));
   }
 
@@ -101,4 +106,24 @@ class AlbumScreenWidgetModel extends WidgetModel<AlbumScreen, IAlbumScreenModel>
   void playShuffled() => _player
     ..setShuffleModeEnabled(true)
     ..playFrom(playlist: _albumItemsEntity.value.data!);
+
+  @override
+  Future<void> onMoreTap() async {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      isDismissible: true,
+      backgroundColor: Colors.transparent,
+      context: context.findRootAncestorStateOfType<NavigatorState>()!.context,
+      builder: (context) => AlbumMoreSheet(
+        onEditTap: () async {
+          context.maybePop();
+          await onEditPlaylistTap();
+        },
+        onDeleteTap: () async {
+          context.maybePop();
+          await onDeletePlaylistTap();
+        },
+      ),
+    );
+  }
 }

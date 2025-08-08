@@ -5,7 +5,7 @@ import '../../../data/models/playlist/playlist.dart';
 import '../../../domain/model/player_audio.dart';
 import '../../../ui/features/album/album_screen.dart';
 import '../../../ui/features/album/widget/add_audio_screen.dart';
-import '../../../ui/features/album/widget/edit_playlist_screen.dart';
+import '../../../ui/features/album/widget/edit_playlist/edit_playlist_screen.dart';
 import '../../../ui/features/albums/albums_screen_widget.dart';
 import '../../../ui/features/artist/artist_screen.dart';
 import '../../../ui/features/artist/widget/all_audios/all_songs_screen.dart';

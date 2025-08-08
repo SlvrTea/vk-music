@@ -51,7 +51,10 @@ class AudioRepository {
         audioIds: audios.map((e) => '${e.ownerId}_${e.id}').join(','),
       );
 
-  Future<Playlist> createPlaylist(String title) => _audioService.createPlaylist(ownerId: _user!.userId, title: title);
+  Future<void> createPlaylist(String title) async {
+    final res = await _audioService.createPlaylist(ownerId: _user!.userId, title: title);
+    userAlbumsNotifier.value = [res, ...userAlbumsNotifier.value!];
+  }
 
   Future<void> delete(PlayerAudio audio) async {
     _audioService.delete(ownerId: _user!.userId, shortId: audio.id);

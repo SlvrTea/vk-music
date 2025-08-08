@@ -22,15 +22,18 @@ class PlaylistWidget extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             CoverWidget(
-                photoUrl: playlist.thumbs?.first.photo600 ?? playlist.photo?.photo600,
-                borderRadius: BorderRadius.circular(16),
-                size: size),
+              photoUrl: playlist.thumbs?.first.photo600 ?? playlist.photo?.photo600,
+              borderRadius: BorderRadius.circular(16),
+              size: size,
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-              child: Text(playlist.title,
-                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis),
+              child: Text(
+                playlist.title,
+                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ],
         ),

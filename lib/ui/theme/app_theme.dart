@@ -205,6 +205,7 @@ class AppColors {
         secondaryBackground: Color(0xff090b10),
         primaryButtonColor: Color.fromARGB(255, 20, 20, 20),
         mainTextColor: Color(0xFFFFFFFF),
+        secondary: Color(0xFF191919),
       );
 
   factory AppColors.light() => const AppColors._(
@@ -212,11 +213,13 @@ class AppColors {
         secondaryBackground: Colors.blueGrey,
         primaryButtonColor: Colors.grey,
         mainTextColor: Color(0xFF192038),
+        secondary: Color(0xFF191919),
       );
 
   final Color backgroundColor;
   final Color secondaryBackground;
   final Color primaryButtonColor;
+  final Color secondary;
   final Color mainTextColor;
 
   const AppColors._({
@@ -224,5 +227,6 @@ class AppColors {
     required this.secondaryBackground,
     required this.primaryButtonColor,
     required this.mainTextColor,
+    required this.secondary,
   });
 }
