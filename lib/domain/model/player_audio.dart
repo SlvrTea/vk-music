@@ -121,7 +121,7 @@ final class PlayerAudioMP3 extends ProgressiveAudioSource implements PlayerAudio
   }
 }
 
-final class PlayerAudioM3U8 extends ProgressiveAudioSource implements PlayerAudio {
+final class PlayerAudioM3U8 extends HlsAudioSource implements PlayerAudio {
   PlayerAudioM3U8(
     super.url, {
     required this.artist,

@@ -37,8 +37,8 @@ class VKInterceptor extends Interceptor {
     options.queryParameters = <String, dynamic>{
       'v': apiVersion,
       'access_token': user?.accessToken,
-      if (AppGlobalDependency.isKateAuth ?? false) 'device_id': deviceId,
-      if (AppGlobalDependency.isKateAuth ?? false) 'sig': hash,
+      if (!(AppGlobalDependency.isKateAuth ?? false)) 'device_id': deviceId,
+      if (!(AppGlobalDependency.isKateAuth ?? false)) 'sig': hash,
     };
     options.queryParameters.addAll(query);
     return handler.next(options);
