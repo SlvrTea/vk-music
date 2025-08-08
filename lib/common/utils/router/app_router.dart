@@ -12,11 +12,11 @@ import '../../../ui/features/artist/widget/all_audios/all_songs_screen.dart';
 import '../../../ui/features/audio/audio_screen_widget.dart';
 import '../../../ui/features/audio_bottom_sheet/widgets/select_playlist.dart';
 import '../../../ui/features/auth/auth_screen_widget.dart';
+import '../../../ui/features/kate_auth/kate_auth.dart';
 import '../../../ui/features/main/main_screen_widget.dart';
 import '../../../ui/features/search/search_screen_widget.dart';
 import '../../../ui/features/search/widget/all_audios/all_songs_screen.dart';
 import '../../../ui/features/settings/settings_screen.dart';
-import '../../../ui/features/tfa/tfa_screen.dart';
 import '../../../ui/widgets/common/all_playlists_screen.dart';
 import 'app_tabs.dart';
 
@@ -32,8 +32,8 @@ class AppRouter extends RootStackRouter {
           initial: true,
         ),
         AutoRoute(
-          page: TfaRoute.page,
-          path: '/tfa',
+          page: KateAuthRoute.page,
+          path: '/kate',
         ),
         AutoRoute(
           page: MainRoute.page,

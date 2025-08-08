@@ -21,7 +21,9 @@ import '../../../../domain/audio_player/audio_player_controller.dart';
 class AppGlobalDependency extends AppAsyncDependency {
   static String baseUrl = 'https://api.vk.com/method/';
 
-  static double apiVersion = 5.95;
+  static double apiVersion = 5.155;
+
+  static bool? isKateAuth;
 
   late User? user;
 
@@ -44,6 +46,7 @@ class AppGlobalDependency extends AppAsyncDependency {
   @override
   Future<void> initAsync(BuildContext context) async {
     final AppConfig? cfg = Hive.box('config').get('main');
+    AppGlobalDependency.isKateAuth = cfg?.isKateAuth;
     systemColor = SystemTheme.accentColor.accent;
 
     if (cfg != null) {
@@ -57,6 +60,7 @@ class AppGlobalDependency extends AppAsyncDependency {
         isDarkMode: SchedulerBinding.instance.platformDispatcher.platformBrightness == Brightness.dark ? true : false,
         accentColor: systemColor,
         isSystem: true,
+        isKateAuth: null,
       );
     }
 

@@ -5,6 +5,4 @@ class AuthRepository {
   final VKAuthService _authService = VKAuthService();
 
   Future<User> auth(String login, String password) => _authService.auth(login: login, password: password);
-
-  Future<Map> captchaAuth() => throw UnimplementedError();
 }

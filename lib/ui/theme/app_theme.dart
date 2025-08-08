@@ -42,7 +42,13 @@ class AppTheme {
         backgroundColor: colors.backgroundColor,
       ),
       // filledButtonTheme: FilledButtonThemeData(style: buttonPrimary),
-      // elevatedButtonTheme: ElevatedButtonThemeData(style: buttonPrimary),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+            backgroundColor: colors.primaryButtonColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            )),
+      ),
       colorScheme:
           ColorScheme.fromSeed(seedColor: this.accentColor, primary: this.accentColor, brightness: this.brightness),
       bottomSheetTheme: BottomSheetThemeData(
