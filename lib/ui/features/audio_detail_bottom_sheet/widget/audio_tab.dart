@@ -1,7 +1,9 @@
 import 'dart:ui';
 
+import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:text_marquee/text_marquee.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
 import 'package:vk_music/domain/model/player_audio.dart';
 
@@ -38,7 +40,10 @@ class AudioTab extends StatelessWidget {
             secondValue: playing,
             builder: (context, audio, isPlaying) {
               if (audio.data == null || isPlaying.data == null) {
-                return const Placeholder();
+                return CoverWidget(
+                  size: MediaQuery.of(context).size.width - 32,
+                  borderRadius: BorderRadius.circular(16),
+                );
               }
               return Stack(
                 alignment: Alignment.center,
@@ -71,7 +76,7 @@ class AudioTab extends StatelessWidget {
                     ),
                   ),
                   AnimatedContainer(
-                    duration: const Duration(milliseconds: 500),
+                    duration: const Duration(milliseconds: 300),
                     curve: Curves.easeInOut,
                     width: isPlaying.data!
                         ? MediaQuery.of(context).size.width - 50
@@ -95,6 +100,9 @@ class AudioTab extends StatelessWidget {
         EntityStateNotifierBuilder(
           listenableEntityState: currentAudio,
           builder: (context, audio) {
+            if (audio == null) {
+              return const _PlaceholderControl();
+            }
             return Expanded(
               child: Column(
                 children: [
@@ -105,15 +113,15 @@ class AudioTab extends StatelessWidget {
                   const Spacer(),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Text(
-                      audio!.title,
+                    child: TextMarquee(
+                      audio.title,
                       style:
                           const TextStyle(fontWeight: FontWeight.bold, fontSize: 24, overflow: TextOverflow.ellipsis),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 25),
-                    child: Text(
+                    child: TextMarquee(
                       audio.artist,
                       style: const TextStyle(fontSize: 16),
                     ),
@@ -204,6 +212,71 @@ class _ForwardButton extends StatelessWidget {
       icon: Icon(
         Icons.fast_forward_rounded,
         size: size,
+      ),
+    );
+  }
+}
+
+class _PlaceholderControl extends StatelessWidget {
+  const _PlaceholderControl({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Expanded(
+      child: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            child: ProgressBar(
+              progress: Duration.zero,
+              total: Duration.zero,
+              thumbRadius: 6,
+            ),
+          ),
+          Spacer(),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24),
+            child: TextMarquee(
+              'В данный момент ничего не играет',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24, overflow: TextOverflow.fade),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 25),
+            child: Text(
+              '',
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
+          Spacer(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              IconButton(
+                onPressed: null,
+                icon: Icon(
+                  Icons.fast_rewind_rounded,
+                  size: 48,
+                ),
+              ),
+              IconButton(
+                onPressed: null,
+                icon: Icon(
+                  Icons.pause_rounded,
+                  size: 48,
+                ),
+              ),
+              IconButton(
+                onPressed: null,
+                icon: Icon(
+                  Icons.fast_forward_rounded,
+                  size: 48,
+                ),
+              ),
+            ],
+          ),
+          Spacer()
+        ],
       ),
     );
   }

@@ -50,6 +50,7 @@ dependencies:
   collection: ^1.19.1
   super_sliver_list: ^0.4.1
   mask_text_input_formatter: ^2.9.0
+  text_marquee: ^0.0.2
 
 dev_dependencies:
   flutter_test:

@@ -41,19 +41,21 @@ class CoverWidget extends StatelessWidget {
     return SizedBox(
       height: h,
       width: w,
-      child: Stack(children: [
-        ClipRRect(
-            borderRadius: borderRadius ?? BorderRadius.circular(8),
-            child: Container(color: Colors.grey.withOpacity(0.3))),
-        Center(
-          child: SvgPicture.asset(
-            'assets/note.svg',
-            width: w - 20,
-            height: w - 20,
+      child: Stack(
+        children: [
+          ClipRRect(
+              borderRadius: borderRadius ?? BorderRadius.circular(8),
+              child: Container(color: Colors.grey.withAlpha(76))),
+          Center(
+            child: SvgPicture.asset(
+              'assets/note.svg',
+              width: w - 20,
+              height: w - 20,
+            ),
           ),
-        ),
-        Center(child: child)
-      ]),
+          Center(child: child)
+        ],
+      ),
     );
   }
 }

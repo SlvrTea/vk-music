@@ -18,7 +18,7 @@ class AudioDetailBottomSheet extends ElementaryWidget<IAudioDetailBottomSheetWid
           preferredSize: const Size.fromHeight(kToolbarHeight),
           child: Center(
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 8, top: 12),
+              padding: const EdgeInsets.only(bottom: 8, top: 16),
               child: IconButton(
                 icon: const Icon(Icons.keyboard_arrow_down_rounded),
                 onPressed: wm.onBackTap,
