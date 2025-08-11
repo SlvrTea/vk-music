@@ -51,7 +51,7 @@ dependencies:
   mask_text_input_formatter: ^2.9.0
   text_marquee: ^0.0.2
   path_provider: ^2.1.5
-  ffmpeg_kit_flutter_new: ^3.1.0
+  ffmpeg_kit_flutter_new_audio: ^1.0.1
 
 dev_dependencies:
   flutter_test:
