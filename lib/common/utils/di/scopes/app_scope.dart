@@ -13,6 +13,7 @@ import 'package:vk_music/data/provider/audio/audio_service.dart';
 import 'package:vk_music/data/service/interceptors/vk_interceptor.dart';
 import 'package:vk_music/domain/audio/audio_repository.dart';
 import 'package:vk_music/domain/auth/auth_repository.dart';
+import 'package:vk_music/domain/cache_manager/cache_manager.dart';
 import 'package:vk_music/ui/theme/app_theme.dart';
 
 import '../../../../data/models/user/user.dart';
@@ -43,6 +44,8 @@ class AppGlobalDependency extends AppAsyncDependency {
 
   late final AppAudioPlayerController audioPlayer;
 
+  late final IOCacheManager cacheManager;
+
   @override
   Future<void> initAsync(BuildContext context) async {
     final AppConfig? cfg = Hive.box('config').get('main');
@@ -68,11 +71,12 @@ class AppGlobalDependency extends AppAsyncDependency {
     user = userBox.get('user');
     router = AppRouter();
     dio = _initDio();
+    cacheManager = IOCacheManager();
 
     final audioService = AudioService(dio);
 
     authRepository = AuthRepository();
-    audioRepository = AudioRepository(audioService, user);
+    audioRepository = AudioRepository(audioService, user, cacheManager);
     audioPlayer = AppAudioPlayerController();
   }
 

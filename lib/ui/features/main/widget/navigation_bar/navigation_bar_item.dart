@@ -10,7 +10,6 @@ class NavBarItem {
 
 class _NavBarItem extends StatelessWidget {
   const _NavBarItem({
-    super.key,
     required this.item,
     required this.isSelected,
     required this.navHeight,
@@ -44,7 +43,7 @@ class _NavBarItem extends StatelessWidget {
                   child: IconTheme(
                     data: IconThemeData(
                       size: iconSize,
-                      color: isSelected ? selectedColor!.withOpacity(1) : unselectedColor,
+                      color: isSelected ? selectedColor!.withAlpha(255) : unselectedColor,
                     ),
                     child: item.icon,
                   ))),

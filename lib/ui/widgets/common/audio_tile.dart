@@ -24,45 +24,66 @@ class AudioTile extends StatelessWidget {
     final duration = audio.duration!.inSeconds;
     final formatDuration = '${duration ~/ 60}:${duration % 60 < 10 ? '0${duration % 60}' : duration % 60}';
     final player = context.global.audioPlayer;
+    final cachedAudios = context.global.audioRepository.cachedAudioNotifier;
+    final inProgress = context.global.audioRepository.downloadInProgressNotifier;
     return ListTile(
       trailing: withMenu
-          ? Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(formatDuration, style: context.global.theme.b1),
-                IconButton(
-                  onPressed: () {
-                    showModalBottomSheet(
-                      useRootNavigator: true,
-                      context: context,
-                      isScrollControlled: true,
-                      backgroundColor: context.global.theme.colors.secondaryBackground,
-                      builder: (_) => AudioBottomSheetWidget(
-                        audio: audio,
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.more_vert_rounded),
-                  color: context.global.theme.colors.mainTextColor,
-                )
-              ],
-            )
+          ? ListenableBuilder(
+              listenable: cachedAudios,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(formatDuration, style: context.global.theme.b1),
+                  IconButton(
+                    onPressed: () {
+                      showModalBottomSheet(
+                        useRootNavigator: true,
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: context.global.theme.colors.secondaryBackground,
+                        builder: (_) => AudioBottomSheetWidget(
+                          audio: audio,
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.more_vert_rounded),
+                    color: context.global.theme.colors.mainTextColor,
+                  ),
+                ],
+              ),
+              builder: (context, child) {
+                return Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (cachedAudios.value.any((e) => e.id == audio.id)) const Icon(Icons.download, size: 16),
+                    child!,
+                  ],
+                );
+              })
           : Text(formatDuration),
       leading: CoverWidget(
         photoUrl: audio.album?.thumb?.photo270,
         child: ListenableBuilder(
           listenable: player,
           builder: (context, _) {
-            final isPlaying = player.playing;
-            final currentAudio = player.currentAudio;
-            if (currentAudio == null || isPlaying == null) return const SizedBox.shrink();
-            if (currentAudio.id == audio.id) {
-              if (isPlaying) {
-                return const Icon(Icons.pause_rounded, size: 48);
-              }
-              return const Icon(Icons.play_arrow_rounded, size: 48);
-            }
-            return const SizedBox.shrink();
+            return ListenableBuilder(
+              listenable: inProgress,
+              builder: (context, _) {
+                if (inProgress.value.contains(audio.id)) {
+                  return const CircularProgressIndicator();
+                }
+                final isPlaying = player.playing;
+                final currentAudio = player.currentAudio;
+                if (currentAudio == null || isPlaying == null) return const SizedBox.shrink();
+                if (currentAudio.id == audio.id) {
+                  if (isPlaying) {
+                    return const Icon(Icons.pause_rounded, size: 48);
+                  }
+                  return const Icon(Icons.play_arrow_rounded, size: 48);
+                }
+                return const SizedBox.shrink();
+              },
+            );
           },
         ),
       ),

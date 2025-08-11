@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
 
 import '../../models/user/user.dart';
 
@@ -28,7 +29,7 @@ class VKAuthService {
           'scope': 'audio',
           'client_id': 2274003,
           'client_secret': 'hHbZxrka2uZ6jB1inYsH',
-          'v': '5.155',
+          'v': AppGlobalDependency.apiVersion,
           'libverify_support': '1',
           'force_sms': '1',
           'username': login,

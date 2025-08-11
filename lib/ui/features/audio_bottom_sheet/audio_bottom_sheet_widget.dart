@@ -25,10 +25,11 @@ class AudioBottomSheetWidget extends ElementaryWidget<IAudioBottomSheetWidgetMod
           width: double.infinity,
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
-            child: EntityStateNotifierBuilder(
-              listenableEntityState: wm.audios,
-              builder: (context, audios) {
-                if (audios == null) return const Center(child: CircularProgressIndicator());
+            child: DoubleValueListenableBuilder(
+              firstValue: wm.audios,
+              secondValue: wm.cachedAudios,
+              builder: (context, audios, cached) {
+                if (audios.data == null || cached.data == null) return const Center(child: CircularProgressIndicator());
                 return Column(
                   children: [
                     const SizedBox(height: 4),
@@ -49,11 +50,11 @@ class AudioBottomSheetWidget extends ElementaryWidget<IAudioBottomSheetWidgetMod
                       ),
                     ),
                     const Divider(),
-                    if (!audios.contains(audio))
+                    if (!audios.data!.any((e) => e.id == audio.id))
                       ContextMenuItem(
                         leading: const Icon(Icons.add_rounded),
                         title: const Text('Добавить в мою музыку'),
-                        onTap: () => wm.onAddAudioTap(audio),
+                        onTap: wm.onAddAudioTap,
                       ),
                     ContextMenuItem(
                       leading: const Icon(Icons.playlist_add_rounded),
@@ -63,32 +64,44 @@ class AudioBottomSheetWidget extends ElementaryWidget<IAudioBottomSheetWidgetMod
                     ContextMenuItem(
                       title: const Text('Слушать далее'),
                       leading: const Icon(Icons.playlist_play_rounded),
-                      onTap: () => wm.onPlayNextTap(audio),
+                      onTap: wm.onPlayNextTap,
                     ),
                     if (audio.mainArtists != null)
                       ContextMenuItem(
                         title: const Text('Перейти к исполнителю'),
                         leading: const Icon(Icons.person),
-                        onTap: () => wm.onGoToArtistTap(audio.mainArtists!.first.id!),
+                        onTap: wm.onGoToArtistTap,
                       )
                     else
                       ContextMenuItem(
                         title: const Text('Найти исполнителя'),
                         leading: const Icon(Icons.search_rounded),
-                        onTap: () => wm.onFindArtistTap(audio),
+                        onTap: wm.onFindArtistTap,
                       ),
                     if (audio.album != null)
                       ContextMenuItem(
                         title: const Text('Перейти к альбому'),
                         leading: const Icon(Icons.album_rounded),
-                        onTap: () => wm.onGoToAlbumTap(audio),
+                        onTap: wm.onGoToAlbumTap,
                       ),
-                    if (audios.contains(audio))
+                    if (!cached.data!.any((e) => e.id == audio.id))
+                      ContextMenuItem(
+                        title: const Text('Кешировать'),
+                        leading: const Icon(Icons.download_rounded),
+                        onTap: wm.onCacheTap,
+                      )
+                    else
+                      ContextMenuItem(
+                        title: const Text('Удалить из кеша'),
+                        leading: const Icon(Icons.delete_forever),
+                        onTap: wm.onDeleteCachedTap,
+                      ),
+                    if (audios.data!.any((e) => e.id == audio.id))
                       ContextMenuItem(
                         leading: const Icon(Icons.delete_outline_rounded),
                         title: const Text('Удалить из моей музыки'),
                         iconColor: Colors.red,
-                        onTap: () => wm.onDeleteAudioTap(audio),
+                        onTap: wm.onDeleteAudioTap,
                       ),
                   ],
                 );

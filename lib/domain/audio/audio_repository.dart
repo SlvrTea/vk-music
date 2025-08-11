@@ -7,6 +7,7 @@ import 'package:vk_music/data/models/response/get_recommendations/get_recommenda
 import 'package:vk_music/data/models/response/search/search_albums_response/search_albums_response.dart';
 import 'package:vk_music/data/models/response/search/search_playlists_response/search_playlists_response.dart';
 import 'package:vk_music/data/models/response/search/search_response/search_response.dart';
+import 'package:vk_music/domain/cache_manager/cache_manager.dart';
 
 import '../../data/models/response/search/search_artists_response/search_artists_response.dart';
 import '../../data/models/user/user.dart';
@@ -14,9 +15,11 @@ import '../../data/provider/audio/audio_service.dart';
 import '../model/player_audio.dart';
 
 class AudioRepository {
-  AudioRepository(this._audioService, this._user);
+  AudioRepository(this._audioService, this._user, this._cacheManager);
 
   final AudioService _audioService;
+
+  final IOCacheManager _cacheManager;
 
   User? _user;
 
@@ -24,7 +27,32 @@ class AudioRepository {
 
   final userAlbumsNotifier = ValueNotifier<List<Playlist>?>(null);
 
+  final cachedAudioNotifier = ListNotifier<PlayerAudio>([]);
+
+  final downloadInProgressNotifier = ListNotifier<int>([]);
+
   void updateUser(User? user) => _user = user;
+
+  void loadCachedAudio() async {
+    final audios = _cacheManager.readCache();
+    cachedAudioNotifier.setValue(audios);
+  }
+
+  Future<void> downloadAudio(PlayerAudio audio) async {
+    downloadInProgressNotifier.add(audio.id);
+    final file = await _cacheManager.downloadAudio(audio);
+    final cachedAudios = cachedAudioNotifier.value;
+    cachedAudios.insert(0, audio.copyWith(uri: Uri.file(file.path)));
+    cachedAudioNotifier.setValue(cachedAudios);
+    downloadInProgressNotifier.remove(audio.id);
+  }
+
+  Future<void> deleteCachedAudio(PlayerAudio audio) async {
+    await _cacheManager.deleteAudio(audio);
+    final cachedAudios = cachedAudioNotifier.value;
+    cachedAudios.removeWhere((e) => e.id == audio.id);
+    cachedAudioNotifier.setValue(cachedAudios);
+  }
 
   Future<GetResponse> getAudios({
     required String ownerId,
@@ -133,4 +161,25 @@ class AudioRepository {
     required List<String> audioIds,
   }) =>
       _audioService.removeFromPlaylist(playlistId: playlistId, ownerId: ownerId, audioIds: audioIds.join(','));
+}
+
+class ListNotifier<T> extends ChangeNotifier {
+  ListNotifier(this.value);
+
+  List<T> value;
+
+  void add(T value) {
+    this.value.add(value);
+    notifyListeners();
+  }
+
+  void remove(T value) {
+    this.value.remove(value);
+    notifyListeners();
+  }
+
+  void setValue(List<T> value) {
+    this.value = value;
+    notifyListeners();
+  }
 }

@@ -35,7 +35,7 @@ abstract interface class PlayerAudio extends UriAudioSource {
   String? releaseAudioId;
   List<Artist>? mainArtists;
 
-  static PlayerAudio fromJson(Map<String, dynamic> json) {
+  factory PlayerAudio.fromJson(Map<String, dynamic> json) {
     if (AppGlobalDependency.isKateAuth ?? false) {
       return PlayerAudioMP3.fromJson(json);
     } else {
@@ -44,6 +44,18 @@ abstract interface class PlayerAudio extends UriAudioSource {
   }
 
   Map<String, dynamic> toJson();
+
+  PlayerAudio copyWith({
+    Uri? uri,
+    String? artist,
+    int? id,
+    int? ownerId,
+    String? title,
+    String? accessKey,
+    SongAlbum? album,
+    String? releaseAudioId,
+    List<Artist>? mainArtists,
+  });
 }
 
 final class PlayerAudioMP3 extends ProgressiveAudioSource implements PlayerAudio {
@@ -103,12 +115,13 @@ final class PlayerAudioMP3 extends ProgressiveAudioSource implements PlayerAudio
   @override
   Map<String, dynamic> toJson() {
     return {
-      'url': super.uri,
+      'url': super.uri.toString(),
       'artist': artist,
       'id': id,
       'owner_id': ownerId,
       'title': title,
-      'accessKey': accessKey,
+      'access_key': accessKey,
+      'duration': super.duration?.inSeconds,
       'album': album?.toJson(),
       'release_audio_id': releaseAudioId,
       'main_artists': mainArtists?.map((e) => e.toJson()).toList(),
@@ -118,6 +131,32 @@ final class PlayerAudioMP3 extends ProgressiveAudioSource implements PlayerAudio
   @override
   String toString() {
     return 'Player Audio MP3: $title, $artist';
+  }
+
+  @override
+  PlayerAudio copyWith({
+    Uri? uri,
+    String? artist,
+    int? id,
+    int? ownerId,
+    String? title,
+    String? accessKey,
+    SongAlbum? album,
+    String? releaseAudioId,
+    List<Artist>? mainArtists,
+  }) {
+    return PlayerAudioMP3(
+      uri ?? super.uri,
+      duration: super.duration,
+      artist: artist ?? this.artist,
+      id: id ?? this.id,
+      ownerId: ownerId ?? this.ownerId,
+      title: title ?? this.title,
+      accessKey: accessKey ?? this.accessKey,
+      album: album ?? this.album,
+      releaseAudioId: releaseAudioId ?? this.releaseAudioId,
+      mainArtists: mainArtists ?? this.mainArtists,
+    );
   }
 }
 
@@ -178,12 +217,13 @@ final class PlayerAudioM3U8 extends HlsAudioSource implements PlayerAudio {
   @override
   Map<String, dynamic> toJson() {
     return {
-      'url': super.uri,
+      'url': super.uri.toString(),
       'artist': artist,
       'id': id,
       'owner_id': ownerId,
       'title': title,
-      'accessKey': accessKey,
+      'access_key': accessKey,
+      'duration': super.duration?.inSeconds,
       'album': album?.toJson(),
       'release_audio_id': releaseAudioId,
       'main_artists': mainArtists?.map((e) => e.toJson()).toList(),
@@ -193,5 +233,31 @@ final class PlayerAudioM3U8 extends HlsAudioSource implements PlayerAudio {
   @override
   String toString() {
     return 'Player Audio M3U8: $title, $artist';
+  }
+
+  @override
+  PlayerAudio copyWith({
+    Uri? uri,
+    String? artist,
+    int? id,
+    int? ownerId,
+    String? title,
+    String? accessKey,
+    SongAlbum? album,
+    String? releaseAudioId,
+    List<Artist>? mainArtists,
+  }) {
+    return PlayerAudioM3U8(
+      uri ?? super.uri,
+      duration: super.duration,
+      artist: artist ?? this.artist,
+      id: id ?? this.id,
+      ownerId: ownerId ?? this.ownerId,
+      title: title ?? this.title,
+      accessKey: accessKey ?? this.accessKey,
+      album: album ?? this.album,
+      releaseAudioId: releaseAudioId ?? this.releaseAudioId,
+      mainArtists: mainArtists ?? this.mainArtists,
+    );
   }
 }

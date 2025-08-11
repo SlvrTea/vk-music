@@ -30,9 +30,16 @@ class MainScreen extends StatelessWidget {
         if (router.isRouteActive(AudioRoute.name) ||
             router.isRouteActive(SearchRoute.name) ||
             router.isRouteActive(AlbumsRoute.name)) {
-          return const PreferredSize(
-            preferredSize: Size.fromHeight(kToolbarHeight),
-            child: CustomAppBar(),
+          return PreferredSize(
+            preferredSize: const Size.fromHeight(kToolbarHeight),
+            child: CustomAppBar(
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.download),
+                  onPressed: () => context.router.push(const CachedAudioRoute()),
+                ),
+              ],
+            ),
           );
         }
         return PreferredSize(

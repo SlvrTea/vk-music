@@ -9,6 +9,8 @@ import '../../../domain/model/player_audio.dart';
 abstract interface class IAudioBottomSheetModel extends ElementaryModel {
   ValueNotifier<List<PlayerAudio>?> get userAudiosNotifier;
 
+  ListNotifier<PlayerAudio> get cachedAudiosNotifier;
+
   Future<void> addAudio(PlayerAudio audio);
 
   Future<void> deleteAudio(PlayerAudio audio);
@@ -18,6 +20,10 @@ abstract interface class IAudioBottomSheetModel extends ElementaryModel {
   Future<List<Playlist>> getPlaylists();
 
   Future<Playlist> getPlaylist(PlayerAudio audio);
+
+  Future<void> cacheAudio(PlayerAudio audio);
+
+  Future<void> deleteCachedAudio(PlayerAudio audio);
 }
 
 class AudioBottomSheetModel extends IAudioBottomSheetModel {
@@ -25,6 +31,9 @@ class AudioBottomSheetModel extends IAudioBottomSheetModel {
 
   @override
   ValueNotifier<List<PlayerAudio>?> get userAudiosNotifier => _audioRepository.userAudiosNotifier;
+
+  @override
+  ListNotifier<PlayerAudio> get cachedAudiosNotifier => _audioRepository.cachedAudioNotifier;
 
   final _logger = Logger(printer: PrettyPrinter(methodCount: 4));
 
@@ -77,5 +86,15 @@ class AudioBottomSheetModel extends IAudioBottomSheetModel {
       _logger.e(e);
       rethrow;
     }
+  }
+  
+  @override
+  Future<void> cacheAudio(PlayerAudio audio) async {
+    _audioRepository.downloadAudio(audio);
+  }
+  
+  @override
+  Future<void> deleteCachedAudio(PlayerAudio audio) async {
+    _audioRepository.deleteCachedAudio(audio);
   }
 }

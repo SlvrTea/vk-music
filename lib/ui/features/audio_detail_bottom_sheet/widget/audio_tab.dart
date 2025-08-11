@@ -59,7 +59,8 @@ class AudioTab extends StatelessWidget {
                       ),
                     )
                   else
-                    SizedBox.square(dimension: MediaQuery.of(context).size.width - 32),
+                    SizedBox.square(
+                        dimension: MediaQuery.of(context).size.width - 32),
                   BackdropFilter(
                     filter: ImageFilter.blur(sigmaY: 30, sigmaX: 30),
                     child: Container(
@@ -68,8 +69,10 @@ class AudioTab extends StatelessWidget {
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            context.global.theme.colors.backgroundColor.withAlpha(179),
-                            context.global.theme.colors.backgroundColor.withAlpha(230),
+                            context.global.theme.colors.backgroundColor
+                                .withAlpha(179),
+                            context.global.theme.colors.backgroundColor
+                                .withAlpha(230),
                           ],
                         ),
                       ),
@@ -115,8 +118,10 @@ class AudioTab extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: TextMarquee(
                       audio.title,
-                      style:
-                          const TextStyle(fontWeight: FontWeight.bold, fontSize: 24, overflow: TextOverflow.ellipsis),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 24,
+                          overflow: TextOverflow.ellipsis),
                     ),
                   ),
                   Padding(
@@ -152,15 +157,13 @@ class AudioTab extends StatelessWidget {
 
 class _PlayButton extends StatelessWidget {
   const _PlayButton({
-    super.key,
     required this.isPlaying,
     required this.play,
     required this.pause,
-    this.size = 48,
   });
 
   final EntityValueListenable<bool?> isPlaying;
-  final double size;
+  final double size = 48;
   final VoidCallback play;
   final VoidCallback pause;
 
@@ -175,7 +178,11 @@ class _PlayButton extends StatelessWidget {
               : isPlaying
                   ? pause
                   : play,
-          icon: Icon(isPlaying ?? false ? Icons.pause_rounded : Icons.play_arrow_rounded, size: size),
+          icon: Icon(
+              isPlaying ?? false
+                  ? Icons.pause_rounded
+                  : Icons.play_arrow_rounded,
+              size: size),
         );
       },
     );
@@ -183,9 +190,9 @@ class _PlayButton extends StatelessWidget {
 }
 
 class _RewindButton extends StatelessWidget {
-  const _RewindButton({super.key, this.size = 48, required this.seekPrevious});
+  const _RewindButton({required this.seekPrevious});
 
-  final double size;
+  final double size = 48;
   final VoidCallback seekPrevious;
 
   @override
@@ -200,9 +207,9 @@ class _RewindButton extends StatelessWidget {
 }
 
 class _ForwardButton extends StatelessWidget {
-  const _ForwardButton({super.key, this.size = 48, required this.seekNext});
+  const _ForwardButton({required this.seekNext});
 
-  final double size;
+  final double size = 48;
   final VoidCallback seekNext;
 
   @override
@@ -218,7 +225,7 @@ class _ForwardButton extends StatelessWidget {
 }
 
 class _PlaceholderControl extends StatelessWidget {
-  const _PlaceholderControl({super.key});
+  const _PlaceholderControl();
 
   @override
   Widget build(BuildContext context) {
@@ -238,7 +245,11 @@ class _PlaceholderControl extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 24),
             child: TextMarquee(
               'В данный момент ничего не играет',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24, overflow: TextOverflow.fade),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
+                overflow: TextOverflow.fade,
+              ),
             ),
           ),
           Padding(

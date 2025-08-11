@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:vk_music/ui/features/cache/cached_audio_widget.dart';
 
 import '../../../data/models/playlist/playlist.dart';
 import '../../../domain/model/player_audio.dart';
@@ -150,6 +151,10 @@ class AppRouter extends RootStackRouter {
         AutoRoute(
           page: SettingsRoute.page,
           path: '/settings',
+        ),
+        AutoRoute(
+          page: CachedAudioRoute.page,
+          path: '/cache',
         ),
       ];
 }

@@ -393,6 +393,25 @@ class AuthRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [CachedAudioWidget]
+class CachedAudioRoute extends PageRouteInfo<void> {
+  const CachedAudioRoute({List<PageRouteInfo>? children})
+      : super(
+          CachedAudioRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'CachedAudioRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const CachedAudioWidget();
+    },
+  );
+}
+
+/// generated route for
 /// [EditPlaylistScreen]
 class EditPlaylistRoute extends PageRouteInfo<EditPlaylistRouteArgs> {
   EditPlaylistRoute({
