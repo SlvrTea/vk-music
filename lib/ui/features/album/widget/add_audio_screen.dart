@@ -43,7 +43,7 @@ class AddAudioScreen extends StatelessWidget {
 }
 
 class _AddAudioTile extends StatefulWidget {
-  const _AddAudioTile({super.key, required this.audio, required this.isAdded, required this.onTap});
+  const _AddAudioTile({required this.audio, required this.isAdded, required this.onTap});
 
   final PlayerAudio audio;
   final bool isAdded;

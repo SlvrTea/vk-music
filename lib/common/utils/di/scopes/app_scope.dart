@@ -13,6 +13,7 @@ import 'package:vk_music/data/provider/audio/audio_service.dart';
 import 'package:vk_music/data/service/interceptors/vk_interceptor.dart';
 import 'package:vk_music/domain/audio/audio_repository.dart';
 import 'package:vk_music/domain/auth/auth_repository.dart';
+import 'package:vk_music/domain/cache_manager/cache_manager.dart';
 import 'package:vk_music/ui/theme/app_theme.dart';
 
 import '../../../../data/models/user/user.dart';
@@ -21,7 +22,9 @@ import '../../../../domain/audio_player/audio_player_controller.dart';
 class AppGlobalDependency extends AppAsyncDependency {
   static String baseUrl = 'https://api.vk.com/method/';
 
-  static double apiVersion = 5.95;
+  static double apiVersion = 5.155;
+
+  static bool? isKateAuth;
 
   late User? user;
 
@@ -41,9 +44,12 @@ class AppGlobalDependency extends AppAsyncDependency {
 
   late final AppAudioPlayerController audioPlayer;
 
+  late final IOCacheManager cacheManager;
+
   @override
   Future<void> initAsync(BuildContext context) async {
     final AppConfig? cfg = Hive.box('config').get('main');
+    AppGlobalDependency.isKateAuth = cfg?.isKateAuth;
     systemColor = SystemTheme.accentColor.accent;
 
     if (cfg != null) {
@@ -57,6 +63,7 @@ class AppGlobalDependency extends AppAsyncDependency {
         isDarkMode: SchedulerBinding.instance.platformDispatcher.platformBrightness == Brightness.dark ? true : false,
         accentColor: systemColor,
         isSystem: true,
+        isKateAuth: null,
       );
     }
 
@@ -64,11 +71,12 @@ class AppGlobalDependency extends AppAsyncDependency {
     user = userBox.get('user');
     router = AppRouter();
     dio = _initDio();
+    cacheManager = IOCacheManager();
 
     final audioService = AudioService(dio);
 
     authRepository = AuthRepository();
-    audioRepository = AudioRepository(audioService, user);
+    audioRepository = AudioRepository(audioService, user, cacheManager);
     audioPlayer = AppAudioPlayerController();
   }
 

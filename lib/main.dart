@@ -24,6 +24,7 @@ void main() async {
   await Hive.initFlutter();
   await Hive.openBox('userBox');
   await Hive.openBox('config');
+  await Hive.openBox<String>('cachedAudio');
 
   SystemTheme.fallbackColor = Colors.cyanAccent;
 

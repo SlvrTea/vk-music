@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:text_marquee/text_marquee.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
 
+import '../../../audio_detail_bottom_sheet/audio_detail_bottom_sheet.dart';
 import 'audio_buttons.dart';
-import 'audio_details_bottom_sheet.dart';
 
 class AudioBar extends StatelessWidget {
   const AudioBar({super.key});
@@ -29,17 +30,15 @@ class AudioBar extends StatelessWidget {
                   dense: true,
                   visualDensity: VisualDensity.compact,
                   title: Center(
-                    child: Text(
+                    child: TextMarquee(
                       audio!.title,
                       style: const TextStyle(fontWeight: FontWeight.bold, overflow: TextOverflow.ellipsis),
-                      maxLines: 1,
                     ),
                   ),
                   subtitle: Center(
-                    child: Text(
+                    child: TextMarquee(
                       audio.artist,
                       style: const TextStyle(overflow: TextOverflow.ellipsis),
-                      maxLines: 1,
                     ),
                   ),
                 ),

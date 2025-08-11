@@ -393,6 +393,25 @@ class AuthRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [CachedAudioWidget]
+class CachedAudioRoute extends PageRouteInfo<void> {
+  const CachedAudioRoute({List<PageRouteInfo>? children})
+      : super(
+          CachedAudioRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'CachedAudioRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const CachedAudioWidget();
+    },
+  );
+}
+
+/// generated route for
 /// [EditPlaylistScreen]
 class EditPlaylistRoute extends PageRouteInfo<EditPlaylistRouteArgs> {
   EditPlaylistRoute({
@@ -436,6 +455,25 @@ class EditPlaylistRouteArgs {
   String toString() {
     return 'EditPlaylistRouteArgs{key: $key, playlist: $playlist}';
   }
+}
+
+/// generated route for
+/// [KateAuthWidget]
+class KateAuthRoute extends PageRouteInfo<void> {
+  const KateAuthRoute({List<PageRouteInfo>? children})
+      : super(
+          KateAuthRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'KateAuthRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const KateAuthWidget();
+    },
+  );
 }
 
 /// generated route for
@@ -607,56 +645,4 @@ class SettingsRoute extends PageRouteInfo<void> {
       return const SettingsScreen();
     },
   );
-}
-
-/// generated route for
-/// [TfaScreen]
-class TfaRoute extends PageRouteInfo<TfaRouteArgs> {
-  TfaRoute({
-    Key? key,
-    required Map<String, dynamic> query,
-    required String redirect,
-    List<PageRouteInfo>? children,
-  }) : super(
-          TfaRoute.name,
-          args: TfaRouteArgs(
-            key: key,
-            query: query,
-            redirect: redirect,
-          ),
-          initialChildren: children,
-        );
-
-  static const String name = 'TfaRoute';
-
-  static PageInfo page = PageInfo(
-    name,
-    builder: (data) {
-      final args = data.argsAs<TfaRouteArgs>();
-      return TfaScreen(
-        key: args.key,
-        query: args.query,
-        redirect: args.redirect,
-      );
-    },
-  );
-}
-
-class TfaRouteArgs {
-  const TfaRouteArgs({
-    this.key,
-    required this.query,
-    required this.redirect,
-  });
-
-  final Key? key;
-
-  final Map<String, dynamic> query;
-
-  final String redirect;
-
-  @override
-  String toString() {
-    return 'TfaRouteArgs{key: $key, query: $query, redirect: $redirect}';
-  }
 }

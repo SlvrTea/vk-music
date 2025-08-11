@@ -1,22 +1,23 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:vk_music/ui/features/cache/cached_audio_widget.dart';
 
 import '../../../data/models/playlist/playlist.dart';
 import '../../../domain/model/player_audio.dart';
 import '../../../ui/features/album/album_screen.dart';
 import '../../../ui/features/album/widget/add_audio_screen.dart';
-import '../../../ui/features/album/widget/edit_playlist_screen.dart';
+import '../../../ui/features/album/widget/edit_playlist/edit_playlist_screen.dart';
 import '../../../ui/features/albums/albums_screen_widget.dart';
 import '../../../ui/features/artist/artist_screen.dart';
 import '../../../ui/features/artist/widget/all_audios/all_songs_screen.dart';
 import '../../../ui/features/audio/audio_screen_widget.dart';
 import '../../../ui/features/audio_bottom_sheet/widgets/select_playlist.dart';
 import '../../../ui/features/auth/auth_screen_widget.dart';
+import '../../../ui/features/kate_auth/kate_auth.dart';
 import '../../../ui/features/main/main_screen_widget.dart';
 import '../../../ui/features/search/search_screen_widget.dart';
 import '../../../ui/features/search/widget/all_audios/all_songs_screen.dart';
 import '../../../ui/features/settings/settings_screen.dart';
-import '../../../ui/features/tfa/tfa_screen.dart';
 import '../../../ui/widgets/common/all_playlists_screen.dart';
 import 'app_tabs.dart';
 
@@ -32,8 +33,8 @@ class AppRouter extends RootStackRouter {
           initial: true,
         ),
         AutoRoute(
-          page: TfaRoute.page,
-          path: '/tfa',
+          page: KateAuthRoute.page,
+          path: '/kate',
         ),
         AutoRoute(
           page: MainRoute.page,
@@ -150,6 +151,10 @@ class AppRouter extends RootStackRouter {
         AutoRoute(
           page: SettingsRoute.page,
           path: '/settings',
+        ),
+        AutoRoute(
+          page: CachedAudioRoute.page,
+          path: '/cache',
         ),
       ];
 }

@@ -20,19 +20,25 @@ abstract interface class IAudioBottomSheetWidgetModel implements IWidgetModel {
 
   EntityValueListenable<List<Playlist>> get ownedPlaylists;
 
-  Future<void> onAddAudioTap(PlayerAudio audio);
+  EntityValueListenable<List<PlayerAudio>> get cachedAudios;
 
-  Future<void> onDeleteAudioTap(PlayerAudio audio);
+  Future<void> onAddAudioTap();
 
-  void onGoToArtistTap(String artistId);
+  Future<void> onDeleteAudioTap();
+
+  void onGoToArtistTap();
 
   void onAddToPlaylistTap();
 
-  void onFindArtistTap(PlayerAudio audio);
+  void onFindArtistTap();
 
-  void onGoToAlbumTap(PlayerAudio audio);
+  void onGoToAlbumTap();
 
-  void onPlayNextTap(PlayerAudio audio);
+  void onPlayNextTap();
+
+  void onCacheTap();
+
+  void onDeleteCachedTap();
 }
 
 AudioBottomSheetWidgetModel defaultAudioBottomSheetWidgetModelFactory(BuildContext context) =>
@@ -49,6 +55,8 @@ class AudioBottomSheetWidgetModel extends WidgetModel<AudioBottomSheetWidget, IA
 
   final _playlistsEntity = EntityStateNotifier<List<Playlist>>();
 
+  final _cachedAudioEntity = EntityStateNotifier<List<PlayerAudio>>();
+
   @override
   EntityValueListenable<List<PlayerAudio>> get audios => _audiosEntity;
 
@@ -56,8 +64,12 @@ class AudioBottomSheetWidgetModel extends WidgetModel<AudioBottomSheetWidget, IA
   EntityValueListenable<List<Playlist>> get ownedPlaylists => _playlistsEntity;
 
   @override
+  EntityValueListenable<List<PlayerAudio>> get cachedAudios => _cachedAudioEntity;
+
+  @override
   void initWidgetModel() {
     _audiosEntity.content(model.userAudiosNotifier.value!);
+    _cachedAudioEntity.content(model.cachedAudiosNotifier.value);
     _initAsync();
     super.initWidgetModel();
   }
@@ -68,9 +80,9 @@ class AudioBottomSheetWidgetModel extends WidgetModel<AudioBottomSheetWidget, IA
   }
 
   @override
-  Future<void> onAddAudioTap(PlayerAudio audio) async {
+  Future<void> onAddAudioTap() async {
     try {
-      await model.addAudio(audio);
+      await model.addAudio(widget.audio);
       if (context.mounted) {
         context.router.maybePop();
         const snackBar = SnackBar(content: Text('Аудиозапись добавлена'));
@@ -82,9 +94,9 @@ class AudioBottomSheetWidgetModel extends WidgetModel<AudioBottomSheetWidget, IA
   }
 
   @override
-  Future<void> onDeleteAudioTap(PlayerAudio audio) async {
+  Future<void> onDeleteAudioTap() async {
     try {
-      await model.deleteAudio(audio);
+      await model.deleteAudio(widget.audio);
       if (context.mounted) {
         context.router.maybePop();
         const snackBar = SnackBar(content: Text('Аудиозапись удалена'));
@@ -103,14 +115,14 @@ class AudioBottomSheetWidgetModel extends WidgetModel<AudioBottomSheetWidget, IA
       ));
 
   @override
-  void onGoToArtistTap(String artistId) => context.router
+  void onGoToArtistTap() => context.router
     ..popUntil((route) => route is! ModalBottomSheetRoute)
-    ..push(ArtistRoute(artistId: artistId));
+    ..push(ArtistRoute(artistId: widget.audio.mainArtists!.first.id!));
 
   @override
-  void onFindArtistTap(PlayerAudio audio) => context.router
+  void onFindArtistTap() => context.router
     ..popUntil((route) => route is! ModalBottomSheetRoute)
-    ..navigate(SearchRoute(initialQuery: audio.artist))
+    ..navigate(SearchRoute(initialQuery: widget.audio.artist))
     ..notifyAll();
 
   Future<void> _addToPlaylist(Playlist playlist, PlayerAudio audio) async {
@@ -122,8 +134,8 @@ class AudioBottomSheetWidgetModel extends WidgetModel<AudioBottomSheetWidget, IA
   }
 
   @override
-  Future<void> onGoToAlbumTap(PlayerAudio audio) async {
-    final playlist = await model.getPlaylist(audio);
+  Future<void> onGoToAlbumTap() async {
+    final playlist = await model.getPlaylist(widget.audio);
     if (context.mounted) {
       context.router
         ..popUntil((route) => route is! ModalBottomSheetRoute)
@@ -132,8 +144,20 @@ class AudioBottomSheetWidgetModel extends WidgetModel<AudioBottomSheetWidget, IA
   }
 
   @override
-  void onPlayNextTap(PlayerAudio audio) {
-    player.playNext(audio);
+  void onPlayNextTap() {
+    player.playNext(widget.audio);
+    context.maybePop();
+  }
+
+  @override
+  void onCacheTap() {
+    model.cacheAudio(widget.audio);
+    context.maybePop();
+  }
+
+  @override
+  void onDeleteCachedTap() {
+    model.deleteCachedAudio(_cachedAudioEntity.value.data!.firstWhere((e) => e.id == widget.audio.id));
     context.maybePop();
   }
 }

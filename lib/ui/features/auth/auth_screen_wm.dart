@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:elementary/elementary.dart';
 import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
 
 import '../../../common/utils/router/app_router.dart';
@@ -15,11 +16,15 @@ abstract interface class IAuthScreenWidgetModel implements IWidgetModel {
 
   TextEditingController get passwordController;
 
+  MaskTextInputFormatter get formatter;
+
   EntityValueListenable<bool> get obscurePassword;
 
   EntityValueListenable<User> get user;
 
   Future<void> onLoginTap();
+
+  Future<void> altKateAuth();
 
   void onChangeObscureTap();
 }
@@ -34,6 +39,9 @@ class AuthScreenWidgetModel extends WidgetModel<AuthScreen, IAuthScreenModel> im
 
   final _passwordController = TextEditingController();
 
+  final _loginFormatter = MaskTextInputFormatter(
+      mask: '+# (###) ###-##-##', filter: {"#": RegExp(r'[0-9]')}, type: MaskAutoCompletionType.lazy);
+
   final _obscurePasswordEntity = EntityStateNotifier<bool>();
 
   final _userEntity = EntityStateNotifier<User>();
@@ -43,6 +51,9 @@ class AuthScreenWidgetModel extends WidgetModel<AuthScreen, IAuthScreenModel> im
 
   @override
   TextEditingController get passwordController => _passwordController;
+
+  @override
+  MaskTextInputFormatter get formatter => _loginFormatter;
 
   @override
   EntityValueListenable<bool> get obscurePassword => _obscurePasswordEntity;
@@ -77,7 +88,7 @@ class AuthScreenWidgetModel extends WidgetModel<AuthScreen, IAuthScreenModel> im
     }
 
     try {
-      final userResp = await model.authUser(_loginController.text, _passwordController.text);
+      final userResp = await model.authUser(_loginFormatter.getUnmaskedText(), _passwordController.text);
       if (userResp == null) {
         return;
       }
@@ -90,24 +101,30 @@ class AuthScreenWidgetModel extends WidgetModel<AuthScreen, IAuthScreenModel> im
     } on DioException catch (e) {
       if (e.response == null) {
         _showError('Нет подключения к интернету');
-      } else if (e.response!.data['error'] == 'need_captcha') {
-        _showError('На данный момент капча не работает :(');
-      } else if (e.response!.data['redirect_uri'] != null) {
+      } else if (e.response!.data['error']['redirect_uri'] != null) {
         if (!context.mounted) return;
-
-        final resp = await context.router.push<String>(
-            TfaRoute(query: e.requestOptions.queryParameters, redirect: e.response!.data['redirect_uri']));
-
-        final user = await model.authUser(_loginController.text, _passwordController.text, resp);
-
-        _userEntity.content(user!);
-
-        if (context.mounted) context.global.user = user;
-
-        if (!context.mounted) return;
-        context.router.push(const MainRoute());
+        _showTfaError();
       } else {
-        _showError(e.response!.data['error_description']);
+        _showError(e.response!.data['error_msg']);
+      }
+    }
+  }
+
+  @override
+  Future<void> altKateAuth() async {
+    final url = await context.router.push<String?>(const KateAuthRoute());
+    if (url != null) {
+      final user = User(
+        accessToken: url.split('access_token=').last.split('&').first,
+        secret: 'hHbZxrka2uZ6jB1inYsH',
+        userId: url.split('user_id=').last.split('&').first,
+      );
+      model.cacheUser(user);
+      AppGlobalDependency.isKateAuth = true;
+      if (context.mounted) {
+        context
+          ..global.updateConfig(context.global.config.copyWith(isKateAuth: true))
+          ..router.replace(const MainRoute());
       }
     }
   }
@@ -120,5 +137,35 @@ class AuthScreenWidgetModel extends WidgetModel<AuthScreen, IAuthScreenModel> im
 
   void _showError(String errorText) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorText)));
+  }
+
+  void _showTfaError() {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: const Text('Ошибка валидации'),
+      action: SnackBarAction(
+        label: 'Подробнее',
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog.adaptive(
+              title: const Text('Ошибка валидации'),
+              content: const Text('В связи с изменениями в api вк, при запросе на прохождение капчи, '
+                  'авторизация с доступом к аудио невозможна.\n'
+                  'Это может быть вызвано:'
+                  '   Слишком частыми запросами на авторизацию с Вашего устройства'
+                  '   Включенным VPN'
+                  '   В вк просто решили, что Ваши действия подозрительные\n'
+                  'Попробуйте подождать несколько часов или используйте альтернативный метод авторизации.'),
+              actions: [
+                TextButton(
+                  onPressed: context.maybePop,
+                  child: const Text('Закрыть'),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    ));
   }
 }

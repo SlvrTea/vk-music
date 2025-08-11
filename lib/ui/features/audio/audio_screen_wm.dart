@@ -24,6 +24,8 @@ abstract interface class IAudioScreenWidgetModel implements IWidgetModel {
 
   EntityValueListenable<List<Playlist>> get playlists;
 
+  EntityValueListenable<List<PlayerAudio>> get cachedAudios;
+
   void onAudioTileTap(int index);
 
   void onReorder({required int audioId, int? before, int? after});
@@ -54,11 +56,16 @@ class AudioScreenWidgetModel extends WidgetModel<AudioScreen, IAudioScreenModel>
 
   final _playlistsEntity = EntityStateNotifier<List<Playlist>>();
 
+  final _cachedAudioEntity = EntityStateNotifier<List<PlayerAudio>>();
+
   @override
   EntityValueListenable<List<PlayerAudio>> get audios => _audiosEntity;
 
   @override
   EntityValueListenable<List<Playlist>> get playlists => _playlistsEntity;
+
+  @override
+  EntityValueListenable<List<PlayerAudio>> get cachedAudios => _cachedAudioEntity;
 
   @override
   void onAudioTileTap(int index) {
@@ -82,6 +89,8 @@ class AudioScreenWidgetModel extends WidgetModel<AudioScreen, IAudioScreenModel>
   void initWidgetModel() {
     model.userAudiosNotifier.addListener(_listenAudioChanges);
     model.userPlaylistsNotifier.addListener(_listenPlaylistsChanges);
+    model.cachedAudioNotifier.addListener(_listenCacheChanges);
+    model.loadCachedAudio();
 
     _initAsync();
     super.initWidgetModel();
@@ -91,6 +100,7 @@ class AudioScreenWidgetModel extends WidgetModel<AudioScreen, IAudioScreenModel>
   void dispose() {
     model.userAudiosNotifier.removeListener(_listenAudioChanges);
     model.userPlaylistsNotifier.removeListener(_listenPlaylistsChanges);
+    model.cachedAudioNotifier.removeListener(_listenCacheChanges);
     super.dispose();
   }
 
@@ -127,4 +137,6 @@ class AudioScreenWidgetModel extends WidgetModel<AudioScreen, IAudioScreenModel>
   void _listenAudioChanges() => _audiosEntity.content(model.userAudiosNotifier.value!);
 
   void _listenPlaylistsChanges() => _playlistsEntity.content(model.userPlaylistsNotifier.value!);
+
+  void _listenCacheChanges() => _cachedAudioEntity.content(model.cachedAudioNotifier.value);
 }

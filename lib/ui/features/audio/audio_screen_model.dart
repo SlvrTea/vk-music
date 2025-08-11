@@ -10,11 +10,15 @@ abstract interface class IAudioScreenModel extends ElementaryModel {
 
   ValueNotifier<List<Playlist>?> get userPlaylistsNotifier;
 
+  ListNotifier<PlayerAudio> get cachedAudioNotifier;
+
   Future<List<Playlist>> getPlaylists({int? count, int? offset});
 
   Future<List<PlayerAudio>> getAudios(String ownerId);
 
   Future<void> reorder({required int audioId, int? before, int? after});
+
+  void loadCachedAudio();
 }
 
 class AudioScreenModel extends IAudioScreenModel {
@@ -27,6 +31,9 @@ class AudioScreenModel extends IAudioScreenModel {
 
   @override
   ValueNotifier<List<Playlist>?> get userPlaylistsNotifier => _audioRepository.userAlbumsNotifier;
+
+  @override
+  ListNotifier<PlayerAudio> get cachedAudioNotifier => _audioRepository.cachedAudioNotifier;
 
   @override
   Future<List<Playlist>> getPlaylists({int? count, int? offset}) async {
@@ -47,5 +54,10 @@ class AudioScreenModel extends IAudioScreenModel {
     } on Exception catch (e) {
       rethrow;
     }
+  }
+  
+  @override
+  void loadCachedAudio() {
+    _audioRepository.loadCachedAudio();
   }
 }

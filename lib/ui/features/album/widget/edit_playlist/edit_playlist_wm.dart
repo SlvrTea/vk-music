@@ -7,9 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
 import 'package:vk_music/common/utils/extensions/widget_model_extension.dart';
 import 'package:vk_music/common/utils/router/app_router.dart';
-import 'package:vk_music/ui/features/album/widget/edit_playlist_screen.dart';
+import 'package:vk_music/ui/features/album/widget/edit_playlist/edit_playlist_screen.dart';
 
-import '../../../../domain/model/player_audio.dart';
+import '../../../../../domain/model/player_audio.dart';
 import 'edit_playlist_model.dart';
 
 abstract interface class IEditPlaylistWidgetModel implements IWidgetModel {

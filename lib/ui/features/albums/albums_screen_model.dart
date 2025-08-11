@@ -5,6 +5,8 @@ import 'package:vk_music/domain/audio/audio_repository.dart';
 
 abstract interface class IAlbumsScreenModel extends ElementaryModel {
   ValueNotifier<List<Playlist>?> get userPlaylistsNotifier;
+
+  Future<void> createAlbum(String title);
 }
 
 class AlbumsScreenModel extends IAlbumsScreenModel {
@@ -14,4 +16,9 @@ class AlbumsScreenModel extends IAlbumsScreenModel {
 
   @override
   ValueNotifier<List<Playlist>?> get userPlaylistsNotifier => _audioRepository.userAlbumsNotifier;
+
+  @override
+  Future<void> createAlbum(String title) async {
+    await _audioRepository.createPlaylist(title);
+  }
 }

@@ -12,7 +12,7 @@ class HorizontalMusicList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height * .21;
+    final height = MediaQuery.of(context).size.height * .24;
     final width = MediaQuery.of(context).size.width;
     final tileWidth = width * .75;
     final tileHeight = height / 3;
@@ -45,7 +45,7 @@ class _CustomSongTile extends StatelessWidget {
       onTap: () => player.playFrom(playlist: playlist, initialIndex: playlist.indexOf(audio)),
       child: SizedBox(
         width: width,
-        height: MediaQuery.of(context).size.height * .07,
+        height: MediaQuery.of(context).size.height * .08,
         child: Row(
           children: [
             CoverWidget(

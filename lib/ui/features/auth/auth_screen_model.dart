@@ -1,7 +1,7 @@
 import 'package:elementary/elementary.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:logger/logger.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:logger/logger.dart';
 
 import '../../../data/models/user/user.dart';
 import '../../../domain/auth/auth_repository.dart';
@@ -12,6 +12,8 @@ abstract interface class IAuthScreenModel extends ElementaryModel {
   final userBox = Hive.box('userBox');
 
   IAuthScreenModel(this.authRepository);
+
+  void cacheUser(User user, {LoopMode loopMode = LoopMode.off, bool shuffle = false});
 
   Future<User?> authUser(String login, String password, [String? url]);
 
@@ -25,8 +27,9 @@ class AuthScreenModel extends IAuthScreenModel {
 
   final _logger = Logger();
 
-  void _cacheUser(User user, {LoopMode loopMode = LoopMode.off, bool shuffle = false}) {
-    _logger.i('Write user to cache');
+  @override
+  void cacheUser(User user, {LoopMode loopMode = LoopMode.off, bool shuffle = false}) {
+    _logger.i('Write user to cache: $user');
     userBox.put('user', user);
     userBox.put('loopMode', loopMode.index);
     userBox.put('shuffle', shuffle);
@@ -34,29 +37,18 @@ class AuthScreenModel extends IAuthScreenModel {
 
   @override
   Future<User?> authUser(String login, String password, [String? url]) async {
-    _logger.i('Attempt to auth user');
+    _logger.i('Auth via default method');
     late User user;
     if (url == null) {
       final res = await authRepository.auth(login, password);
       user = res;
     } else {
       user = User(
-          accessToken: url
-              .split('access_token=')
-              .last
-              .split('&')
-              .first,
-          secret: url
-              .split('secret=')
-              .last,
-          userId: url
-              .split('user_id=')
-              .last
-              .split('&')
-              .first
-      );
+          accessToken: url.split('access_token=').last.split('&').first,
+          secret: url.split('secret=').last,
+          userId: url.split('user_id=').last.split('&').first);
     }
-    _cacheUser(user);
+    cacheUser(user);
     return user;
   }
 

@@ -95,10 +95,14 @@ class AppAudioPlayerController with ChangeNotifier {
       }
     }
 
+    if (const ListEquality().equals(currentPlaylist, playlist)) {
+      _player.seek(Duration.zero, index: initialIndex);
+      await _player.play();
+      return notifyListeners();
+    }
     if (playing ?? false) {
       await _player.stop();
     }
-
     currentPlaylist = [...playlist];
     await _player.setAudioSources(playlist, initialIndex: initialIndex, initialPosition: Duration.zero);
     await _player.play();
