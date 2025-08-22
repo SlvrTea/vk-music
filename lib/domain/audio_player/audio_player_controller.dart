@@ -2,8 +2,9 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart' show Hive;
 import 'package:just_audio/just_audio.dart';
+import 'package:vk_music/common/utils/config/app_config.dart';
 import 'package:vk_music/domain/model/player_audio.dart';
 
 class AppAudioPlayer extends AudioPlayer {
@@ -32,14 +33,14 @@ class AppAudioPlayer extends AudioPlayer {
 }
 
 class AppAudioPlayerController with ChangeNotifier {
-  AppAudioPlayerController() {
+  AppAudioPlayerController(AppConfig config) {
     _playbackStreamSubscription = _player.playbackEventStream.listen(_listenPlaybackEvent);
     _playerStateStreamSubscription = _player.playerStateStream.listen(_listenPlayerState);
 
     _player
       ..setAutomaticallyWaitsToMinimizeStalling(false)
-      ..setLoopMode(_getLoopMode())
-      ..setShuffleModeEnabled(_getShuffle());
+      ..setLoopMode(config.loopMode)
+      ..setShuffleModeEnabled(config.enableShuffle);
   }
 
   LoopMode get loopMode => _player.loopMode;
@@ -142,8 +143,9 @@ class AppAudioPlayerController with ChangeNotifier {
   }
 
   Future<void> switchShuffleMode() async {
+    final box = Hive.box<AppConfig>('config');
     final mode = !_getShuffle();
-    Hive.box('userBox').put('shuffle', mode);
+    box.put('main', box.get('main')!.copyWith(enableShuffle: mode));
     await _player.setShuffleModeEnabled(mode);
     if (mode) _player.shuffle();
     notifyListeners();
@@ -152,13 +154,14 @@ class AppAudioPlayerController with ChangeNotifier {
   void setShuffleModeEnabled(bool enabled) => _player.setShuffleModeEnabled(enabled);
 
   void switchLoopMode(LoopMode mode) async {
+    final box = Hive.box<AppConfig>('config');
     switch (mode) {
       case LoopMode.off:
-        Hive.box('userBox').put('loopMode', 0);
+        box.put('main', box.get('main')!.copyWith(loopMode: mode));
       case LoopMode.all:
-        Hive.box('userBox').put('loopMode', 1);
+        box.put('main', box.get('main')!.copyWith(loopMode: mode));
       case LoopMode.one:
-        Hive.box('userBox').put('loopMode', 2);
+        box.put('main', box.get('main')!.copyWith(loopMode: mode));
     }
     await _player.setLoopMode(mode);
     notifyListeners();
@@ -189,18 +192,5 @@ class AppAudioPlayerController with ChangeNotifier {
     notifyListeners();
   }
 
-  bool _getShuffle() => Hive.box('userBox').get('shuffle') ?? false;
-
-  LoopMode _getLoopMode() {
-    switch (Hive.box('userBox').get('loopMode')) {
-      case 0:
-        return LoopMode.off;
-      case 1:
-        return LoopMode.all;
-      case 2:
-        return LoopMode.one;
-      default:
-        return LoopMode.off;
-    }
-  }
+  bool _getShuffle() => Hive.box<AppConfig>('config').get('main')?.enableShuffle ?? false;
 }

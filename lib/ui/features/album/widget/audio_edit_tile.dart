@@ -27,16 +27,8 @@ class _AudioEditTileState extends State<AudioEditTile> {
   Widget build(BuildContext context) {
     return ListTile(
       leading: CoverWidget(photoUrl: widget.audio.album?.thumb?.photo270),
-      title: Text(
-        widget.audio.title,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
-      subtitle: Text(
-        widget.audio.artist,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
+      title: Text(widget.audio.title, maxLines: 1, overflow: TextOverflow.ellipsis),
+      subtitle: Text(widget.audio.artist, maxLines: 1, overflow: TextOverflow.ellipsis),
       enabled: _selected,
       trailing: IconButton(
         onPressed: () {

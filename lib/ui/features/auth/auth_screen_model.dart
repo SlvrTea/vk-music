@@ -1,6 +1,5 @@
 import 'package:elementary/elementary.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:just_audio/just_audio.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:logger/logger.dart';
 
 import '../../../data/models/user/user.dart';
@@ -9,11 +8,11 @@ import '../../../domain/auth/auth_repository.dart';
 abstract interface class IAuthScreenModel extends ElementaryModel {
   final AuthRepository authRepository;
 
-  final userBox = Hive.box('userBox');
+  final userBox = Hive.box<User>('user');
 
   IAuthScreenModel(this.authRepository);
 
-  void cacheUser(User user, {LoopMode loopMode = LoopMode.off, bool shuffle = false});
+  void cacheUser(User user);
 
   Future<User?> authUser(String login, String password, [String? url]);
 
@@ -28,11 +27,9 @@ class AuthScreenModel extends IAuthScreenModel {
   final _logger = Logger();
 
   @override
-  void cacheUser(User user, {LoopMode loopMode = LoopMode.off, bool shuffle = false}) {
+  void cacheUser(User user) {
     _logger.i('Write user to cache: $user');
     userBox.put('user', user);
-    userBox.put('loopMode', loopMode.index);
-    userBox.put('shuffle', shuffle);
   }
 
   @override
@@ -44,9 +41,10 @@ class AuthScreenModel extends IAuthScreenModel {
       user = res;
     } else {
       user = User(
-          accessToken: url.split('access_token=').last.split('&').first,
-          secret: url.split('secret=').last,
-          userId: url.split('user_id=').last.split('&').first);
+        accessToken: url.split('access_token=').last.split('&').first,
+        secret: url.split('secret=').last,
+        userId: url.split('user_id=').last.split('&').first,
+      );
     }
     cacheUser(user);
     return user;

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/adapters.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:system_theme/system_theme.dart';
 import 'package:vk_music/common/utils/config/app_config.dart';
 import 'package:vk_music/common/utils/di/app_async_dependency.dart';
+import 'package:vk_music/hive/hive_registrar.g.dart';
 
 import 'common/app/app.dart';
 import 'common/utils/di/scopes/app_scope.dart';
@@ -18,12 +19,11 @@ void main() async {
     androidNotificationOngoing: true,
   );
 
-  Hive.registerAdapter<User>(UserAdapter());
-  Hive.registerAdapter<AppConfig>(AppConfigAdapter());
-  Hive.registerAdapter<Color>(ColorAdapter());
   await Hive.initFlutter();
-  await Hive.openBox('userBox');
-  await Hive.openBox('config');
+  Hive.registerAdapters();
+
+  await Hive.openBox<User>('user');
+  await Hive.openBox<AppConfig>('config');
   await Hive.openBox<String>('cachedAudio');
 
   SystemTheme.fallbackColor = Colors.cyanAccent;

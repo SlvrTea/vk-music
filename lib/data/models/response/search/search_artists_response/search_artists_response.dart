@@ -5,7 +5,7 @@ part 'search_artists_response.freezed.dart';
 part 'search_artists_response.g.dart';
 
 @freezed
-class SearchArtistsResponse with _$SearchArtistsResponse {
+abstract class SearchArtistsResponse with _$SearchArtistsResponse {
   const factory SearchArtistsResponse({
     required int count,
     @Default([]) List<Artist> items,

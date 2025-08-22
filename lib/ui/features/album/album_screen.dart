@@ -47,7 +47,8 @@ class AlbumScreen extends ElementaryWidget<IAlbumScreenWidgetModel> {
                 pinned: true,
                 stretch: true,
                 actions: [
-                  IconButton(onPressed: wm.onMoreTap, icon: const Icon(Icons.more_vert)),
+                  if (album.data!.original == null && album.data!.ownerId.toString() == context.global.user!.userId)
+                    IconButton(onPressed: wm.onMoreTap, icon: const Icon(Icons.more_vert)),
                 ],
                 flexibleSpace: FlexibleSpaceBar(
                   collapseMode: CollapseMode.pin,

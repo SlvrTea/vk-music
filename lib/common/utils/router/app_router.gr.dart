@@ -1,3 +1,4 @@
+// dart format width=80
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // **************************************************************************
@@ -17,13 +18,10 @@ class AddAudioRoute extends PageRouteInfo<AddAudioRouteArgs> {
     required List<PlayerAudio> playlistAudios,
     List<PageRouteInfo>? children,
   }) : super(
-          AddAudioRoute.name,
-          args: AddAudioRouteArgs(
-            key: key,
-            playlistAudios: playlistAudios,
-          ),
-          initialChildren: children,
-        );
+         AddAudioRoute.name,
+         args: AddAudioRouteArgs(key: key, playlistAudios: playlistAudios),
+         initialChildren: children,
+       );
 
   static const String name = 'AddAudioRoute';
 
@@ -31,19 +29,13 @@ class AddAudioRoute extends PageRouteInfo<AddAudioRouteArgs> {
     name,
     builder: (data) {
       final args = data.argsAs<AddAudioRouteArgs>();
-      return AddAudioScreen(
-        key: args.key,
-        playlistAudios: args.playlistAudios,
-      );
+      return AddAudioScreen(key: args.key, playlistAudios: args.playlistAudios);
     },
   );
 }
 
 class AddAudioRouteArgs {
-  const AddAudioRouteArgs({
-    this.key,
-    required this.playlistAudios,
-  });
+  const AddAudioRouteArgs({this.key, required this.playlistAudios});
 
   final Key? key;
 
@@ -53,6 +45,17 @@ class AddAudioRouteArgs {
   String toString() {
     return 'AddAudioRouteArgs{key: $key, playlistAudios: $playlistAudios}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! AddAudioRouteArgs) return false;
+    return key == other.key &&
+        const ListEquality().equals(playlistAudios, other.playlistAudios);
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ const ListEquality().hash(playlistAudios);
 }
 
 /// generated route for
@@ -63,13 +66,10 @@ class AlbumRoute extends PageRouteInfo<AlbumRouteArgs> {
     required Playlist playlist,
     List<PageRouteInfo>? children,
   }) : super(
-          AlbumRoute.name,
-          args: AlbumRouteArgs(
-            key: key,
-            playlist: playlist,
-          ),
-          initialChildren: children,
-        );
+         AlbumRoute.name,
+         args: AlbumRouteArgs(key: key, playlist: playlist),
+         initialChildren: children,
+       );
 
   static const String name = 'AlbumRoute';
 
@@ -77,19 +77,13 @@ class AlbumRoute extends PageRouteInfo<AlbumRouteArgs> {
     name,
     builder: (data) {
       final args = data.argsAs<AlbumRouteArgs>();
-      return AlbumScreen(
-        key: args.key,
-        playlist: args.playlist,
-      );
+      return AlbumScreen(key: args.key, playlist: args.playlist);
     },
   );
 }
 
 class AlbumRouteArgs {
-  const AlbumRouteArgs({
-    this.key,
-    required this.playlist,
-  });
+  const AlbumRouteArgs({this.key, required this.playlist});
 
   final Key? key;
 
@@ -99,16 +93,23 @@ class AlbumRouteArgs {
   String toString() {
     return 'AlbumRouteArgs{key: $key, playlist: $playlist}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! AlbumRouteArgs) return false;
+    return key == other.key && playlist == other.playlist;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ playlist.hashCode;
 }
 
 /// generated route for
 /// [AlbumsScreen]
 class AlbumsRoute extends PageRouteInfo<void> {
   const AlbumsRoute({List<PageRouteInfo>? children})
-      : super(
-          AlbumsRoute.name,
-          initialChildren: children,
-        );
+    : super(AlbumsRoute.name, initialChildren: children);
 
   static const String name = 'AlbumsRoute';
 
@@ -124,10 +125,7 @@ class AlbumsRoute extends PageRouteInfo<void> {
 /// [AlbumsTapPage]
 class AlbumsTab extends PageRouteInfo<void> {
   const AlbumsTab({List<PageRouteInfo>? children})
-      : super(
-          AlbumsTab.name,
-          initialChildren: children,
-        );
+    : super(AlbumsTab.name, initialChildren: children);
 
   static const String name = 'AlbumsTab';
 
@@ -148,14 +146,14 @@ class AllArtistSongsRoute extends PageRouteInfo<AllArtistSongsRouteArgs> {
     required List<PlayerAudio> initialAudios,
     List<PageRouteInfo>? children,
   }) : super(
-          AllArtistSongsRoute.name,
-          args: AllArtistSongsRouteArgs(
-            key: key,
-            artistId: artistId,
-            initialAudios: initialAudios,
-          ),
-          initialChildren: children,
-        );
+         AllArtistSongsRoute.name,
+         args: AllArtistSongsRouteArgs(
+           key: key,
+           artistId: artistId,
+           initialAudios: initialAudios,
+         ),
+         initialChildren: children,
+       );
 
   static const String name = 'AllArtistSongsRoute';
 
@@ -189,6 +187,21 @@ class AllArtistSongsRouteArgs {
   String toString() {
     return 'AllArtistSongsRouteArgs{key: $key, artistId: $artistId, initialAudios: $initialAudios}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! AllArtistSongsRouteArgs) return false;
+    return key == other.key &&
+        artistId == other.artistId &&
+        const ListEquality().equals(initialAudios, other.initialAudios);
+  }
+
+  @override
+  int get hashCode =>
+      key.hashCode ^
+      artistId.hashCode ^
+      const ListEquality().hash(initialAudios);
 }
 
 /// generated route for
@@ -199,13 +212,10 @@ class AllPlaylistsRoute extends PageRouteInfo<AllPlaylistsRouteArgs> {
     required List<Playlist> playlists,
     List<PageRouteInfo>? children,
   }) : super(
-          AllPlaylistsRoute.name,
-          args: AllPlaylistsRouteArgs(
-            key: key,
-            playlists: playlists,
-          ),
-          initialChildren: children,
-        );
+         AllPlaylistsRoute.name,
+         args: AllPlaylistsRouteArgs(key: key, playlists: playlists),
+         initialChildren: children,
+       );
 
   static const String name = 'AllPlaylistsRoute';
 
@@ -213,19 +223,13 @@ class AllPlaylistsRoute extends PageRouteInfo<AllPlaylistsRouteArgs> {
     name,
     builder: (data) {
       final args = data.argsAs<AllPlaylistsRouteArgs>();
-      return AllPlaylistsScreen(
-        key: args.key,
-        playlists: args.playlists,
-      );
+      return AllPlaylistsScreen(key: args.key, playlists: args.playlists);
     },
   );
 }
 
 class AllPlaylistsRouteArgs {
-  const AllPlaylistsRouteArgs({
-    this.key,
-    required this.playlists,
-  });
+  const AllPlaylistsRouteArgs({this.key, required this.playlists});
 
   final Key? key;
 
@@ -235,6 +239,17 @@ class AllPlaylistsRouteArgs {
   String toString() {
     return 'AllPlaylistsRouteArgs{key: $key, playlists: $playlists}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! AllPlaylistsRouteArgs) return false;
+    return key == other.key &&
+        const ListEquality().equals(playlists, other.playlists);
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ const ListEquality().hash(playlists);
 }
 
 /// generated route for
@@ -246,14 +261,14 @@ class AllSongsRoute extends PageRouteInfo<AllSongsRouteArgs> {
     required List<PlayerAudio> initialAudios,
     List<PageRouteInfo>? children,
   }) : super(
-          AllSongsRoute.name,
-          args: AllSongsRouteArgs(
-            key: key,
-            query: query,
-            initialAudios: initialAudios,
-          ),
-          initialChildren: children,
-        );
+         AllSongsRoute.name,
+         args: AllSongsRouteArgs(
+           key: key,
+           query: query,
+           initialAudios: initialAudios,
+         ),
+         initialChildren: children,
+       );
 
   static const String name = 'AllSongsRoute';
 
@@ -287,6 +302,19 @@ class AllSongsRouteArgs {
   String toString() {
     return 'AllSongsRouteArgs{key: $key, query: $query, initialAudios: $initialAudios}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! AllSongsRouteArgs) return false;
+    return key == other.key &&
+        query == other.query &&
+        const ListEquality().equals(initialAudios, other.initialAudios);
+  }
+
+  @override
+  int get hashCode =>
+      key.hashCode ^ query.hashCode ^ const ListEquality().hash(initialAudios);
 }
 
 /// generated route for
@@ -297,13 +325,10 @@ class ArtistRoute extends PageRouteInfo<ArtistRouteArgs> {
     Key? key,
     List<PageRouteInfo>? children,
   }) : super(
-          ArtistRoute.name,
-          args: ArtistRouteArgs(
-            artistId: artistId,
-            key: key,
-          ),
-          initialChildren: children,
-        );
+         ArtistRoute.name,
+         args: ArtistRouteArgs(artistId: artistId, key: key),
+         initialChildren: children,
+       );
 
   static const String name = 'ArtistRoute';
 
@@ -311,19 +336,13 @@ class ArtistRoute extends PageRouteInfo<ArtistRouteArgs> {
     name,
     builder: (data) {
       final args = data.argsAs<ArtistRouteArgs>();
-      return ArtistScreen(
-        args.artistId,
-        key: args.key,
-      );
+      return ArtistScreen(args.artistId, key: args.key);
     },
   );
 }
 
 class ArtistRouteArgs {
-  const ArtistRouteArgs({
-    required this.artistId,
-    this.key,
-  });
+  const ArtistRouteArgs({required this.artistId, this.key});
 
   final String artistId;
 
@@ -333,16 +352,23 @@ class ArtistRouteArgs {
   String toString() {
     return 'ArtistRouteArgs{artistId: $artistId, key: $key}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! ArtistRouteArgs) return false;
+    return artistId == other.artistId && key == other.key;
+  }
+
+  @override
+  int get hashCode => artistId.hashCode ^ key.hashCode;
 }
 
 /// generated route for
 /// [AudioScreen]
 class AudioRoute extends PageRouteInfo<void> {
   const AudioRoute({List<PageRouteInfo>? children})
-      : super(
-          AudioRoute.name,
-          initialChildren: children,
-        );
+    : super(AudioRoute.name, initialChildren: children);
 
   static const String name = 'AudioRoute';
 
@@ -358,10 +384,7 @@ class AudioRoute extends PageRouteInfo<void> {
 /// [AudioTabPage]
 class AudioTab extends PageRouteInfo<void> {
   const AudioTab({List<PageRouteInfo>? children})
-      : super(
-          AudioTab.name,
-          initialChildren: children,
-        );
+    : super(AudioTab.name, initialChildren: children);
 
   static const String name = 'AudioTab';
 
@@ -377,10 +400,7 @@ class AudioTab extends PageRouteInfo<void> {
 /// [AuthScreen]
 class AuthRoute extends PageRouteInfo<void> {
   const AuthRoute({List<PageRouteInfo>? children})
-      : super(
-          AuthRoute.name,
-          initialChildren: children,
-        );
+    : super(AuthRoute.name, initialChildren: children);
 
   static const String name = 'AuthRoute';
 
@@ -396,10 +416,7 @@ class AuthRoute extends PageRouteInfo<void> {
 /// [CachedAudioWidget]
 class CachedAudioRoute extends PageRouteInfo<void> {
   const CachedAudioRoute({List<PageRouteInfo>? children})
-      : super(
-          CachedAudioRoute.name,
-          initialChildren: children,
-        );
+    : super(CachedAudioRoute.name, initialChildren: children);
 
   static const String name = 'CachedAudioRoute';
 
@@ -419,13 +436,10 @@ class EditPlaylistRoute extends PageRouteInfo<EditPlaylistRouteArgs> {
     required Playlist playlist,
     List<PageRouteInfo>? children,
   }) : super(
-          EditPlaylistRoute.name,
-          args: EditPlaylistRouteArgs(
-            key: key,
-            playlist: playlist,
-          ),
-          initialChildren: children,
-        );
+         EditPlaylistRoute.name,
+         args: EditPlaylistRouteArgs(key: key, playlist: playlist),
+         initialChildren: children,
+       );
 
   static const String name = 'EditPlaylistRoute';
 
@@ -433,19 +447,13 @@ class EditPlaylistRoute extends PageRouteInfo<EditPlaylistRouteArgs> {
     name,
     builder: (data) {
       final args = data.argsAs<EditPlaylistRouteArgs>();
-      return EditPlaylistScreen(
-        key: args.key,
-        playlist: args.playlist,
-      );
+      return EditPlaylistScreen(key: args.key, playlist: args.playlist);
     },
   );
 }
 
 class EditPlaylistRouteArgs {
-  const EditPlaylistRouteArgs({
-    this.key,
-    required this.playlist,
-  });
+  const EditPlaylistRouteArgs({this.key, required this.playlist});
 
   final Key? key;
 
@@ -455,16 +463,23 @@ class EditPlaylistRouteArgs {
   String toString() {
     return 'EditPlaylistRouteArgs{key: $key, playlist: $playlist}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! EditPlaylistRouteArgs) return false;
+    return key == other.key && playlist == other.playlist;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ playlist.hashCode;
 }
 
 /// generated route for
 /// [KateAuthWidget]
 class KateAuthRoute extends PageRouteInfo<void> {
   const KateAuthRoute({List<PageRouteInfo>? children})
-      : super(
-          KateAuthRoute.name,
-          initialChildren: children,
-        );
+    : super(KateAuthRoute.name, initialChildren: children);
 
   static const String name = 'KateAuthRoute';
 
@@ -480,10 +495,7 @@ class KateAuthRoute extends PageRouteInfo<void> {
 /// [MainScreen]
 class MainRoute extends PageRouteInfo<void> {
   const MainRoute({List<PageRouteInfo>? children})
-      : super(
-          MainRoute.name,
-          initialChildren: children,
-        );
+    : super(MainRoute.name, initialChildren: children);
 
   static const String name = 'MainRoute';
 
@@ -498,19 +510,13 @@ class MainRoute extends PageRouteInfo<void> {
 /// generated route for
 /// [SearchScreen]
 class SearchRoute extends PageRouteInfo<SearchRouteArgs> {
-  SearchRoute({
-    Key? key,
-    String? initialQuery,
-    List<PageRouteInfo>? children,
-  }) : super(
-          SearchRoute.name,
-          args: SearchRouteArgs(
-            key: key,
-            initialQuery: initialQuery,
-          ),
-          rawPathParams: {'q': initialQuery},
-          initialChildren: children,
-        );
+  SearchRoute({Key? key, String? initialQuery, List<PageRouteInfo>? children})
+    : super(
+        SearchRoute.name,
+        args: SearchRouteArgs(key: key, initialQuery: initialQuery),
+        rawPathParams: {'q': initialQuery},
+        initialChildren: children,
+      );
 
   static const String name = 'SearchRoute';
 
@@ -519,21 +525,15 @@ class SearchRoute extends PageRouteInfo<SearchRouteArgs> {
     builder: (data) {
       final pathParams = data.inheritedPathParams;
       final args = data.argsAs<SearchRouteArgs>(
-          orElse: () =>
-              SearchRouteArgs(initialQuery: pathParams.optString('q')));
-      return SearchScreen(
-        key: args.key,
-        initialQuery: args.initialQuery,
+        orElse: () => SearchRouteArgs(initialQuery: pathParams.optString('q')),
       );
+      return SearchScreen(key: args.key, initialQuery: args.initialQuery);
     },
   );
 }
 
 class SearchRouteArgs {
-  const SearchRouteArgs({
-    this.key,
-    this.initialQuery,
-  });
+  const SearchRouteArgs({this.key, this.initialQuery});
 
   final Key? key;
 
@@ -543,16 +543,23 @@ class SearchRouteArgs {
   String toString() {
     return 'SearchRouteArgs{key: $key, initialQuery: $initialQuery}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! SearchRouteArgs) return false;
+    return key == other.key && initialQuery == other.initialQuery;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ initialQuery.hashCode;
 }
 
 /// generated route for
 /// [SearchTapPage]
 class SearchTab extends PageRouteInfo<void> {
   const SearchTab({List<PageRouteInfo>? children})
-      : super(
-          SearchTab.name,
-          initialChildren: children,
-        );
+    : super(SearchTab.name, initialChildren: children);
 
   static const String name = 'SearchTab';
 
@@ -571,21 +578,18 @@ class SelectPlaylistRoute extends PageRouteInfo<SelectPlaylistRouteArgs> {
     Key? key,
     required PlayerAudio song,
     required List<Playlist> ownedPlaylists,
-    required void Function(
-      Playlist,
-      PlayerAudio,
-    ) addToPlaylist,
+    required void Function(Playlist, PlayerAudio) addToPlaylist,
     List<PageRouteInfo>? children,
   }) : super(
-          SelectPlaylistRoute.name,
-          args: SelectPlaylistRouteArgs(
-            key: key,
-            song: song,
-            ownedPlaylists: ownedPlaylists,
-            addToPlaylist: addToPlaylist,
-          ),
-          initialChildren: children,
-        );
+         SelectPlaylistRoute.name,
+         args: SelectPlaylistRouteArgs(
+           key: key,
+           song: song,
+           ownedPlaylists: ownedPlaylists,
+           addToPlaylist: addToPlaylist,
+         ),
+         initialChildren: children,
+       );
 
   static const String name = 'SelectPlaylistRoute';
 
@@ -617,25 +621,32 @@ class SelectPlaylistRouteArgs {
 
   final List<Playlist> ownedPlaylists;
 
-  final void Function(
-    Playlist,
-    PlayerAudio,
-  ) addToPlaylist;
+  final void Function(Playlist, PlayerAudio) addToPlaylist;
 
   @override
   String toString() {
     return 'SelectPlaylistRouteArgs{key: $key, song: $song, ownedPlaylists: $ownedPlaylists, addToPlaylist: $addToPlaylist}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! SelectPlaylistRouteArgs) return false;
+    return key == other.key &&
+        song == other.song &&
+        const ListEquality().equals(ownedPlaylists, other.ownedPlaylists);
+  }
+
+  @override
+  int get hashCode =>
+      key.hashCode ^ song.hashCode ^ const ListEquality().hash(ownedPlaylists);
 }
 
 /// generated route for
 /// [SettingsScreen]
 class SettingsRoute extends PageRouteInfo<void> {
   const SettingsRoute({List<PageRouteInfo>? children})
-      : super(
-          SettingsRoute.name,
-          initialChildren: children,
-        );
+    : super(SettingsRoute.name, initialChildren: children);
 
   static const String name = 'SettingsRoute';
 

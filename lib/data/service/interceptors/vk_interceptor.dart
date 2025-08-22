@@ -3,6 +3,7 @@ import 'dart:math' hide log;
 
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:dio/dio.dart';
+import 'package:logger/logger.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
 import 'package:vk_music/data/models/user/user.dart';
 
@@ -11,6 +12,7 @@ class VKInterceptor extends Interceptor {
 
   final double apiVersion;
   final User? user;
+  final _logger = Logger();
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
@@ -50,6 +52,14 @@ class VKInterceptor extends Interceptor {
       response.data = response.data['response'];
     }
     return handler.next(response);
+  }
+
+  @override
+  void onError(
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) {
+    _logger.e(err.response);
   }
 
   String _getRandomString(int length) {

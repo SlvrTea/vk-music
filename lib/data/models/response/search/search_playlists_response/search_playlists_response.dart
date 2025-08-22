@@ -7,7 +7,7 @@ part 'search_playlists_response.g.dart';
 
 
 @freezed
-class SearchPlaylistsResponse with _$SearchPlaylistsResponse {
+abstract class SearchPlaylistsResponse with _$SearchPlaylistsResponse {
   const factory SearchPlaylistsResponse({
     required int count,
     required List<Playlist> items,

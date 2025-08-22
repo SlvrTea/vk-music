@@ -6,7 +6,7 @@ part 'song_album.freezed.dart';
 part 'song_album.g.dart';
 
 @freezed
-class SongAlbum with _$SongAlbum {
+abstract class SongAlbum with _$SongAlbum {
   factory SongAlbum({
     required int id,
     required String title,

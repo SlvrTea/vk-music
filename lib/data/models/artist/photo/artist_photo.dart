@@ -4,7 +4,7 @@ part 'artist_photo.freezed.dart';
 part 'artist_photo.g.dart';
 
 @freezed
-class ArtistPhoto with _$ArtistPhoto {
+abstract class ArtistPhoto with _$ArtistPhoto {
   const factory ArtistPhoto({
     required String url,
     required int width,

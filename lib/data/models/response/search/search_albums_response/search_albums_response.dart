@@ -5,7 +5,7 @@ part 'search_albums_response.freezed.dart';
 part 'search_albums_response.g.dart';
 
 @freezed
-class SearchAlbumsResponse with _$SearchAlbumsResponse {
+abstract class SearchAlbumsResponse with _$SearchAlbumsResponse {
   const factory SearchAlbumsResponse({
     required int count,
     required List<Playlist> items,

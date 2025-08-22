@@ -2,7 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:provider/provider.dart';
 import 'package:system_theme/system_theme.dart';
@@ -48,7 +49,7 @@ class AppGlobalDependency extends AppAsyncDependency {
 
   @override
   Future<void> initAsync(BuildContext context) async {
-    final AppConfig? cfg = Hive.box('config').get('main');
+    final AppConfig? cfg = Hive.box<AppConfig>('config').get('main');
     AppGlobalDependency.isKateAuth = cfg?.isKateAuth;
     systemColor = SystemTheme.accentColor.accent;
 
@@ -64,11 +65,11 @@ class AppGlobalDependency extends AppAsyncDependency {
         accentColor: systemColor,
         isSystem: true,
         isKateAuth: null,
+        loopMode: LoopMode.off,
       );
     }
 
-    final userBox = Hive.box('userBox');
-    user = userBox.get('user');
+    user = Hive.box<User>('user').get('user');
     router = AppRouter();
     dio = _initDio();
     cacheManager = IOCacheManager();
@@ -76,8 +77,8 @@ class AppGlobalDependency extends AppAsyncDependency {
     final audioService = AudioService(dio);
 
     authRepository = AuthRepository();
+    audioPlayer = AppAudioPlayerController(config);
     audioRepository = AudioRepository(audioService, user, cacheManager);
-    audioPlayer = AppAudioPlayerController();
   }
 
   Future<void> updateConfig(AppConfig newConfig) async {
@@ -89,17 +90,10 @@ class AppGlobalDependency extends AppAsyncDependency {
   }
 
   Dio _initDio() {
-    final dio = Dio(BaseOptions(
-      baseUrl: baseUrl,
-    ))
+    final dio = Dio(BaseOptions(baseUrl: baseUrl))
       ..interceptors.addAll([
         VKInterceptor(apiVersion: apiVersion, user: user),
-        PrettyDioLogger(
-          responseBody: false,
-          error: true,
-          compact: true,
-          enabled: kDebugMode,
-        ),
+        PrettyDioLogger(responseBody: false, error: true, compact: true, enabled: kDebugMode),
       ]);
     return dio;
   }

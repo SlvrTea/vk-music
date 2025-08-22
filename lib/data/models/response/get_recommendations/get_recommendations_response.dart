@@ -5,7 +5,7 @@ part 'get_recommendations_response.freezed.dart';
 part 'get_recommendations_response.g.dart';
 
 @freezed
-class GetRecommendationsResponse with _$GetRecommendationsResponse {
+abstract class GetRecommendationsResponse with _$GetRecommendationsResponse {
   const factory GetRecommendationsResponse({
     required List<PlayerAudio> items,
   }) = _GetRecommendationsResponse;

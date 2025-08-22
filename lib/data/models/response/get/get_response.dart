@@ -5,7 +5,7 @@ part 'get_response.freezed.dart';
 part 'get_response.g.dart';
 
 @freezed
-class GetResponse with _$GetResponse {
+abstract class GetResponse with _$GetResponse {
   const factory GetResponse({
     int? count,
     required List<PlayerAudio> items,
