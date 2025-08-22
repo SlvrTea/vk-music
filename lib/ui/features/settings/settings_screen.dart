@@ -20,7 +20,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   void initState() {
-    final AppConfig? config = Hive.box('config').get('main');
+    final AppConfig? config = Hive.box<AppConfig>('config').get('main');
     _isSystem = config?.isSystem ?? true;
     if (config != null) {
       _isDarkMode = config.isDarkMode;

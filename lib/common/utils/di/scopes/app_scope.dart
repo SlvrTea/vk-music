@@ -84,8 +84,8 @@ class AppGlobalDependency extends AppAsyncDependency {
   Future<void> updateConfig(AppConfig newConfig) async {
     config = newConfig;
     theme = AppTheme.fromConfig(config);
-    await Hive.box('config').delete('main');
-    await Hive.box('config').put('main', config);
+    await Hive.box<AppConfig>('config').delete('main');
+    await Hive.box<AppConfig>('config').put('main', config);
     notifyListeners();
   }
 

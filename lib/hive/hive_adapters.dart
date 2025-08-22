@@ -9,5 +9,7 @@ import 'package:vk_music/data/models/user/user.dart';
 @GenerateAdapters([
   AdapterSpec<User>(),
   AdapterSpec<AppConfig>(),
+  AdapterSpec<LoopMode>(),
+  AdapterSpec<Color>(),
 ])
 part 'hive_adapters.g.dart';

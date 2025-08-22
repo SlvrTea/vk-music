@@ -52,6 +52,7 @@ dependencies:
   text_marquee: ^0.0.2
   path_provider: ^2.1.5
   ffmpeg_kit_flutter_new_audio: ^1.0.1
+  ua_client_hints: ^1.4.1
 
 dev_dependencies:
   flutter_test:
