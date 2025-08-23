@@ -5,7 +5,7 @@ part 'thumb.freezed.dart';
 part 'thumb.g.dart';
 
 @freezed
-class Thumb with _$Thumb {
+abstract class Thumb with _$Thumb {
   factory Thumb({
     required int width,
     required int height,

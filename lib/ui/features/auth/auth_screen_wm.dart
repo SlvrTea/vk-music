@@ -101,7 +101,7 @@ class AuthScreenWidgetModel extends WidgetModel<AuthScreen, IAuthScreenModel> im
     } on DioException catch (e) {
       if (e.response == null) {
         _showError('Нет подключения к интернету');
-      } else if (e.response!.data['error']['redirect_uri'] != null) {
+      } else if (e.response!.data['redirect_uri'] != null) {
         if (!context.mounted) return;
         _showTfaError();
       } else {
@@ -123,6 +123,7 @@ class AuthScreenWidgetModel extends WidgetModel<AuthScreen, IAuthScreenModel> im
       AppGlobalDependency.isKateAuth = true;
       if (context.mounted) {
         context
+          ..global.audioRepository.updateUser(user)
           ..global.updateConfig(context.global.config.copyWith(isKateAuth: true))
           ..router.replace(const MainRoute());
       }

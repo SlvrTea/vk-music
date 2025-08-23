@@ -2,7 +2,7 @@ import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:vk_music/common/utils/config/app_config.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
 
@@ -20,7 +20,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   void initState() {
-    final AppConfig? config = Hive.box('config').get('main');
+    final AppConfig? config = Hive.box<AppConfig>('config').get('main');
     _isSystem = config?.isSystem ?? true;
     if (config != null) {
       _isDarkMode = config.isDarkMode;

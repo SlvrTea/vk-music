@@ -6,7 +6,7 @@ part 'playlist.freezed.dart';
 part 'playlist.g.dart';
 
 @freezed
-class Playlist with _$Playlist {
+abstract class Playlist with _$Playlist {
   factory Playlist({
     required int id,
     required int ownerId,
@@ -21,7 +21,7 @@ class Playlist with _$Playlist {
     required bool isFollowing,
     required String accessKey,
     required String albumType,
-    required bool exclusive,
+    bool? exclusive,
     PlaylistOriginalOwner? original,
     List<Thumb>? thumbs,
     Thumb? photo,

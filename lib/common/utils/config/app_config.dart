@@ -1,32 +1,57 @@
 import 'dart:ui';
+import 'package:hive_ce/hive.dart';
+import 'package:just_audio/just_audio.dart';
 
-import 'package:hive_flutter/adapters.dart';
-
-part 'app_config.g.dart';
-
-@HiveType(typeId: 2)
-class AppConfig {
-  const AppConfig({
+class AppConfig extends HiveObject {
+  AppConfig({
     required this.isDarkMode,
     this.accentColor,
     required this.isSystem,
     required this.isKateAuth,
+    required this.loopMode,
+    this.enableShuffle = false,
   });
 
-  @HiveField(0)
   final bool isDarkMode;
-  @HiveField(1)
   final Color? accentColor;
-  @HiveField(2)
   final bool isSystem;
-  @HiveField(3)
   final bool? isKateAuth;
+  final LoopMode loopMode;
+  final bool enableShuffle;
 
-  AppConfig copyWith({bool? isDarkMode, Color? accentColor, bool? isSystem, bool? isKateAuth}) {
+  factory AppConfig.fromJson(Map<String, dynamic> json) => AppConfig(
+    isDarkMode: json['isDarkMode'],
+    accentColor: json['accentColor'],
+    isSystem: json['isSystem'],
+    isKateAuth: json['isKateAuth'],
+    loopMode: LoopMode.values.byName(json['loopMode']),
+    enableShuffle: json['enableShuffle'],
+  );
+
+  Map<String, dynamic> toJson() => {
+    'isDarkMode': isDarkMode,
+    'accentColor': accentColor,
+    'isSystem': isSystem,
+    'isKateAuth': isKateAuth,
+    'loopMode': loopMode.name,
+    'enableShuffle': enableShuffle,
+  };
+
+  AppConfig copyWith({
+    bool? isDarkMode,
+    Color? accentColor,
+    bool? isSystem,
+    bool? isKateAuth,
+    LoopMode? loopMode,
+    bool? enableShuffle,
+  }) {
     return AppConfig(
-        isDarkMode: isDarkMode ?? this.isDarkMode,
-        accentColor: accentColor ?? this.accentColor,
-        isSystem: isSystem ?? this.isSystem,
-        isKateAuth: isKateAuth ?? this.isKateAuth);
+      isDarkMode: isDarkMode ?? this.isDarkMode,
+      accentColor: accentColor ?? this.accentColor,
+      isSystem: isSystem ?? this.isSystem,
+      isKateAuth: isKateAuth ?? this.isKateAuth,
+      loopMode: loopMode ?? this.loopMode,
+      enableShuffle: enableShuffle ?? this.enableShuffle,
+    );
   }
 }

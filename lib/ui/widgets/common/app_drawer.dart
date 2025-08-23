@@ -1,8 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
 import 'package:vk_music/common/utils/router/app_router.dart';
+import 'package:vk_music/data/models/user/user.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -25,7 +26,7 @@ class AppDrawer extends StatelessWidget {
               ),
               TextButton(
                 onPressed: () {
-                  Hive.box('userBox').delete('user');
+                  Hive.box<User>('user').delete('user');
                   context.global.audioPlayer.stop();
                   context.global.audioRepository
                     ..userAudiosNotifier.value = []

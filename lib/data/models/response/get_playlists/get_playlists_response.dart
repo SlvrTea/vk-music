@@ -7,7 +7,7 @@ part 'get_playlists_response.freezed.dart';
 part 'get_playlists_response.g.dart';
 
 @freezed
-class GetPlaylistsResponse with _$GetPlaylistsResponse {
+abstract class GetPlaylistsResponse with _$GetPlaylistsResponse {
   factory GetPlaylistsResponse({
     required int count,
     required List<Playlist> items,

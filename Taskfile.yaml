@@ -7,3 +7,4 @@ tasks:
     cmds:
       - echo "[build:gen] Running dart build_runner..."
       - dart run build_runner build --delete-conflicting-outputs
+      - dart run lean_builder build
