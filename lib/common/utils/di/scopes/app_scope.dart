@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,8 +13,11 @@ import 'package:system_theme/system_theme.dart';
 import 'package:vk_music/common/utils/config/app_config.dart';
 import 'package:vk_music/common/utils/di/app_async_dependency.dart';
 import 'package:vk_music/common/utils/router/app_router.dart';
+import 'package:vk_music/data/provider/apple/apple_music_service.dart';
 import 'package:vk_music/data/provider/audio/audio_service.dart';
+import 'package:vk_music/data/service/interceptors/apple_music_interceptor.dart';
 import 'package:vk_music/data/service/interceptors/vk_interceptor.dart';
+import 'package:vk_music/domain/apple/apple_music_repository.dart';
 import 'package:vk_music/domain/audio/audio_repository.dart';
 import 'package:vk_music/domain/auth/auth_repository.dart';
 import 'package:vk_music/domain/cache_manager/cache_manager.dart';
@@ -21,9 +27,11 @@ import '../../../../data/models/user/user.dart';
 import '../../../../domain/audio_player/audio_player_controller.dart';
 
 class AppGlobalDependency extends AppAsyncDependency {
-  static String baseUrl = 'https://api.vk.com/method/';
+  static const baseUrl = 'https://api.vk.com/method/';
 
-  static double apiVersion = 5.155;
+  static const appleMusicUrl = 'https://amp-api-edge.music.apple.com/v1/';
+
+  static const apiVersion = 5.155;
 
   static bool? isKateAuth;
 
@@ -39,9 +47,13 @@ class AppGlobalDependency extends AppAsyncDependency {
 
   late final Dio dio;
 
+  late final Dio appleMusicDio;
+
   late final AuthRepository authRepository;
 
   late final AudioRepository audioRepository;
+
+  late final AppleMusicRepository appleMusicRepository;
 
   late final AppAudioPlayerController audioPlayer;
 
@@ -71,14 +83,16 @@ class AppGlobalDependency extends AppAsyncDependency {
 
     user = Hive.box<User>('user').get('user');
     router = AppRouter();
-    dio = _initDio();
+    _initDio();
     cacheManager = IOCacheManager();
 
     final audioService = AudioService(dio);
+    final appleMusicService = AppleMusicService(appleMusicDio);
 
     authRepository = AuthRepository();
     audioPlayer = AppAudioPlayerController(config);
     audioRepository = AudioRepository(audioService, user, cacheManager);
+    appleMusicRepository = AppleMusicRepository(appleMusicService);
   }
 
   Future<void> updateConfig(AppConfig newConfig) async {
@@ -89,13 +103,25 @@ class AppGlobalDependency extends AppAsyncDependency {
     notifyListeners();
   }
 
-  Dio _initDio() {
-    final dio = Dio(BaseOptions(baseUrl: baseUrl))
+  void _initDio() {
+    dio = Dio(BaseOptions(baseUrl: baseUrl))
       ..interceptors.addAll([
         VKInterceptor(apiVersion: apiVersion, user: user),
         PrettyDioLogger(responseBody: false, error: true, compact: true, enabled: kDebugMode),
       ]);
-    return dio;
+
+    appleMusicDio =
+        Dio(
+            BaseOptions(
+              baseUrl: appleMusicUrl,
+              validateStatus: (_) => true,
+              requestEncoder: (request, options) => gzip.encode(utf8.encode(request)),
+            ),
+          )
+          ..interceptors.addAll([
+            AppleMusicInterceptor(),
+            PrettyDioLogger(responseBody: true, error: true, compact: true, enabled: kDebugMode),
+          ]);
   }
 }
 
