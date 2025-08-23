@@ -105,16 +105,17 @@ class AudioScreenWidgetModel extends WidgetModel<AudioScreen, IAudioScreenModel>
   }
 
   Future<void> _initAsync() async {
-    await Future.wait([
-      loadAudios(),
-      loadPlaylists(),
-    ]);
+    await Future.wait([loadAudios(), loadPlaylists()]);
   }
 
   @override
   Future<void> loadAudios() async {
     _audiosEntity.loading();
-    model.getAudios(context.global.user!.userId.toString());
+    await model.getAudios(context.global.user!.userId.toString());
+    await context.global.appleMusicRepository.search(
+      model.userAudiosNotifier.value!.first.title,
+      model.userAudiosNotifier.value!.first.artist,
+    );
   }
 
   @override

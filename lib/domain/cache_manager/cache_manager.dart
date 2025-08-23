@@ -7,6 +7,7 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
+import 'package:vk_music/data/models/playlist/playlist.dart';
 import 'package:vk_music/domain/model/player_audio.dart';
 
 class IOCacheManager {
@@ -20,6 +21,8 @@ class IOCacheManager {
 
     return Hive.box<String>('cachedAudio').values.map((e) => PlayerAudio.fromJson(jsonDecode(e))).toList();
   }
+
+
 
   Future<File> downloadAudio(PlayerAudio audio) async {
     _logger.i('Downloading audio: $audio');
