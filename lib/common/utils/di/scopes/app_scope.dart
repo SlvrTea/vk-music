@@ -13,11 +13,9 @@ import 'package:system_theme/system_theme.dart';
 import 'package:vk_music/common/utils/config/app_config.dart';
 import 'package:vk_music/common/utils/di/app_async_dependency.dart';
 import 'package:vk_music/common/utils/router/app_router.dart';
-import 'package:vk_music/data/provider/apple/apple_music_service.dart';
 import 'package:vk_music/data/provider/audio/audio_service.dart';
 import 'package:vk_music/data/service/interceptors/apple_music_interceptor.dart';
 import 'package:vk_music/data/service/interceptors/vk_interceptor.dart';
-import 'package:vk_music/domain/apple/apple_music_repository.dart';
 import 'package:vk_music/domain/audio/audio_repository.dart';
 import 'package:vk_music/domain/auth/auth_repository.dart';
 import 'package:vk_music/domain/cache_manager/cache_manager.dart';
@@ -53,8 +51,6 @@ class AppGlobalDependency extends AppAsyncDependency {
 
   late final AudioRepository audioRepository;
 
-  late final AppleMusicRepository appleMusicRepository;
-
   late final AppAudioPlayerController audioPlayer;
 
   late final IOCacheManager cacheManager;
@@ -87,12 +83,10 @@ class AppGlobalDependency extends AppAsyncDependency {
     cacheManager = IOCacheManager();
 
     final audioService = AudioService(dio);
-    final appleMusicService = AppleMusicService(appleMusicDio);
 
     authRepository = AuthRepository();
     audioPlayer = AppAudioPlayerController(config);
     audioRepository = AudioRepository(audioService, user, cacheManager);
-    appleMusicRepository = AppleMusicRepository(appleMusicService);
   }
 
   Future<void> updateConfig(AppConfig newConfig) async {
