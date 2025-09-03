@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +11,6 @@ import 'package:vk_music/common/utils/config/app_config.dart';
 import 'package:vk_music/common/utils/di/app_async_dependency.dart';
 import 'package:vk_music/common/utils/router/app_router.dart';
 import 'package:vk_music/data/provider/audio/audio_service.dart';
-import 'package:vk_music/data/service/interceptors/apple_music_interceptor.dart';
 import 'package:vk_music/data/service/interceptors/vk_interceptor.dart';
 import 'package:vk_music/domain/audio/audio_repository.dart';
 import 'package:vk_music/domain/auth/auth_repository.dart';
@@ -26,8 +22,6 @@ import '../../../../domain/audio_player/audio_player_controller.dart';
 
 class AppGlobalDependency extends AppAsyncDependency {
   static const baseUrl = 'https://api.vk.com/method/';
-
-  static const appleMusicUrl = 'https://amp-api-edge.music.apple.com/v1/';
 
   static const apiVersion = 5.155;
 
@@ -103,19 +97,6 @@ class AppGlobalDependency extends AppAsyncDependency {
         VKInterceptor(apiVersion: apiVersion, user: user),
         PrettyDioLogger(responseBody: false, error: true, compact: true, enabled: kDebugMode),
       ]);
-
-    appleMusicDio =
-        Dio(
-            BaseOptions(
-              baseUrl: appleMusicUrl,
-              validateStatus: (_) => true,
-              requestEncoder: (request, options) => gzip.encode(utf8.encode(request)),
-            ),
-          )
-          ..interceptors.addAll([
-            AppleMusicInterceptor(),
-            PrettyDioLogger(responseBody: true, error: true, compact: true, enabled: kDebugMode),
-          ]);
   }
 }
 
