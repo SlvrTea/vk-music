@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:vk_music/data/models/playlist/cached_playlist.dart';
 import 'package:vk_music/ui/features/auth/widgets/captcha.dart';
 import 'package:vk_music/ui/features/auth/widgets/password.dart';
 import 'package:vk_music/ui/features/auth/widgets/tfa.dart';
@@ -53,6 +54,7 @@ class AppRouter extends RootStackRouter {
             AutoRoute(page: AllPlaylistsRoute.page, path: ''),
             AutoRoute(page: AllArtistSongsRoute.page, path: ''),
             AutoRoute(page: CachedAudioRoute.page, path: ''),
+            AutoRoute(page: CachedPlaylistRoute.page, path: ''),
           ],
         ),
         AutoRoute(
@@ -67,6 +69,7 @@ class AppRouter extends RootStackRouter {
             AutoRoute(page: AllPlaylistsRoute.page, path: ''),
             AutoRoute(page: AllArtistSongsRoute.page, path: ''),
             AutoRoute(page: CachedAudioRoute.page, path: ''),
+            AutoRoute(page: CachedPlaylistRoute.page, path: ''),
           ],
         ),
         AutoRoute(
@@ -81,6 +84,7 @@ class AppRouter extends RootStackRouter {
             AutoRoute(page: AllPlaylistsRoute.page, path: ''),
             AutoRoute(page: AllArtistSongsRoute.page, path: ''),
             AutoRoute(page: CachedAudioRoute.page, path: ''),
+            AutoRoute(page: CachedPlaylistRoute.page, path: ''),
           ],
         ),
       ],

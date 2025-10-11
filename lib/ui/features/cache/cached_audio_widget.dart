@@ -1,9 +1,11 @@
 import 'dart:io';
 
 import 'package:auto_route/annotations.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:elementary/elementary.dart';
 import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:vk_music/common/utils/router/app_router.dart';
 import 'package:vk_music/ui/features/cache/cached_audio_wm.dart';
 import 'package:vk_music/ui/widgets/common/audio_tile.dart';
 import 'package:vk_music/ui/widgets/common/custom_app_bar.dart';
@@ -53,7 +55,7 @@ class CachedAudioWidget extends ElementaryWidget<ICachedAudioWidgetModel> {
                                   width: 131,
                                   child: InkWell(
                                     borderRadius: BorderRadius.circular(16),
-                                    onTap: null,
+                                    onTap: () => context.pushRoute(CachedPlaylistRoute(playlist: e)),
                                     child: Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [

@@ -430,18 +430,49 @@ class CachedAudioRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [CachedPlaylistWidget]
-class CachedPlaylistRoute extends PageRouteInfo<void> {
-  const CachedPlaylistRoute({List<PageRouteInfo>? children})
-    : super(CachedPlaylistRoute.name, initialChildren: children);
+class CachedPlaylistRoute extends PageRouteInfo<CachedPlaylistRouteArgs> {
+  CachedPlaylistRoute({
+    Key? key,
+    required CachedPlaylist playlist,
+    List<PageRouteInfo>? children,
+  }) : super(
+         CachedPlaylistRoute.name,
+         args: CachedPlaylistRouteArgs(key: key, playlist: playlist),
+         initialChildren: children,
+       );
 
   static const String name = 'CachedPlaylistRoute';
 
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      return const CachedPlaylistWidget();
+      final args = data.argsAs<CachedPlaylistRouteArgs>();
+      return CachedPlaylistWidget(key: args.key, playlist: args.playlist);
     },
   );
+}
+
+class CachedPlaylistRouteArgs {
+  const CachedPlaylistRouteArgs({this.key, required this.playlist});
+
+  final Key? key;
+
+  final CachedPlaylist playlist;
+
+  @override
+  String toString() {
+    return 'CachedPlaylistRouteArgs{key: $key, playlist: $playlist}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! CachedPlaylistRouteArgs) return false;
+    return key == other.key && playlist == other.playlist;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ playlist.hashCode;
 }
 
 /// generated route for
