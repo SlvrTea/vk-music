@@ -1,7 +1,11 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:vk_music/ui/features/auth/widgets/captcha.dart';
+import 'package:vk_music/ui/features/auth/widgets/password.dart';
+import 'package:vk_music/ui/features/auth/widgets/tfa.dart';
 import 'package:vk_music/ui/features/cache/cached_audio_widget.dart';
+import 'package:vk_music/ui/features/cache/cached_playlist/cached_playlist_widget.dart';
 
 import '../../../data/models/playlist/playlist.dart';
 import '../../../domain/model/player_audio.dart';
@@ -28,134 +32,60 @@ part 'app_router.gr.dart';
 class AppRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes => [
+    AutoRoute(page: AuthRoute.page, path: '/auth', initial: true),
+    AutoRoute(page: KateAuthRoute.page, path: '/kate'),
+    AutoRoute(page: CaptchaRoute.page, path: '/captcha'),
+    AutoRoute(page: TfaRoute.page, path: '/tfa'),
+    AutoRoute(page: PasswordRoute.page, path: '/pass'),
+    AutoRoute(
+      page: MainRoute.page,
+      path: '/main',
+      children: [
         AutoRoute(
-          page: AuthRoute.page,
-          path: '/auth',
-          initial: true,
-        ),
-        AutoRoute(
-          page: KateAuthRoute.page,
-          path: '/kate',
-        ),
-        AutoRoute(
-          page: MainRoute.page,
-          path: '/main',
+          page: AudioTab.page,
+          path: 'audio',
           children: [
-            AutoRoute(
-              page: AudioTab.page,
-              path: 'audio',
-              children: [
-                AutoRoute(
-                  page: AudioRoute.page,
-                  path: '',
-                ),
-                AutoRoute(
-                  page: AlbumRoute.page,
-                  path: '',
-                ),
-                AutoRoute(
-                  page: ArtistRoute.page,
-                  path: '',
-                ),
-                AutoRoute(
-                  page: EditPlaylistRoute.page,
-                  path: '',
-                ),
-                AutoRoute(
-                  page: AddAudioRoute.page,
-                  path: '',
-                ),
-                AutoRoute(
-                  page: AllPlaylistsRoute.page,
-                  path: '',
-                ),
-                AutoRoute(
-                  page: AllArtistSongsRoute.page,
-                  path: '',
-                ),
-              ],
-            ),
-            AutoRoute(
-              page: SearchTab.page,
-              path: 'search',
-              children: [
-                AutoRoute(
-                  page: SearchRoute.page,
-                  path: '',
-                ),
-                AutoRoute(
-                  page: AlbumRoute.page,
-                  path: '',
-                ),
-                AutoRoute(
-                  page: ArtistRoute.page,
-                  path: '',
-                ),
-                AutoRoute(
-                  page: AllSongsRoute.page,
-                  path: '',
-                ),
-                AutoRoute(
-                  page: AddAudioRoute.page,
-                  path: '',
-                ),
-                AutoRoute(
-                  page: AllPlaylistsRoute.page,
-                  path: '',
-                ),
-                AutoRoute(
-                  page: AllArtistSongsRoute.page,
-                  path: '',
-                ),
-              ],
-            ),
-            AutoRoute(
-              page: AlbumsTab.page,
-              path: 'albums',
-              children: [
-                AutoRoute(
-                  page: AlbumsRoute.page,
-                  path: '',
-                ),
-                AutoRoute(
-                  page: AlbumRoute.page,
-                  path: '',
-                ),
-                AutoRoute(
-                  page: ArtistRoute.page,
-                  path: '',
-                ),
-                AutoRoute(
-                  page: EditPlaylistRoute.page,
-                  path: '',
-                ),
-                AutoRoute(
-                  page: AddAudioRoute.page,
-                  path: '',
-                ),
-                AutoRoute(
-                  page: AllPlaylistsRoute.page,
-                  path: '',
-                ),
-                AutoRoute(
-                  page: AllArtistSongsRoute.page,
-                  path: '',
-                ),
-              ],
-            ),
+            AutoRoute(page: AudioRoute.page, path: ''),
+            AutoRoute(page: AlbumRoute.page, path: ''),
+            AutoRoute(page: ArtistRoute.page, path: ''),
+            AutoRoute(page: EditPlaylistRoute.page, path: ''),
+            AutoRoute(page: AddAudioRoute.page, path: ''),
+            AutoRoute(page: AllPlaylistsRoute.page, path: ''),
+            AutoRoute(page: AllArtistSongsRoute.page, path: ''),
+            AutoRoute(page: CachedAudioRoute.page, path: ''),
           ],
         ),
         AutoRoute(
-          page: SelectPlaylistRoute.page,
-          path: '/select_playlist',
+          page: SearchTab.page,
+          path: 'search',
+          children: [
+            AutoRoute(page: SearchRoute.page, path: ''),
+            AutoRoute(page: AlbumRoute.page, path: ''),
+            AutoRoute(page: ArtistRoute.page, path: ''),
+            AutoRoute(page: AllSongsRoute.page, path: ''),
+            AutoRoute(page: AddAudioRoute.page, path: ''),
+            AutoRoute(page: AllPlaylistsRoute.page, path: ''),
+            AutoRoute(page: AllArtistSongsRoute.page, path: ''),
+            AutoRoute(page: CachedAudioRoute.page, path: ''),
+          ],
         ),
         AutoRoute(
-          page: SettingsRoute.page,
-          path: '/settings',
+          page: AlbumsTab.page,
+          path: 'albums',
+          children: [
+            AutoRoute(page: AlbumsRoute.page, path: ''),
+            AutoRoute(page: AlbumRoute.page, path: ''),
+            AutoRoute(page: ArtistRoute.page, path: ''),
+            AutoRoute(page: EditPlaylistRoute.page, path: ''),
+            AutoRoute(page: AddAudioRoute.page, path: ''),
+            AutoRoute(page: AllPlaylistsRoute.page, path: ''),
+            AutoRoute(page: AllArtistSongsRoute.page, path: ''),
+            AutoRoute(page: CachedAudioRoute.page, path: ''),
+          ],
         ),
-        AutoRoute(
-          page: CachedAudioRoute.page,
-          path: '/cache',
-        ),
-      ];
+      ],
+    ),
+    AutoRoute(page: SelectPlaylistRoute.page, path: '/select_playlist'),
+    AutoRoute(page: SettingsRoute.page, path: '/settings'),
+  ];
 }

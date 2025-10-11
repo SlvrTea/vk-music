@@ -15,48 +15,86 @@ class AuthScreen extends ElementaryWidget<AuthScreenWidgetModel> {
     return Scaffold(
       body: SafeArea(
         child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Авторизация',
-                style: wm.wmTheme.h3,
-              ),
-              const SizedBox(height: 16),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(
-                  autofillHints: const [AutofillHints.telephoneNumber],
-                  controller: wm.loginController,
-                  inputFormatters: [wm.formatter],
-                  decoration: const InputDecoration(hintText: 'Логин'),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(child: Text('Авторизация VK', style: wm.wmTheme.h3)),
+                const SizedBox(height: 16),
+                EntityStateNotifierBuilder(
+                  listenableEntityState: wm.activeField,
+                  builder: (context, field) {
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        SegmentedButton<String>(
+                          segments: [
+                            ButtonSegment<String>(
+                              value: 'phone',
+                              label: Text('Номер Телефона'),
+                            ),
+                            ButtonSegment<String>(
+                              value: 'email',
+                              label: Text('Почта'),
+                            ),
+                          ],
+                          selected: field!,
+                          onSelectionChanged: (field) =>
+                              wm.onChangeActiveField(field),
+                        ),
+                        const SizedBox(height: 16),
+                        if (field.contains('phone'))
+                          TextField(
+                            autofillHints: const [
+                              AutofillHints.telephoneNumber,
+                            ],
+                            controller: wm.phoneController,
+                            inputFormatters: [wm.formatter],
+                            decoration: const InputDecoration(
+                              hintText: 'Номер Телефона',
+                            ),
+                          ),
+                        if (field.contains('email'))
+                          TextField(
+                            autofillHints: const [AutofillHints.email],
+                            controller: wm.emailComtroller,
+                            inputFormatters: [wm.formatter],
+                            decoration: const InputDecoration(
+                              hintText: 'Почта',
+                            ),
+                          ),
+                      ],
+                    );
+                  },
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: EntityStateNotifierBuilder(
-                  listenableEntityState: wm.obscurePassword,
-                  builder: (context, data) => TextField(
-                    controller: wm.passwordController,
-                    obscureText: data ?? true,
-                    enableSuggestions: false,
-                    autocorrect: false,
-                    autofillHints: const [AutofillHints.password],
-                    decoration: InputDecoration(
-                      hintText: 'Пароль',
-                      suffixIcon: IconButton(
-                        onPressed: wm.onChangeObscureTap,
-                        icon: data ?? true
-                            ? const Icon(Icons.visibility_off_rounded)
-                            : const Icon(Icons.visibility_rounded),
-                      ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: wm.onLoginTap,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadiusGeometry.circular(8),
                     ),
                   ),
+                  child: const Text('Продолжить'),
                 ),
-              ),
-              ElevatedButton(onPressed: wm.onLoginTap, child: const Text('Войти')),
-              ElevatedButton(onPressed: wm.altKateAuth, child: const Text('Альтернативный метод'))
-            ],
+                ElevatedButton(
+                  onPressed: wm.altKateAuth,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadiusGeometry.circular(8),
+                    ),
+                  ),
+                  child: const Text('Альтернативный метод'),
+                ),
+              ],
+            ),
           ),
         ),
       ),

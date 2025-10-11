@@ -9,23 +9,22 @@ class AppTheme {
   factory AppTheme.dark() => AppTheme(colors: AppColors.dark());
 
   factory AppTheme.fromConfig(AppConfig config) => AppTheme(
-        colors: config.isDarkMode ? AppColors.dark() : AppColors.light(),
-        accentColor: config.accentColor,
-        brightness: config.isDarkMode ? Brightness.dark : Brightness.light,
-      );
+    colors: config.isDarkMode ? AppColors.dark() : AppColors.light(),
+    accentColor: config.accentColor,
+    brightness: config.isDarkMode ? Brightness.dark : Brightness.light,
+  );
 
-  AppTheme({
-    required this.colors,
-    Color? accentColor,
-    Brightness? brightness,
-  })  : accentColor = accentColor ?? SystemTheme.accentColor.accent,
-        brightness = brightness ?? SchedulerBinding.instance.platformDispatcher.platformBrightness {
+  AppTheme({required this.colors, Color? accentColor, Brightness? brightness})
+    : accentColor = accentColor ?? SystemTheme.accentColor.accent,
+      brightness =
+          brightness ??
+          SchedulerBinding.instance.platformDispatcher.platformBrightness {
     themeData = ThemeData(
       useMaterial3: true,
       appBarTheme: AppBarTheme(
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
-        color: colors.backgroundColor,
+        backgroundColor: colors.backgroundColor,
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
@@ -44,20 +43,26 @@ class AppTheme {
       // filledButtonTheme: FilledButtonThemeData(style: buttonPrimary),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-            backgroundColor: colors.primaryButtonColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            )),
+          backgroundColor: colors.primaryButtonColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
       ),
-      colorScheme:
-          ColorScheme.fromSeed(seedColor: this.accentColor, primary: this.accentColor, brightness: this.brightness),
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: this.accentColor,
+        primary: this.accentColor,
+        brightness: this.brightness,
+      ),
       bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: colors.backgroundColor,
         surfaceTintColor: colors.backgroundColor,
       ),
       searchBarTheme: SearchBarThemeData(
         backgroundColor: WidgetStatePropertyAll(colors.secondaryBackground),
-        shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+        shape: WidgetStatePropertyAll(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
       ),
       scaffoldBackgroundColor: colors.backgroundColor,
       dividerTheme: DividerThemeData(
@@ -87,100 +92,55 @@ class AppTheme {
 
   late ThemeData themeData;
 
-  TextStyle get h1 => _createStyle(
-        fontSize: 32,
-        figmaHeight: 38,
-        fontWeight: FontWeight.bold,
-      );
+  TextStyle get h1 =>
+      _createStyle(fontSize: 32, figmaHeight: 38, fontWeight: FontWeight.bold);
 
-  TextStyle get h2 => _createStyle(
-        fontSize: 26,
-        figmaHeight: 32,
-        fontWeight: FontWeight.w700,
-      );
+  TextStyle get h2 =>
+      _createStyle(fontSize: 26, figmaHeight: 32, fontWeight: FontWeight.w700);
 
-  TextStyle get h3 => _createStyle(
-        fontSize: 20,
-        figmaHeight: 24,
-        fontWeight: FontWeight.w700,
-      );
+  TextStyle get h3 =>
+      _createStyle(fontSize: 20, figmaHeight: 24, fontWeight: FontWeight.w700);
 
-  TextStyle get h4 => _createStyle(
-        fontSize: 16,
-        figmaHeight: 24,
-        fontWeight: FontWeight.w700,
-      );
+  TextStyle get h4 =>
+      _createStyle(fontSize: 16, figmaHeight: 24, fontWeight: FontWeight.w700);
 
-  TextStyle get t1 => _createStyle(
-        fontSize: 20,
-        figmaHeight: 26,
-        fontWeight: FontWeight.bold,
-      );
+  TextStyle get t1 =>
+      _createStyle(fontSize: 20, figmaHeight: 26, fontWeight: FontWeight.bold);
 
-  TextStyle get t2 => _createStyle(
-        fontSize: 18,
-        figmaHeight: 24,
-        fontWeight: FontWeight.bold,
-      );
+  TextStyle get t2 =>
+      _createStyle(fontSize: 18, figmaHeight: 24, fontWeight: FontWeight.bold);
 
-  TextStyle get b1 => _createStyle(
-        fontSize: 14,
-        figmaHeight: 22,
-      );
+  TextStyle get b1 => _createStyle(fontSize: 14, figmaHeight: 22);
 
-  TextStyle get b2 => _createStyle(
-        fontSize: 14,
-        figmaHeight: 22,
-        fontWeight: FontWeight.bold,
-      );
+  TextStyle get b2 =>
+      _createStyle(fontSize: 14, figmaHeight: 22, fontWeight: FontWeight.bold);
 
   TextStyle get b3 => _createStyle(
-        fontSize: 16,
-        figmaHeight: 24,
-        fontWeight: FontWeight.normal,
-      );
+    fontSize: 16,
+    figmaHeight: 24,
+    fontWeight: FontWeight.normal,
+  );
 
-  TextStyle get b4 => _createStyle(
-        fontSize: 16,
-        figmaHeight: 24,
-        fontWeight: FontWeight.bold,
-      );
+  TextStyle get b4 =>
+      _createStyle(fontSize: 16, figmaHeight: 24, fontWeight: FontWeight.bold);
 
-  TextStyle get b5 => _createStyle(
-        fontSize: 12,
-        figmaHeight: 16,
-        fontWeight: FontWeight.w700,
-      );
+  TextStyle get b5 =>
+      _createStyle(fontSize: 12, figmaHeight: 16, fontWeight: FontWeight.w700);
 
-  TextStyle get b6 => _createStyle(
-        fontSize: 10,
-        figmaHeight: 12,
-        fontWeight: FontWeight.bold,
-      );
+  TextStyle get b6 =>
+      _createStyle(fontSize: 10, figmaHeight: 12, fontWeight: FontWeight.bold);
 
-  TextStyle get c1 => _createStyle(
-        fontSize: 14,
-        figmaHeight: 22,
-        fontWeight: FontWeight.w100,
-      );
+  TextStyle get c1 =>
+      _createStyle(fontSize: 14, figmaHeight: 22, fontWeight: FontWeight.w100);
 
-  TextStyle get c2 => _createStyle(
-        fontSize: 14,
-        figmaHeight: 22,
-        fontWeight: FontWeight.bold,
-      );
+  TextStyle get c2 =>
+      _createStyle(fontSize: 14, figmaHeight: 22, fontWeight: FontWeight.bold);
 
-  TextStyle get c3 => _createStyle(
-        fontSize: 16,
-        figmaHeight: 32,
-        fontWeight: FontWeight.w400,
-      );
+  TextStyle get c3 =>
+      _createStyle(fontSize: 16, figmaHeight: 32, fontWeight: FontWeight.w400);
 
-  TextStyle get c4 => _createStyle(
-        fontSize: 16,
-        figmaHeight: 32,
-        fontWeight: FontWeight.w400,
-      );
+  TextStyle get c4 =>
+      _createStyle(fontSize: 16, figmaHeight: 32, fontWeight: FontWeight.w400);
 
   TextStyle _createStyle({
     double fontSize = 14,
@@ -201,26 +161,29 @@ class AppTheme {
 
 class AppColors {
   factory AppColors.dark() => const AppColors._(
-        backgroundColor: Colors.black,
-        secondaryBackground: Color(0xff090b10),
-        primaryButtonColor: Color.fromARGB(255, 20, 20, 20),
-        mainTextColor: Color(0xFFFFFFFF),
-        secondary: Color(0xFF191919),
-      );
+    backgroundColor: Colors.black,
+    secondaryBackground: Color(0xff090b10),
+    primaryButtonColor: Color.fromARGB(255, 20, 20, 20),
+    mainTextColor: Color(0xFFFFFFFF),
+    secondary: Color(0xFF191919),
+    secondaryTextColor: Colors.grey,
+  );
 
   factory AppColors.light() => const AppColors._(
-        backgroundColor: Colors.white,
-        secondaryBackground: Colors.blueGrey,
-        primaryButtonColor: Colors.grey,
-        mainTextColor: Color(0xFF192038),
-        secondary: Color(0xFF191919),
-      );
+    backgroundColor: Colors.white,
+    secondaryBackground: Color(0xffd2d3db),
+    primaryButtonColor: Colors.grey,
+    mainTextColor: Color(0xFF192038),
+    secondary: Color(0xFF191919),
+    secondaryTextColor: Colors.grey,
+  );
 
   final Color backgroundColor;
   final Color secondaryBackground;
   final Color primaryButtonColor;
   final Color secondary;
   final Color mainTextColor;
+  final Color secondaryTextColor;
 
   const AppColors._({
     required this.backgroundColor,
@@ -228,5 +191,6 @@ class AppColors {
     required this.primaryButtonColor,
     required this.mainTextColor,
     required this.secondary,
+    required this.secondaryTextColor,
   });
 }

@@ -10,7 +10,7 @@ abstract class Playlist with _$Playlist {
   factory Playlist({
     required int id,
     required int ownerId,
-    required int type,
+    required String type,
     required String title,
     required String description,
     required int count,
@@ -20,7 +20,6 @@ abstract class Playlist with _$Playlist {
     required int updateTime,
     required bool isFollowing,
     required String accessKey,
-    required String albumType,
     bool? exclusive,
     PlaylistOriginalOwner? original,
     List<Thumb>? thumbs,

@@ -1,3 +1,4 @@
+import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
@@ -18,13 +19,15 @@ abstract interface class PlayerAudio extends UriAudioSource {
     this.releaseAudioId,
     this.mainArtists,
   }) : super(
-          tag: MediaItem(
-            id: id.toString(),
-            title: title,
-            artist: artist,
-            artUri: album?.thumb != null ? Uri.parse(album!.thumb!.photo600!) : null,
-          ),
-        );
+         tag: MediaItem(
+           id: id.toString(),
+           title: title,
+           artist: artist,
+           artUri: album?.thumb != null
+               ? Uri.parse(album!.thumb!.photo600!)
+               : null,
+         ),
+       );
 
   final String artist;
   final int id;
@@ -35,8 +38,11 @@ abstract interface class PlayerAudio extends UriAudioSource {
   String? releaseAudioId;
   List<Artist>? mainArtists;
 
-  factory PlayerAudio.fromJson(Map<String, dynamic> json) {
-    if (AppGlobalDependency.isKateAuth ?? false) {
+  factory PlayerAudio.fromJson(
+    Map<String, dynamic> json, {
+    bool fromCache = false,
+  }) {
+    if ((AppGlobalDependency.isKateAuth ?? false) || fromCache) {
       return PlayerAudioMP3.fromJson(json);
     } else {
       return PlayerAudioM3U8.fromJson(json);
@@ -58,9 +64,11 @@ abstract interface class PlayerAudio extends UriAudioSource {
   });
 }
 
-final class PlayerAudioMP3 extends ProgressiveAudioSource implements PlayerAudio {
-  PlayerAudioMP3(
-    super.url, {
+final class PlayerAudioMP3 extends ProgressiveAudioSource
+    with HiveObjectMixin
+    implements PlayerAudio {
+  PlayerAudioMP3({
+    required this.uri,
     required this.artist,
     required this.id,
     required this.ownerId,
@@ -71,14 +79,19 @@ final class PlayerAudioMP3 extends ProgressiveAudioSource implements PlayerAudio
     this.releaseAudioId,
     this.mainArtists,
   }) : super(
-          tag: MediaItem(
-            id: id.toString(),
-            title: title,
-            artist: artist,
-            artUri: album?.thumb != null ? Uri.parse(album!.thumb!.photo600!) : null,
-          ),
-        );
+         uri,
+         tag: MediaItem(
+           id: id.toString(),
+           title: title,
+           artist: artist,
+           artUri: album?.thumb != null
+               ? Uri.parse(album!.thumb!.photo600!)
+               : null,
+         ),
+       );
 
+  @override
+  final Uri uri;
   @override
   final String artist;
   @override
@@ -98,24 +111,27 @@ final class PlayerAudioMP3 extends ProgressiveAudioSource implements PlayerAudio
 
   factory PlayerAudioMP3.fromJson(Map<String, dynamic> json) {
     return PlayerAudioMP3(
-      Uri.parse(json['url'].toString()),
+      uri: Uri.parse(json['url'].toString()),
       duration: Duration(seconds: json['duration']),
       artist: json['artist'] as String,
       id: json['id'] as int,
       ownerId: json['owner_id'] as int,
       title: json['title'] as String,
       accessKey: json['access_key'] as String,
-      album: json['album'] == null ? null : SongAlbum.fromJson(json['album'] as Map<String, dynamic>),
+      album: json['album'] == null
+          ? null
+          : SongAlbum.fromJson(json['album'] as Map<String, dynamic>),
       releaseAudioId: json['release_audio_id'] as String?,
-      mainArtists:
-          (json['main_artists'] as List<dynamic>?)?.map((e) => Artist.fromJson(e as Map<String, dynamic>)).toList(),
+      mainArtists: (json['main_artists'] as List<dynamic>?)
+          ?.map((e) => Artist.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
   @override
   Map<String, dynamic> toJson() {
     return {
-      'url': super.uri.toString(),
+      'uri': super.uri.toString(),
       'artist': artist,
       'id': id,
       'owner_id': ownerId,
@@ -146,8 +162,8 @@ final class PlayerAudioMP3 extends ProgressiveAudioSource implements PlayerAudio
     List<Artist>? mainArtists,
   }) {
     return PlayerAudioMP3(
-      uri ?? super.uri,
-      duration: super.duration,
+      uri: uri ?? this.uri,
+      duration: duration,
       artist: artist ?? this.artist,
       id: id ?? this.id,
       ownerId: ownerId ?? this.ownerId,
@@ -160,9 +176,11 @@ final class PlayerAudioMP3 extends ProgressiveAudioSource implements PlayerAudio
   }
 }
 
-final class PlayerAudioM3U8 extends HlsAudioSource implements PlayerAudio {
-  PlayerAudioM3U8(
-    super.url, {
+final class PlayerAudioM3U8 extends HlsAudioSource
+    with HiveObjectMixin
+    implements PlayerAudio {
+  PlayerAudioM3U8({
+    required this.uri,
     required this.artist,
     required this.id,
     required this.ownerId,
@@ -173,14 +191,19 @@ final class PlayerAudioM3U8 extends HlsAudioSource implements PlayerAudio {
     this.releaseAudioId,
     this.mainArtists,
   }) : super(
-          tag: MediaItem(
-            id: id.toString(),
-            title: title,
-            artist: artist,
-            artUri: album?.thumb != null ? Uri.parse(album!.thumb!.photo600!) : null,
-          ),
-        );
+         uri,
+         tag: MediaItem(
+           id: id.toString(),
+           title: title,
+           artist: artist,
+           artUri: album?.thumb != null
+               ? Uri.parse(album!.thumb!.photo600!)
+               : null,
+         ),
+       );
 
+  @override
+  final Uri uri;
   @override
   final String artist;
   @override
@@ -200,17 +223,20 @@ final class PlayerAudioM3U8 extends HlsAudioSource implements PlayerAudio {
 
   factory PlayerAudioM3U8.fromJson(Map<String, dynamic> json) {
     return PlayerAudioM3U8(
-      Uri.parse(json['url'].toString()),
+      uri: Uri.parse(json['url'].toString()),
       duration: Duration(seconds: json['duration']),
       artist: json['artist'] as String,
       id: json['id'] as int,
       ownerId: json['owner_id'] as int,
       title: json['title'] as String,
       accessKey: json['access_key'] as String,
-      album: json['album'] == null ? null : SongAlbum.fromJson(json['album'] as Map<String, dynamic>),
+      album: json['album'] == null
+          ? null
+          : SongAlbum.fromJson(json['album'] as Map<String, dynamic>),
       releaseAudioId: json['release_audio_id'] as String?,
-      mainArtists:
-          (json['main_artists'] as List<dynamic>?)?.map((e) => Artist.fromJson(e as Map<String, dynamic>)).toList(),
+      mainArtists: (json['main_artists'] as List<dynamic>?)
+          ?.map((e) => Artist.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -248,8 +274,8 @@ final class PlayerAudioM3U8 extends HlsAudioSource implements PlayerAudio {
     List<Artist>? mainArtists,
   }) {
     return PlayerAudioM3U8(
-      uri ?? super.uri,
-      duration: super.duration,
+      uri: uri ?? this.uri,
+      duration: duration,
       artist: artist ?? this.artist,
       id: id ?? this.id,
       ownerId: ownerId ?? this.ownerId,

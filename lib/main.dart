@@ -4,6 +4,7 @@ import 'package:just_audio_background/just_audio_background.dart';
 import 'package:system_theme/system_theme.dart';
 import 'package:vk_music/common/utils/config/app_config.dart';
 import 'package:vk_music/common/utils/di/app_async_dependency.dart';
+import 'package:vk_music/data/models/playlist/cached_playlist.dart';
 import 'package:vk_music/hive/hive_registrar.g.dart';
 
 import 'common/app/app.dart';
@@ -25,6 +26,7 @@ void main() async {
   await Hive.openBox<User>('user');
   await Hive.openBox<AppConfig>('config');
   await Hive.openBox<String>('cachedAudio');
+  await Hive.openBox<CachedPlaylist>('cachedPlaylist');
 
   SystemTheme.fallbackColor = Colors.cyanAccent;
 

@@ -1,9 +1,12 @@
 import 'package:elementary/elementary.dart';
+import 'package:vk_music/data/models/playlist/cached_playlist.dart';
 import 'package:vk_music/domain/audio/audio_repository.dart';
 import 'package:vk_music/domain/model/player_audio.dart';
 
 abstract interface class ICachedAudioModel extends ElementaryModel {
   ListNotifier<PlayerAudio> get cachedAudioNotifier;
+
+  ListNotifier<CachedPlaylist> get cachedPlaylistNotifier;
 }
 
 class CachedAudioModel extends ICachedAudioModel {
@@ -13,4 +16,7 @@ class CachedAudioModel extends ICachedAudioModel {
 
   @override
   ListNotifier<PlayerAudio> get cachedAudioNotifier => _audioRepository.cachedAudioNotifier;
+  
+  @override
+  ListNotifier<CachedPlaylist> get cachedPlaylistNotifier => _audioRepository.cachedPlaylistNotifier;
 }

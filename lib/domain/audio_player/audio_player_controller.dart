@@ -34,8 +34,12 @@ class AppAudioPlayer extends AudioPlayer {
 
 class AppAudioPlayerController with ChangeNotifier {
   AppAudioPlayerController(AppConfig config) {
-    _playbackStreamSubscription = _player.playbackEventStream.listen(_listenPlaybackEvent);
-    _playerStateStreamSubscription = _player.playerStateStream.listen(_listenPlayerState);
+    _playbackStreamSubscription = _player.playbackEventStream.listen(
+      _listenPlaybackEvent,
+    );
+    _playerStateStreamSubscription = _player.playerStateStream.listen(
+      _listenPlayerState,
+    );
 
     _player
       ..setAutomaticallyWaitsToMinimizeStalling(false)
@@ -81,11 +85,18 @@ class AppAudioPlayerController with ChangeNotifier {
 
   Future<void> seekToPrevious() => _player.seekToPrevious();
 
-  Future<void> seek(Duration position, {int? index}) => _player.seek(position, index: index);
+  Future<void> seek(Duration position, {int? index}) =>
+      _player.seek(position, index: index);
 
-  Future<void> playFrom({required List<PlayerAudio> playlist, int? initialIndex}) async {
+  Future<void> playFrom({
+    required List<PlayerAudio> playlist,
+    int? initialIndex,
+  }) async {
     if (initialIndex != null) {
-      if (_player.playerState.playing && initialIndex == currentIndex && playlist[initialIndex] == currentAudio) {
+      print(playlist[initialIndex].runtimeType);
+      if (_player.playerState.playing &&
+          initialIndex == currentIndex &&
+          playlist[initialIndex] == currentAudio) {
         await _player.pause();
         return notifyListeners();
       } else if (!_player.playerState.playing &&
@@ -105,7 +116,11 @@ class AppAudioPlayerController with ChangeNotifier {
       await _player.stop();
     }
     currentPlaylist = [...playlist];
-    await _player.setAudioSources(playlist, initialIndex: initialIndex, initialPosition: Duration.zero);
+    await _player.setAudioSources(
+      playlist,
+      initialIndex: initialIndex,
+      initialPosition: Duration.zero,
+    );
     await _player.play();
     return notifyListeners();
   }
@@ -114,9 +129,15 @@ class AppAudioPlayerController with ChangeNotifier {
     if (_player.shuffleModeEnabled) {
       return;
     }
-    currentPlaylist!.insert(newIndex > currentIndex ? newIndex - 1 : newIndex, currentPlaylist!.removeAt(currentIndex));
+    currentPlaylist!.insert(
+      newIndex > currentIndex ? newIndex - 1 : newIndex,
+      currentPlaylist!.removeAt(currentIndex),
+    );
     notifyListeners();
-    await _player.moveAudioSource(currentIndex, newIndex > currentIndex ? newIndex - 1 : newIndex);
+    await _player.moveAudioSource(
+      currentIndex,
+      newIndex > currentIndex ? newIndex - 1 : newIndex,
+    );
   }
 
   Future<void> playNext(PlayerAudio audio) async {
@@ -151,7 +172,8 @@ class AppAudioPlayerController with ChangeNotifier {
     notifyListeners();
   }
 
-  void setShuffleModeEnabled(bool enabled) => _player.setShuffleModeEnabled(enabled);
+  void setShuffleModeEnabled(bool enabled) =>
+      _player.setShuffleModeEnabled(enabled);
 
   void switchLoopMode(LoopMode mode) async {
     final box = Hive.box<AppConfig>('config');
@@ -170,10 +192,13 @@ class AppAudioPlayerController with ChangeNotifier {
   void _listenPlaybackEvent(PlaybackEvent event) {
     currentIndex = event.currentIndex;
     state = event.processingState;
-    if (event.currentIndex != null && currentPlaylist != null && (currentPlaylist?.isNotEmpty ?? false)) {
+    if (event.currentIndex != null &&
+        currentPlaylist != null &&
+        (currentPlaylist?.isNotEmpty ?? false)) {
       currentAudio = currentPlaylist![event.currentIndex!];
     }
-    if (event.processingState == ProcessingState.completed && _player.nextIndex == null) {
+    if (event.processingState == ProcessingState.completed &&
+        _player.nextIndex == null) {
       currentAudio = null;
       currentIndex = null;
       playing = false;
@@ -192,5 +217,6 @@ class AppAudioPlayerController with ChangeNotifier {
     notifyListeners();
   }
 
-  bool _getShuffle() => Hive.box<AppConfig>('config').get('main')?.enableShuffle ?? false;
+  bool _getShuffle() =>
+      Hive.box<AppConfig>('config').get('main')?.enableShuffle ?? false;
 }

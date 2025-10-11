@@ -1,11 +1,14 @@
 
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 
 part 'thumb.freezed.dart';
 part 'thumb.g.dart';
 
 @freezed
-abstract class Thumb with _$Thumb {
+abstract class Thumb extends HiveObject with _$Thumb {
+  Thumb._();
+
   factory Thumb({
     required int width,
     required int height,

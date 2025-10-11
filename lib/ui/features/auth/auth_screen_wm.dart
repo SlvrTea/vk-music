@@ -12,59 +12,67 @@ import 'auth_screen_model.dart';
 import 'auth_screen_widget.dart';
 
 abstract interface class IAuthScreenWidgetModel implements IWidgetModel {
-  TextEditingController get loginController;
+  TextEditingController get phoneController;
 
-  TextEditingController get passwordController;
+  TextEditingController get emailComtroller;
 
   MaskTextInputFormatter get formatter;
 
-  EntityValueListenable<bool> get obscurePassword;
-
   EntityValueListenable<User> get user;
+
+  EntityValueListenable<Set<String>> get activeField;
 
   Future<void> onLoginTap();
 
   Future<void> altKateAuth();
 
   void onChangeObscureTap();
+
+  void onChangeActiveField(Set<String> field);
 }
 
-AuthScreenWidgetModel defaultAuthScreenWidgetModelFactory(BuildContext context) =>
-    AuthScreenWidgetModel(AuthScreenModel(context.global.authRepository));
+AuthScreenWidgetModel defaultAuthScreenWidgetModelFactory(
+  BuildContext context,
+) => AuthScreenWidgetModel(AuthScreenModel(context.global.authRepository));
 
-class AuthScreenWidgetModel extends WidgetModel<AuthScreen, IAuthScreenModel> implements IAuthScreenWidgetModel {
+class AuthScreenWidgetModel extends WidgetModel<AuthScreen, IAuthScreenModel>
+    implements IAuthScreenWidgetModel {
   AuthScreenWidgetModel(super.model);
 
-  final _loginController = TextEditingController();
+  final _phoneController = TextEditingController();
 
-  final _passwordController = TextEditingController();
+  final _emailComtroller = TextEditingController();
 
-  final _loginFormatter = MaskTextInputFormatter(
-      mask: '+# (###) ###-##-##', filter: {"#": RegExp(r'[0-9]')}, type: MaskAutoCompletionType.lazy);
+  final _phoneFormatter = MaskTextInputFormatter(
+    mask: '+# (###) ###-##-##',
+    filter: {"#": RegExp(r'[0-9]')},
+    type: MaskAutoCompletionType.lazy,
+  );
 
   final _obscurePasswordEntity = EntityStateNotifier<bool>();
 
   final _userEntity = EntityStateNotifier<User>();
 
-  @override
-  TextEditingController get loginController => _loginController;
+  final _activeFieldEntity = EntityStateNotifier.value({'phone'});
 
   @override
-  TextEditingController get passwordController => _passwordController;
+  TextEditingController get phoneController => _phoneController;
 
   @override
-  MaskTextInputFormatter get formatter => _loginFormatter;
+  TextEditingController get emailComtroller => _emailComtroller;
 
   @override
-  EntityValueListenable<bool> get obscurePassword => _obscurePasswordEntity;
+  MaskTextInputFormatter get formatter => _phoneFormatter;
 
   @override
   EntityValueListenable<User> get user => _userEntity;
 
   @override
+  EntityValueListenable<Set<String>> get activeField => _activeFieldEntity;
+
+  @override
   void dispose() {
-    _passwordController.dispose();
-    _loginController.dispose();
+    _phoneController.dispose();
     super.dispose();
   }
 
@@ -74,7 +82,7 @@ class AuthScreenWidgetModel extends WidgetModel<AuthScreen, IAuthScreenModel> im
     if (cachedUser != null) {
       context.global.user = cachedUser;
       _userEntity.content(cachedUser);
-      context.router.replace(const MainRoute());
+      context.replaceRoute(const MainRoute());
     }
     _obscurePasswordEntity.content(true);
     super.initWidgetModel();
@@ -83,32 +91,148 @@ class AuthScreenWidgetModel extends WidgetModel<AuthScreen, IAuthScreenModel> im
   @override
   Future<void> onLoginTap() async {
     _userEntity.loading();
-    if (_loginController.text.isEmpty || _passwordController.text.isEmpty) {
+    if (_phoneController.text.isEmpty && _emailComtroller.text.isEmpty) {
       return;
     }
 
+    final token = await model.firstStepAuth();
+
     try {
-      final userResp = await model.authUser(_loginFormatter.getUnmaskedText(), _passwordController.text);
-      if (userResp == null) {
-        return;
+      final validateRes = await model.validateAccount(
+        token!,
+        _activeFieldEntity.value.data!.contains('phone')
+            ? _phoneFormatter.getUnmaskedText()
+            : _emailComtroller.text,
+      );
+      if (context.mounted && validateRes.$2) {
+        context.pushRoute(
+          TfaRoute(
+            sid: validateRes.$1,
+            token: token,
+            onAcceptTap: (String code) =>
+                model.checkOtp(token: token, sid: validateRes.$1, code: code),
+          ),
+        );
       }
-      if (context.mounted) {
-        context.global
-          ..user = userResp
-          ..audioRepository.updateUser(userResp);
+      if (context.mounted && !validateRes.$2) {
+        context.pushRoute(
+          PasswordRoute(
+            onConfirmTap: (String password) async =>
+                _auth(password, sid: validateRes.$1, token: token),
+          ),
+        );
       }
-      _userEntity.content(userResp);
     } on DioException catch (e) {
       if (e.response == null) {
         _showError('Нет подключения к интернету');
-      } else if (e.response!.data['redirect_uri'] != null) {
+      } else if (e.response!.data['error']['redirect_uri'] != null) {
         if (!context.mounted) return;
-        _showTfaError();
+        final successToken = await context.pushRoute<String>(
+          CaptchaRoute(uri: e.response!.data['error']['redirect_uri']),
+        );
+        if (successToken != null) {
+          final validateRes = await model.validateAccount(
+            token!,
+            _phoneFormatter.getUnmaskedText(),
+            successToken,
+          );
+          if (context.mounted && validateRes.$2) {
+            final res = await context.pushRoute<String?>(
+              TfaRoute(
+                sid: validateRes.$1,
+                token: token,
+                onAcceptTap: (String code) => model.checkOtp(
+                  token: token,
+                  sid: validateRes.$1,
+                  code: code,
+                ),
+              ),
+            );
+            if (res != null && context.mounted) {
+              context.pushRoute(
+                PasswordRoute(
+                  onConfirmTap: (String password) async =>
+                      _auth(password, sid: res, token: token),
+                ),
+              );
+            }
+          }
+          if (context.mounted && !validateRes.$2) {
+            context.pushRoute(
+              PasswordRoute(
+                onConfirmTap: (String password) async =>
+                    _auth(password, sid: validateRes.$1, token: token),
+              ),
+            );
+          }
+        }
       } else {
-        _showError(e.response!.data['error_msg']);
+        _showError(e.response!.data['error']['error_msg']);
       }
     }
   }
+
+  Future<void> _auth(
+    String password, {
+    required String sid,
+    required String token,
+  }) async {
+    try {
+      await model.secondStepAuth(
+        sid: sid,
+        login: _phoneFormatter.getUnmaskedText(),
+        password: password,
+        token: token,
+      );
+      if (context.mounted) context.replaceRoute(MainRoute());
+    } on DioException catch (e) {
+      if (e.response?.data['redirect_uri'] != null) {
+        _onAuthCaptcha(e.response!.data['redirect_uri'], sid, token, password);
+      }
+    }
+  }
+
+  Future<void> _onAuthCaptcha(
+    String redirectUri,
+    String sid,
+    String token,
+    String password,
+  ) async {
+    try {
+      if (!context.mounted) return;
+      final successToken = await context.pushRoute<String>(
+        CaptchaRoute(uri: redirectUri),
+      );
+
+      if (successToken != null) {
+        await model.secondStepAuth(
+          sid: sid,
+          login: _phoneFormatter.getUnmaskedText(),
+          password: password,
+          token: token,
+          successToken: successToken,
+        );
+        if (context.mounted) context.replaceRoute(MainRoute());
+      }
+    } on DioException catch (e) {
+      if (e.response?.data['error'] == 'need_validation' && context.mounted) {
+        final sid = e.response!.data['validation_sid'];
+        final res = await context.pushRoute<String?>(
+          TfaRoute(
+            sid: sid,
+            token: token,
+            onAcceptTap: (String code) => _onAcceptTfaCode(code, token, sid),
+          ),
+        );
+        if (res != null) {
+          await _auth(password, sid: res, token: token);
+        }
+      }
+    }
+  }
+
+  Future<String> _onAcceptTfaCode(String code, String token, String sid) =>
+      model.checkOtp(token: token, sid: sid, code: code);
 
   @override
   Future<void> altKateAuth() async {
@@ -124,7 +248,9 @@ class AuthScreenWidgetModel extends WidgetModel<AuthScreen, IAuthScreenModel> im
       if (context.mounted) {
         context
           ..global.audioRepository.updateUser(user)
-          ..global.updateConfig(context.global.config.copyWith(isKateAuth: true))
+          ..global.updateConfig(
+            context.global.config.copyWith(isKateAuth: true),
+          )
           ..router.replace(const MainRoute());
       }
     }
@@ -137,36 +263,12 @@ class AuthScreenWidgetModel extends WidgetModel<AuthScreen, IAuthScreenModel> im
   }
 
   void _showError(String errorText) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorText)));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(errorText)));
   }
 
-  void _showTfaError() {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: const Text('Ошибка валидации'),
-      action: SnackBarAction(
-        label: 'Подробнее',
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog.adaptive(
-              title: const Text('Ошибка валидации'),
-              content: const Text('В связи с изменениями в api вк, при запросе на прохождение капчи, '
-                  'авторизация с доступом к аудио невозможна.\n'
-                  'Это может быть вызвано:\n'
-                  '   Слишком частыми запросами на авторизацию с Вашего устройства\n'
-                  '   Включенным VPN\n'
-                  '   В вк просто решили, что Ваши действия подозрительные\n'
-                  'Попробуйте подождать несколько часов или используйте альтернативный метод авторизации.'),
-              actions: [
-                TextButton(
-                  onPressed: context.maybePop,
-                  child: const Text('Закрыть'),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    ));
-  }
+  @override
+  void onChangeActiveField(Set<String> field) =>
+      _activeFieldEntity.content(field);
 }
