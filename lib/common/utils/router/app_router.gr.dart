@@ -429,6 +429,97 @@ class CachedAudioRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [CachedPlaylistWidget]
+class CachedPlaylistRoute extends PageRouteInfo<CachedPlaylistRouteArgs> {
+  CachedPlaylistRoute({
+    Key? key,
+    required CachedPlaylist playlist,
+    List<PageRouteInfo>? children,
+  }) : super(
+         CachedPlaylistRoute.name,
+         args: CachedPlaylistRouteArgs(key: key, playlist: playlist),
+         initialChildren: children,
+       );
+
+  static const String name = 'CachedPlaylistRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<CachedPlaylistRouteArgs>();
+      return CachedPlaylistWidget(key: args.key, playlist: args.playlist);
+    },
+  );
+}
+
+class CachedPlaylistRouteArgs {
+  const CachedPlaylistRouteArgs({this.key, required this.playlist});
+
+  final Key? key;
+
+  final CachedPlaylist playlist;
+
+  @override
+  String toString() {
+    return 'CachedPlaylistRouteArgs{key: $key, playlist: $playlist}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! CachedPlaylistRouteArgs) return false;
+    return key == other.key && playlist == other.playlist;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ playlist.hashCode;
+}
+
+/// generated route for
+/// [CaptchaScreen]
+class CaptchaRoute extends PageRouteInfo<CaptchaRouteArgs> {
+  CaptchaRoute({Key? key, required String uri, List<PageRouteInfo>? children})
+    : super(
+        CaptchaRoute.name,
+        args: CaptchaRouteArgs(key: key, uri: uri),
+        initialChildren: children,
+      );
+
+  static const String name = 'CaptchaRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<CaptchaRouteArgs>();
+      return CaptchaScreen(key: args.key, uri: args.uri);
+    },
+  );
+}
+
+class CaptchaRouteArgs {
+  const CaptchaRouteArgs({this.key, required this.uri});
+
+  final Key? key;
+
+  final String uri;
+
+  @override
+  String toString() {
+    return 'CaptchaRouteArgs{key: $key, uri: $uri}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! CaptchaRouteArgs) return false;
+    return key == other.key && uri == other.uri;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ uri.hashCode;
+}
+
+/// generated route for
 /// [EditPlaylistScreen]
 class EditPlaylistRoute extends PageRouteInfo<EditPlaylistRouteArgs> {
   EditPlaylistRoute({
@@ -505,6 +596,53 @@ class MainRoute extends PageRouteInfo<void> {
       return const MainScreen();
     },
   );
+}
+
+/// generated route for
+/// [PasswordScreen]
+class PasswordRoute extends PageRouteInfo<PasswordRouteArgs> {
+  PasswordRoute({
+    Key? key,
+    required Future<void> Function(String) onConfirmTap,
+    List<PageRouteInfo>? children,
+  }) : super(
+         PasswordRoute.name,
+         args: PasswordRouteArgs(key: key, onConfirmTap: onConfirmTap),
+         initialChildren: children,
+       );
+
+  static const String name = 'PasswordRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<PasswordRouteArgs>();
+      return PasswordScreen(key: args.key, onConfirmTap: args.onConfirmTap);
+    },
+  );
+}
+
+class PasswordRouteArgs {
+  const PasswordRouteArgs({this.key, required this.onConfirmTap});
+
+  final Key? key;
+
+  final Future<void> Function(String) onConfirmTap;
+
+  @override
+  String toString() {
+    return 'PasswordRouteArgs{key: $key, onConfirmTap: $onConfirmTap}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! PasswordRouteArgs) return false;
+    return key == other.key;
+  }
+
+  @override
+  int get hashCode => key.hashCode;
 }
 
 /// generated route for
@@ -656,4 +794,72 @@ class SettingsRoute extends PageRouteInfo<void> {
       return const SettingsScreen();
     },
   );
+}
+
+/// generated route for
+/// [TfaScreen]
+class TfaRoute extends PageRouteInfo<TfaRouteArgs> {
+  TfaRoute({
+    Key? key,
+    required String sid,
+    required String token,
+    required Future<String> Function(String) onAcceptTap,
+    List<PageRouteInfo>? children,
+  }) : super(
+         TfaRoute.name,
+         args: TfaRouteArgs(
+           key: key,
+           sid: sid,
+           token: token,
+           onAcceptTap: onAcceptTap,
+         ),
+         initialChildren: children,
+       );
+
+  static const String name = 'TfaRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<TfaRouteArgs>();
+      return TfaScreen(
+        key: args.key,
+        sid: args.sid,
+        token: args.token,
+        onAcceptTap: args.onAcceptTap,
+      );
+    },
+  );
+}
+
+class TfaRouteArgs {
+  const TfaRouteArgs({
+    this.key,
+    required this.sid,
+    required this.token,
+    required this.onAcceptTap,
+  });
+
+  final Key? key;
+
+  final String sid;
+
+  final String token;
+
+  final Future<String> Function(String) onAcceptTap;
+
+  @override
+  String toString() {
+    return 'TfaRouteArgs{key: $key, sid: $sid, token: $token, onAcceptTap: $onAcceptTap}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! TfaRouteArgs) return false;
+    return key == other.key && sid == other.sid && token == other.token;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ sid.hashCode ^ token.hashCode;
 }

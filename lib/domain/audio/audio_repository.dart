@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:vk_music/data/models/artist/artist.dart';
+import 'package:vk_music/data/models/playlist/cached_playlist.dart';
 import 'package:vk_music/data/models/playlist/playlist.dart';
 import 'package:vk_music/data/models/response/get/get_response.dart';
 import 'package:vk_music/data/models/response/get_playlists/get_playlists_response.dart';
@@ -29,13 +30,21 @@ class AudioRepository {
 
   final cachedAudioNotifier = ListNotifier<PlayerAudio>([]);
 
+  final cachedPlaylistNotifier = ListNotifier<CachedPlaylist>([]);
+
   final downloadInProgressNotifier = ListNotifier<int>([]);
+
+  final downloadPlaylistInProgress = ListNotifier<String>([]);
 
   void updateUser(User? user) => _user = user;
 
-  void loadCachedAudio() async {
+  void loadCachedAudio() {
     final audios = _cacheManager.readCache();
     cachedAudioNotifier.setValue(audios);
+  }
+
+  void loadCachedPlaylist() {
+    cachedPlaylistNotifier.setValue(_cacheManager.readCachedPlaylist());
   }
 
   Future<void> downloadAudio(PlayerAudio audio) async {
@@ -47,11 +56,25 @@ class AudioRepository {
     downloadInProgressNotifier.remove(audio.id);
   }
 
+  Future<void> downloadPlaylist(List<PlayerAudio> audios, String name, int id, [String? thumbUrl]) async {
+    downloadPlaylistInProgress.add(name);
+    final playlist = await _cacheManager.cachePlaylist(audios, name, id, thumbUrl);
+    cachedPlaylistNotifier.add(playlist);
+    downloadPlaylistInProgress.remove(name);
+  }
+
   Future<void> deleteCachedAudio(PlayerAudio audio) async {
     await _cacheManager.deleteAudio(audio);
     final cachedAudios = cachedAudioNotifier.value;
     cachedAudios.removeWhere((e) => e.id == audio.id);
     cachedAudioNotifier.setValue(cachedAudios);
+  }
+
+  Future<void> deleteCachedPlaylist(CachedPlaylist playlist) async {
+    await _cacheManager.deletePlaylist(playlist);
+    final cachedPlaylists = cachedPlaylistNotifier.value;
+    cachedPlaylists.removeWhere((e) => e.id == playlist.id);
+    cachedPlaylistNotifier.setValue(cachedPlaylists);
   }
 
   Future<GetResponse> getAudios({

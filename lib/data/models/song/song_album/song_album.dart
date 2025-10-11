@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 
 import '../../thumb/thumb.dart';
 
@@ -6,7 +7,9 @@ part 'song_album.freezed.dart';
 part 'song_album.g.dart';
 
 @freezed
-abstract class SongAlbum with _$SongAlbum {
+abstract class SongAlbum extends HiveObject with _$SongAlbum {
+  SongAlbum._();
+
   factory SongAlbum({
     required int id,
     required String title,

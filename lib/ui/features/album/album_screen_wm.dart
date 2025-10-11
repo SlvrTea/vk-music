@@ -11,11 +11,19 @@ abstract interface class IAlbumScreenWidgetModel implements IWidgetModel {
 
   EntityValueListenable<Playlist> get album;
 
+  EntityValueListenable<bool> get downloading;
+
+  EntityValueListenable<bool> get cached;
+
   Future<void> onFollowPlaylistTap();
 
   Future<void> onDeletePlaylistTap();
 
   Future<void> onEditPlaylistTap();
+
+  Future<void> onCachePlaylistTap();
+
+  Future<void> onDeleteCachedPlaylist();
 
   void playFrom();
 
@@ -24,12 +32,12 @@ abstract interface class IAlbumScreenWidgetModel implements IWidgetModel {
   Future<void> onMoreTap();
 }
 
-AlbumScreenWidgetModel defaultAlbumScreenWidgetModelFactory(BuildContext context) =>
-    AlbumScreenWidgetModel(AlbumScreenModel(
-      context.global.audioRepository,
-    ));
+AlbumScreenWidgetModel defaultAlbumScreenWidgetModelFactory(
+  BuildContext context,
+) => AlbumScreenWidgetModel(AlbumScreenModel(context.global.audioRepository));
 
-class AlbumScreenWidgetModel extends WidgetModel<AlbumScreen, IAlbumScreenModel> implements IAlbumScreenWidgetModel {
+class AlbumScreenWidgetModel extends WidgetModel<AlbumScreen, IAlbumScreenModel>
+    implements IAlbumScreenWidgetModel {
   AlbumScreenWidgetModel(super.model);
 
   @override
@@ -51,6 +59,16 @@ class AlbumScreenWidgetModel extends WidgetModel<AlbumScreen, IAlbumScreenModel>
   @override
   EntityValueListenable<Playlist> get album => _albumEntity;
 
+  final _downloadingEntity = EntityStateNotifier<bool>();
+
+  @override
+  EntityValueListenable<bool> get downloading => _downloadingEntity;
+
+  final _cachedEntity = EntityStateNotifier<bool>();
+
+  @override
+  EntityValueListenable<bool> get cached => _cachedEntity;
+
   late final AppAudioPlayerController _player;
 
   @override
@@ -58,14 +76,39 @@ class AlbumScreenWidgetModel extends WidgetModel<AlbumScreen, IAlbumScreenModel>
     _player = context.global.audioPlayer;
 
     _albumEntity.content(widget.playlist);
+    _cachedEntity.content(
+      model.cachedPlaylists.value.any((e) => e.name == widget.playlist.title),
+    );
+    model.cachedPlaylists.addListener(_listenCached);
+    _downloadingEntity.content(
+      model.downloadPlaylistInProgress.value.contains(widget.playlist.title),
+    );
+    model.downloadPlaylistInProgress.addListener(_listenDownload);
     _initAsync();
     super.initWidgetModel();
   }
 
+  @override
+  void dispose() {
+    model.cachedPlaylists.removeListener(_listenCached);
+    model.downloadPlaylistInProgress.removeListener(_listenDownload);
+    super.dispose();
+  }
+
   Future<void> _initAsync() async {
-    await Future.wait([
-      _loadItems(),
-    ]);
+    await Future.wait([_loadItems()]);
+  }
+
+  void _listenDownload() {
+    _downloadingEntity.content(
+      model.downloadPlaylistInProgress.value.contains(widget.playlist.title),
+    );
+  }
+
+  void _listenCached() {
+    _cachedEntity.content(
+      model.cachedPlaylists.value.any((e) => e.id == widget.playlist.id),
+    );
   }
 
   Future<void> _loadItems() async {
@@ -93,7 +136,9 @@ class AlbumScreenWidgetModel extends WidgetModel<AlbumScreen, IAlbumScreenModel>
 
   @override
   Future<void> onEditPlaylistTap() async {
-    final res = await context.router.push<bool?>(EditPlaylistRoute(playlist: _albumEntity.value.data!));
+    final res = await context.router.push<bool?>(
+      EditPlaylistRoute(playlist: _albumEntity.value.data!),
+    );
     if (res == true) {
       await _loadItems();
     }
@@ -125,5 +170,28 @@ class AlbumScreenWidgetModel extends WidgetModel<AlbumScreen, IAlbumScreenModel>
         },
       ),
     );
+  }
+
+  @override
+  Future<void> onCachePlaylistTap() async {
+    try {
+      await model.cachePlaylist(
+        _albumItemsEntity.value.data!,
+        widget.playlist.title,
+        widget.playlist.id,
+        widget.playlist.photo?.photo600,
+      );
+    } catch (e) {}
+  }
+
+  @override
+  Future<void> onDeleteCachedPlaylist() async {
+    try {
+      await model.deleteCachedPlaylist(
+        model.cachedPlaylists.value.firstWhere(
+          (e) => e.id == widget.playlist.id,
+        ),
+      );
+    } catch (e) {}
   }
 }

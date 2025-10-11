@@ -12,9 +12,29 @@ abstract interface class IAuthScreenModel extends ElementaryModel {
 
   IAuthScreenModel(this.authRepository);
 
-  void cacheUser(User user);
+  Future<void> cacheUser(User user);
 
-  Future<User?> authUser(String login, String password, [String? url]);
+  Future<String?> firstStepAuth();
+
+  Future<(String, bool)> validateAccount(
+    String token,
+    String login, [
+    String? successToken,
+  ]);
+
+  Future<String> checkOtp({
+    required String token,
+    required String sid,
+    required String code,
+  });
+
+  Future<User> secondStepAuth({
+    required String sid,
+    required String login,
+    required String password,
+    required String token,
+    String? successToken,
+  });
 
   User? loadUser();
 
@@ -27,27 +47,15 @@ class AuthScreenModel extends IAuthScreenModel {
   final _logger = Logger();
 
   @override
-  void cacheUser(User user) {
+  Future<void> cacheUser(User user) async {
     _logger.i('Write user to cache: $user');
-    userBox.put('user', user);
+    await userBox.put('user', user);
   }
 
   @override
-  Future<User?> authUser(String login, String password, [String? url]) async {
+  Future<String?> firstStepAuth() async {
     _logger.i('Auth via default method');
-    late User user;
-    if (url == null) {
-      final res = await authRepository.auth(login, password);
-      user = res;
-    } else {
-      user = User(
-        accessToken: url.split('access_token=').last.split('&').first,
-        secret: url.split('secret=').last,
-        userId: url.split('user_id=').last.split('&').first,
-      );
-    }
-    cacheUser(user);
-    return user;
+    return authRepository.firstStepAuth();
   }
 
   @override
@@ -62,4 +70,41 @@ class AuthScreenModel extends IAuthScreenModel {
 
   @override
   void logout() => userBox.delete('user');
+
+  @override
+  Future<(String, bool)> validateAccount(
+    String token,
+    String login, [
+    String? successToken,
+  ]) async => authRepository.validateAccount(
+    token: token,
+    login: login,
+    successToken: successToken,
+  );
+
+  @override
+  Future<String> checkOtp({
+    required String token,
+    required String sid,
+    required String code,
+  }) async => authRepository.checkOtp(token: token, sid: sid, code: code);
+
+  @override
+  Future<User> secondStepAuth({
+    required String sid,
+    required String login,
+    required String password,
+    required String token,
+    String? successToken,
+  }) async {
+    final res = await authRepository.secondStepAuth(
+      sid: sid,
+      login: login,
+      password: password,
+      token: token,
+      successToken: successToken,
+    );
+    await cacheUser(res);
+    return res;
+  }
 }

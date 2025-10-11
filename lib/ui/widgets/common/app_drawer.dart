@@ -18,9 +18,43 @@ class AppDrawer extends StatelessWidget {
               TextButton(
                 onPressed: () => context.router.push(const SettingsRoute()),
                 child: const Row(
+                  children: [Icon(Icons.settings), Text('Настройки')],
+                ),
+              ),
+              TextButton(
+                onPressed: () async {
+                  final res = await showDialog<bool>(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog.adaptive(
+                        title: Text('Проверка путей'),
+                        content: Text(
+                          'Запустить проверку путей кеша, если какая-либо из песней в кеше не проигрывается. Данное действие удалит такие песни.',
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => context.maybePop(false),
+                            child: Text('Отмена'),
+                          ),
+                          TextButton(
+                            onPressed: () => context.maybePop(true),
+                            child: Text('Продолжить'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                  if (res != null && res && context.mounted) {
+                    context.global.cacheManager.checkFilePath();
+                    context.global.audioRepository
+                      ..loadCachedAudio()
+                      ..loadCachedPlaylist();
+                  }
+                },
+                child: const Row(
                   children: [
-                    Icon(Icons.settings),
-                    Text('Настройки'),
+                    Icon(Icons.cached_rounded),
+                    Text('Проверка путей'),
                   ],
                 ),
               ),

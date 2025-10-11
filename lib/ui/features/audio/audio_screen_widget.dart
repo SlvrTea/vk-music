@@ -25,18 +25,30 @@ class AudioScreen extends ElementaryWidget<IAudioScreenWidgetModel> {
           firstValue: wm.playlists,
           secondValue: wm.audios,
           builder: (context, playlists, audios) {
-            if (playlists.data == null || audios.data == null) return const Center(child: CircularProgressIndicator());
+            if (playlists.data == null || audios.data == null) {
+              return const Center(child: CircularProgressIndicator());
+            }
             return CustomScrollView(
               slivers: [
-                SliverToBoxAdapter(child: SizedBox(height: wm.mediaQuery.padding.top + 8)),
+                SliverToBoxAdapter(
+                  child: SizedBox(height: wm.mediaQuery.padding.top + 8),
+                ),
                 SliverToBoxAdapter(
                   child: HomePlaylistsSection(playlists.data!),
                 ),
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                    child: Text('Моя музыка: ${audios.data!.length}',
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 8,
+                    ),
+                    child: Text(
+                      'Моя музыка: ${audios.data!.length}',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ),
                 EntityStateNotifierBuilder(
@@ -60,17 +72,26 @@ class AudioScreen extends ElementaryWidget<IAudioScreenWidgetModel> {
                       }
                       if (newIndex == 0) {
                         final oldSong = wm.audios.value.data![0];
-                        wm.onReorder(audioId: wm.audios.value.data![currentIndex].id, before: oldSong.id);
+                        wm.onReorder(
+                          audioId: wm.audios.value.data![currentIndex].id,
+                          before: oldSong.id,
+                        );
                         wm.player.move(currentIndex, newIndex);
                         wm.moveAudio(currentIndex, newIndex);
                       } else if (newIndex < currentIndex) {
                         final oldSong = wm.audios.value.data![newIndex - 1];
-                        wm.onReorder(audioId: wm.audios.value.data![currentIndex].id, after: oldSong.id);
+                        wm.onReorder(
+                          audioId: wm.audios.value.data![currentIndex].id,
+                          after: oldSong.id,
+                        );
                         wm.player.move(currentIndex, newIndex);
                         wm.moveAudio(currentIndex, newIndex);
                       } else {
                         final oldSong = wm.audios.value.data![newIndex];
-                        wm.onReorder(audioId: wm.audios.value.data![currentIndex].id, after: oldSong.id);
+                        wm.onReorder(
+                          audioId: wm.audios.value.data![currentIndex].id,
+                          after: oldSong.id,
+                        );
                         wm.player.move(currentIndex, newIndex);
                         wm.moveAudio(currentIndex, newIndex);
                       }
@@ -79,7 +100,7 @@ class AudioScreen extends ElementaryWidget<IAudioScreenWidgetModel> {
                 ),
                 SliverToBoxAdapter(
                   child: SizedBox(height: wm.mediaQuery.padding.bottom),
-                )
+                ),
               ],
             );
           },

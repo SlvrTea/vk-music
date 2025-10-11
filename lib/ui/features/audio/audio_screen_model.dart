@@ -1,6 +1,8 @@
 import 'package:elementary/elementary.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:vk_music/data/models/playlist/playlist.dart';
+import 'package:vk_music/data/models/user/user.dart';
 
 import '../../../domain/audio/audio_repository.dart';
 import '../../../domain/model/player_audio.dart';
@@ -37,12 +39,15 @@ class AudioScreenModel extends IAudioScreenModel {
 
   @override
   Future<List<Playlist>> getPlaylists({int? count, int? offset}) async {
+    _audioRepository.updateUser(Hive.box<User>('user').get('user'));
     final res = await _audioRepository.getPlaylists(count: count, offset: offset);
     return res.items;
   }
 
   @override
   Future<List<PlayerAudio>> getAudios(String ownerId) async {
+    _audioRepository.updateUser(Hive.box<User>('user').get('user'));
+
     final res = await _audioRepository.getAudios(ownerId: ownerId, isUserAudios: true);
     return res.items;
   }

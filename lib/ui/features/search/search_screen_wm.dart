@@ -54,12 +54,12 @@ abstract interface class ISearchScreenWidgetModel implements IWidgetModel {
   Future<void> searchAlbums({required String query});
 }
 
-SearchScreenWidgetModel defaultSearchScreenWidgetModelFactory(BuildContext context) =>
-    SearchScreenWidgetModel(SearchScreenModel(
-      context.global.audioRepository,
-    ));
+SearchScreenWidgetModel defaultSearchScreenWidgetModelFactory(
+  BuildContext context,
+) => SearchScreenWidgetModel(SearchScreenModel(context.global.audioRepository));
 
-class SearchScreenWidgetModel extends WidgetModel<SearchScreen, ISearchScreenModel>
+class SearchScreenWidgetModel
+    extends WidgetModel<SearchScreen, ISearchScreenModel>
     implements ISearchScreenWidgetModel {
   SearchScreenWidgetModel(super.model);
 
@@ -88,7 +88,8 @@ class SearchScreenWidgetModel extends WidgetModel<SearchScreen, ISearchScreenMod
   final _searchController = TextEditingController();
 
   @override
-  EntityValueListenable<List<PlayerAudio>> get recommendations => _recommendationsEntity;
+  EntityValueListenable<List<PlayerAudio>> get recommendations =>
+      _recommendationsEntity;
 
   @override
   EntityValueListenable<List<PlayerAudio>> get audios => _audiosEntity;
@@ -118,14 +119,14 @@ class SearchScreenWidgetModel extends WidgetModel<SearchScreen, ISearchScreenMod
   void initWidgetModel() {
     _searchController.text = widget.initialQuery ?? '';
     _initAsync();
-    context.router.addListener(() {
-      final router = context.router;
-      if (router.current.pathParams.getString('q') != widget.initialQuery) {
-        search(query: router.current.pathParams.getString('q'));
-        _searchController.text = router.current.pathParams.getString('q');
-      }
-    });
+    context.router.addListener(_listenRoute);
     super.initWidgetModel();
+  }
+
+  @override
+  void dispose() {
+    context.router.removeListener(_listenRoute);
+    super.dispose();
   }
 
   void _initAsync() async {
@@ -133,9 +134,15 @@ class SearchScreenWidgetModel extends WidgetModel<SearchScreen, ISearchScreenMod
       await search(query: _searchController.text);
       return;
     }
-    await Future.wait([
-      getRecommendations(),
-    ]);
+    await Future.wait([getRecommendations()]);
+  }
+
+  void _listenRoute() {
+    final router = context.router;
+    if (router.current.params.getString('q') != widget.initialQuery) {
+      search(query: router.current.params.getString('q'));
+      _searchController.text = router.current.params.getString('q');
+    }
   }
 
   @override
@@ -149,7 +156,10 @@ class SearchScreenWidgetModel extends WidgetModel<SearchScreen, ISearchScreenMod
 
   @override
   Future<void> onLoadMoreRecommendations({int? offset}) async {
-    final res = await model.getRecommendations(offset: offset, count: _recommendationsEntity.value.data!.length + 30);
+    final res = await model.getRecommendations(
+      offset: offset,
+      count: _recommendationsEntity.value.data!.length + 30,
+    );
     final recs = [..._recommendationsEntity.value.data!, ...res];
     _recommendationsEntity.content(recs);
   }
@@ -190,8 +200,12 @@ class SearchScreenWidgetModel extends WidgetModel<SearchScreen, ISearchScreenMod
   }
 
   @override
-  void onAllAlbumsTap() => context.router.push(AllPlaylistsRoute(playlists: _albumsEntity.value.data!));
+  void onAllAlbumsTap() => context.router.push(
+    AllPlaylistsRoute(playlists: _albumsEntity.value.data!),
+  );
 
   @override
-  void onAllPlaylistsTap() => context.router.push(AllPlaylistsRoute(playlists: _playlistsEntity.value.data!));
+  void onAllPlaylistsTap() => context.router.push(
+    AllPlaylistsRoute(playlists: _playlistsEntity.value.data!),
+  );
 }

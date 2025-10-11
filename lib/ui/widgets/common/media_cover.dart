@@ -30,12 +30,21 @@ class CoverWidget extends StatelessWidget {
       return SizedBox(
         height: h,
         width: w,
-        child: Stack(alignment: Alignment.center, children: [
-          ClipRRect(
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            ClipRRect(
               borderRadius: borderRadius ?? BorderRadius.circular(8),
-              child: Image.network(photoUrl!, width: w, height: h, fit: BoxFit.cover)),
-          Center(child: child)
-        ]),
+              child: Image.network(
+                photoUrl!,
+                width: w,
+                height: h,
+                fit: BoxFit.cover,
+              ),
+            ),
+            Center(child: child),
+          ],
+        ),
       );
     }
     return SizedBox(
@@ -45,9 +54,7 @@ class CoverWidget extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: borderRadius ?? BorderRadius.circular(8),
-            child: Container(
-              color: const Color(0xFF191919),
-            ),
+            child: Container(color: const Color(0xFF191919)),
           ),
           Center(
             child: SvgPicture.asset(
@@ -56,7 +63,7 @@ class CoverWidget extends StatelessWidget {
               height: w - 20,
             ),
           ),
-          Center(child: child)
+          Center(child: child),
         ],
       ),
     );
