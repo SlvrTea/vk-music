@@ -20,11 +20,7 @@ class MainScreen extends StatelessWidget {
     return AutoTabsScaffold(
       extendBody: true,
       extendBodyBehindAppBar: true,
-      routes: [
-        const AudioRoute(),
-        SearchRoute(),
-        const AlbumsRoute(),
-      ],
+      routes: [const AudioRoute(), SearchRoute(), const AlbumsRoute()],
       drawer: const AppDrawer(),
       appBarBuilder: (context, router) {
         if (router.isRouteActive(AudioRoute.name) ||
@@ -36,48 +32,54 @@ class MainScreen extends StatelessWidget {
               actions: [
                 IconButton(
                   icon: const Icon(Icons.download),
-                  onPressed: () => context.router.push(const CachedAudioRoute()),
+                  onPressed: () =>
+                      context.router.push(const CachedAudioRoute()),
                 ),
               ],
             ),
           );
         }
         return PreferredSize(
-          preferredSize: Size.fromHeight(MediaQuery.of(context).viewPadding.top),
-          child: SizedBox(
-            height: MediaQuery.of(context).viewPadding.top,
+          preferredSize: Size.fromHeight(
+            MediaQuery.of(context).viewPadding.top,
           ),
+          child: SizedBox(height: MediaQuery.of(context).viewPadding.top),
         );
       },
       bottomNavigationBuilder: (context, router) {
         return ClipRect(
-          child: BackdropFilter(
+          child: BackdropFilter( 
             filter: ImageFilter.blur(sigmaY: 20, sigmaX: 20),
             child: Container(
               decoration: BoxDecoration(
-                color: context.global.theme.colors.backgroundColor.withOpacity(0.7),
+                color: context.global.theme.colors.backgroundColor.withOpacity(
+                  0.7,
+                ),
               ),
               child: ListenableBuilder(
-                  listenable: player,
-                  builder: (context, _) {
-                    final audio = player.currentAudio;
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (audio != null) const AudioBar(),
-                        NavBar(
-                          selectedIndex: router.activeIndex,
-                          onItemSelected: router.setActiveIndex,
-                          backgroundColor: Colors.transparent,
-                          items: [
-                            NavBarItem(icon: const Icon(Icons.music_note_rounded)),
-                            NavBarItem(icon: const Icon(Icons.search_rounded)),
-                            NavBarItem(icon: const Icon(Icons.album_rounded)),
-                          ],
-                        ),
-                      ],
-                    );
-                  }),
+                listenable: player,
+                builder: (context, _) {
+                  final audio = player.currentAudio;
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (audio != null) const AudioBar(),
+                      NavBar(
+                        selectedIndex: router.activeIndex,
+                        onItemSelected: router.setActiveIndex,
+                        backgroundColor: Colors.transparent,
+                        items: [
+                          NavBarItem(
+                            icon: const Icon(Icons.music_note_rounded),
+                          ),
+                          NavBarItem(icon: const Icon(Icons.search_rounded)),
+                          NavBarItem(icon: const Icon(Icons.album_rounded)),
+                        ],
+                      ),
+                    ],
+                  );
+                },
+              ),
             ),
           ),
         );

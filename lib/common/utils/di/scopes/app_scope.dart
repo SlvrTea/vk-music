@@ -77,12 +77,11 @@ class AppGlobalDependency extends AppAsyncDependency {
 
     user = Hive.box<User>('user').get('user');
     router = AppRouter();
+    authRepository = AuthRepository();
     _initDio();
     cacheManager = IOCacheManager()..readCachedPlaylist();
 
     final audioService = AudioService(dio);
-
-    authRepository = AuthRepository();
     audioPlayer = AppAudioPlayerController(config);
     audioRepository = AudioRepository(audioService, user, cacheManager);
   }
@@ -98,7 +97,12 @@ class AppGlobalDependency extends AppAsyncDependency {
   void _initDio() {
     dio = Dio(BaseOptions(baseUrl: baseUrl))
       ..interceptors.addAll([
-        VKInterceptor(apiVersion: apiVersion, user: user),
+        VKInterceptor(
+          authRepository,
+          apiVersion: apiVersion,
+          user: user,
+          updateUser: updateUser,
+        ),
         PrettyDioLogger(
           responseBody: false,
           error: true,
@@ -106,6 +110,12 @@ class AppGlobalDependency extends AppAsyncDependency {
           enabled: kDebugMode,
         ),
       ]);
+  }
+
+  void updateUser(User user) {
+    Hive.box<User>('user').put('user', user);
+    audioRepository.updateUser(user);
+    (dio.interceptors.firstWhere((e) => e is VKInterceptor) as VKInterceptor).user = user;
   }
 }
 

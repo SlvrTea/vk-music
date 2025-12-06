@@ -31,4 +31,6 @@ class AuthRepository {
     token: token,
     successToken: successToken,
   );
+
+  Future<String> exchangeToken(String token, String prcl) => _authService.exchangeToken(token, prcl);
 }

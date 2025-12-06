@@ -37,10 +37,12 @@ abstract interface class IAudioScreenWidgetModel implements IWidgetModel {
   Future<void> loadAudios();
 }
 
-AudioScreenWidgetModel defaultAudioScreenWidgetModelFactory(BuildContext context) =>
-    AudioScreenWidgetModel(AudioScreenModel(context.global.audioRepository));
+AudioScreenWidgetModel defaultAudioScreenWidgetModelFactory(
+  BuildContext context,
+) => AudioScreenWidgetModel(AudioScreenModel(context.global.audioRepository));
 
-class AudioScreenWidgetModel extends WidgetModel<AudioScreen, IAudioScreenModel> implements IAudioScreenWidgetModel {
+class AudioScreenWidgetModel extends WidgetModel<AudioScreen, IAudioScreenModel>
+    implements IAudioScreenWidgetModel {
   AudioScreenWidgetModel(super.model);
 
   @override
@@ -65,7 +67,8 @@ class AudioScreenWidgetModel extends WidgetModel<AudioScreen, IAudioScreenModel>
   EntityValueListenable<List<Playlist>> get playlists => _playlistsEntity;
 
   @override
-  EntityValueListenable<List<PlayerAudio>> get cachedAudios => _cachedAudioEntity;
+  EntityValueListenable<List<PlayerAudio>> get cachedAudios =>
+      _cachedAudioEntity;
 
   @override
   void onAudioTileTap(int index) {
@@ -131,9 +134,12 @@ class AudioScreenWidgetModel extends WidgetModel<AudioScreen, IAudioScreenModel>
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
   }
 
-  void _listenAudioChanges() => _audiosEntity.content(model.userAudiosNotifier.value!);
+  void _listenAudioChanges() =>
+      _audiosEntity.content(model.userAudiosNotifier.value!);
 
-  void _listenPlaylistsChanges() => _playlistsEntity.content(model.userPlaylistsNotifier.value!);
+  void _listenPlaylistsChanges() =>
+      _playlistsEntity.content(model.userPlaylistsNotifier.value!);
 
-  void _listenCacheChanges() => _cachedAudioEntity.content(model.cachedAudioNotifier.value);
+  void _listenCacheChanges() =>
+      _cachedAudioEntity.content(model.cachedAudioNotifier.value);
 }

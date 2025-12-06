@@ -256,6 +256,19 @@ final class PlayerAudioM3U8 extends HlsAudioSource
     };
   }
 
+  PlayerAudioMP3 toMP3() => PlayerAudioMP3(
+    uri: uri,
+    artist: artist,
+    id: id,
+    ownerId: ownerId,
+    title: title,
+    duration: duration,
+    accessKey: accessKey,
+    album: album,
+    releaseAudioId: releaseAudioId,
+    mainArtists: mainArtists,
+  );
+
   @override
   String toString() {
     return 'Player Audio M3U8: $title, $artist';
