@@ -94,7 +94,11 @@ class IOCacheManager {
     }
     for (final audio in needToCache) {
       final file = await downloadAudio(audio, addPath: false);
-      playlist.add(audio.copyWith(uri: Uri.file(file.path)));
+      if (audio is PlayerAudioM3U8) {
+        playlist.add(audio.toMP3().copyWith(uri: Uri.file(file.path)));
+      } else {
+        playlist.add(audio.copyWith(uri: Uri.file(file.path)));
+      }
     }
     final model = CachedPlaylist(
       thumb: thumb,

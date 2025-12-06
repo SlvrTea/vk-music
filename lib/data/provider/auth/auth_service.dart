@@ -10,7 +10,11 @@ import '../../models/user/user.dart';
 
 // Kinda dont lika all of that, but i am scared to change anything without proper docs
 class VKAuthService {
-  final dio = Dio()
+  VKAuthService() {
+    _init();
+  }
+
+  final dio = Dio(BaseOptions(validateStatus: (status) => status == 200 || status == 302,))
     ..interceptors.addAll([
       PrettyDioLogger(
         requestBody: true,
@@ -34,12 +38,48 @@ class VKAuthService {
     'Connection': 'Keep-Alive',
   };
 
-  Future<String> firstStepAuth() async {
+  void _init() async {
     _info = await DeviceInfoPlugin().androidInfo;
+  }
+
+  Future<String> firstStepAuth() async {
     final tokenRes = await getAnonymToken();
     await registerDevice(tokenRes);
 
     return tokenRes;
+  }
+
+  Future<String> exchangeToken(String token, String prcl) async {
+    final headers = _headers
+      ..addAll({
+        'cookie': prcl,
+        'host': 'api.vk.com',
+        'X-Screeen': 'feed_recent',
+        'X-VK-Android-Client': 'new',
+      });
+    final res = await dio.post(
+      'https://api.vk.com/oauth/auth_by_exchange_token',
+      options: Options(headers: headers),
+      data: {
+        'device_id': '2519f2213e3cacf8:90b1afb4ed8485f17533ece9580c1',
+        'exchange_token': token,
+        'client_id': 2274003,
+        'scope': 'all',
+        'initiator': 'expired_token',
+        'sak_version': 1.123,
+        'gaid': 'bfcdfdcc-de3f-cfd7-171d-53b83108dc90',
+        'https': 1,
+        'api_id': 2274003,
+        'lang': 'ru',
+        'v': AppGlobalDependency.apiVersion,
+      },
+    );
+    return res.headers.map['Location']
+        .toString()
+        .split('access_token=')
+        .last
+        .split('&')
+        .first;
   }
 
   Future<String> checkOtp({
@@ -136,10 +176,26 @@ class VKAuthService {
 
     final accessToken = res.data['response']['token'];
 
+    final exchangeTokenRes = await dio.post(
+      'https://api.vk.com/method/execute.getUserInfo',
+      options: Options(
+        headers: _headers
+          ..addAll({"X-Screen": "feed_recent", "X-VK-Android-Client": "new"}),
+      ),
+      data: {
+        'func_v': 33,
+        'needExchangeToken': 1,
+        'access_token': accessToken,
+        'device_id': '2519f2213e3cacf8:90b1afb4ed8485f17533ece9580c1',
+        'v': AppGlobalDependency.apiVersion,
+      },
+    );
+
     return User(
       accessToken: accessToken,
       userId: userId.toString(),
       secret: 'hHbZxrka2uZ6jB1inYsH',
+      exchangeToken: exchangeTokenRes.data['response']['exchange_token'],
     );
   }
 

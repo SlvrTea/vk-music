@@ -178,13 +178,16 @@ class AuthScreenWidgetModel extends WidgetModel<AuthScreen, IAuthScreenModel>
     required String token,
   }) async {
     try {
-      await model.secondStepAuth(
+      final res = await model.secondStepAuth(
         sid: sid,
         login: _phoneFormatter.getUnmaskedText(),
         password: password,
         token: token,
       );
-      if (context.mounted) context.replaceRoute(MainRoute());
+      if (context.mounted) {
+        context.global.updateUser(res);
+        context.router.replaceAll([MainRoute()]);
+      } 
     } on DioException catch (e) {
       if (e.response?.data['redirect_uri'] != null) {
         _onAuthCaptcha(e.response!.data['redirect_uri'], sid, token, password);
@@ -242,6 +245,7 @@ class AuthScreenWidgetModel extends WidgetModel<AuthScreen, IAuthScreenModel>
         accessToken: url.split('access_token=').last.split('&').first,
         secret: 'hHbZxrka2uZ6jB1inYsH',
         userId: url.split('user_id=').last.split('&').first,
+        exchangeToken: '',
       );
       model.cacheUser(user);
       AppGlobalDependency.isKateAuth = true;

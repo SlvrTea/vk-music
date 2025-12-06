@@ -42,7 +42,9 @@ class AlbumsScreenWidgetModel extends WidgetModel<AlbumsScreen, IAlbumsScreenMod
 
   @override
   void initWidgetModel() {
-    _playlistsEntity.content(model.userPlaylistsNotifier.value!);
+    if (model.userPlaylistsNotifier.value != null) {
+      _playlistsEntity.content(model.userPlaylistsNotifier.value!);
+    }
     model.userPlaylistsNotifier.addListener(_listenPlaylistsChange);
     super.initWidgetModel();
   }

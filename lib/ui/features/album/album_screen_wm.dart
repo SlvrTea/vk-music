@@ -136,7 +136,7 @@ class AlbumScreenWidgetModel extends WidgetModel<AlbumScreen, IAlbumScreenModel>
 
   @override
   Future<void> onEditPlaylistTap() async {
-    final res = await context.router.push<bool?>(
+    final res = await context.router.push<bool>(
       EditPlaylistRoute(playlist: _albumEntity.value.data!),
     );
     if (res == true) {
