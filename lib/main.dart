@@ -15,7 +15,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await JustAudioBackground.init(
-    androidNotificationChannelId: 'com.vkmusic.channel.audio', // Change this
+    androidNotificationChannelId: 'com.vkmusic.channel.audio',
     androidNotificationChannelName: 'VKMusic Playback',
     androidNotificationOngoing: true,
   );

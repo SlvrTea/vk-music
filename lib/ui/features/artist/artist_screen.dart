@@ -1,4 +1,5 @@
 import 'package:auto_route/annotations.dart';
+import 'package:collection/collection.dart';
 import 'package:elementary/elementary.dart';
 import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,8 @@ import 'artist_screen_wm.dart';
 
 @RoutePage()
 class ArtistScreen extends ElementaryWidget<IArtistScreenWidgetModel> {
-  const ArtistScreen(this.artistId, {super.key}) : super(defaultArtistScreenWidgetModelFactory);
+  const ArtistScreen(this.artistId, {super.key})
+    : super(defaultArtistScreenWidgetModelFactory);
 
   final String artistId;
 
@@ -21,7 +23,9 @@ class ArtistScreen extends ElementaryWidget<IArtistScreenWidgetModel> {
         secondValue: wm.audios,
         thirdValue: wm.albums,
         builder: (context, artist, audios, albums) {
-          if (artist.data == null || audios.data == null || albums.data == null) {
+          if (artist.data == null ||
+              audios.data == null ||
+              albums.data == null) {
             return const Center(child: CircularProgressIndicator());
           }
           return CustomScrollView(
@@ -33,7 +37,10 @@ class ArtistScreen extends ElementaryWidget<IArtistScreenWidgetModel> {
                 flexibleSpace: FlexibleSpaceBar(
                   title: Text(
                     artist.data!.name,
-                    style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                   background: Stack(
                     fit: StackFit.expand,
@@ -61,7 +68,10 @@ class ArtistScreen extends ElementaryWidget<IArtistScreenWidgetModel> {
                               child: FloatingActionButton(
                                 backgroundColor: Colors.white,
                                 shape: const CircleBorder(),
-                                child: const Icon(Icons.play_arrow_rounded, size: 42),
+                                child: const Icon(
+                                  Icons.play_arrow_rounded,
+                                  size: 42,
+                                ),
                                 onPressed: () {},
                               ),
                             ),
@@ -113,10 +123,11 @@ class ArtistScreen extends ElementaryWidget<IArtistScreenWidgetModel> {
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: albums.data!
-                        .map((e) => PlaylistWidget(
-                              playlist: e,
-                              size: 175,
-                            ))
+                        .slice(
+                          0,
+                          albums.data!.length < 10 ? albums.data!.length : 10,
+                        )
+                        .map((e) => PlaylistWidget(playlist: e, size: 175))
                         .toList(),
                   ),
                 ),
@@ -124,7 +135,8 @@ class ArtistScreen extends ElementaryWidget<IArtistScreenWidgetModel> {
               SliverToBoxAdapter(
                 child: EntityStateNotifierBuilder(
                   listenableEntityState: wm.playlists,
-                  loadingBuilder: (_, __) => const Center(child: CircularProgressIndicator()),
+                  loadingBuilder: (_, _) =>
+                      const Center(child: CircularProgressIndicator()),
                   builder: (context, playlists) {
                     if (playlists == null) return const SizedBox.shrink();
                     return Column(
@@ -135,7 +147,10 @@ class ArtistScreen extends ElementaryWidget<IArtistScreenWidgetModel> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Встречается в плейлистах', style: wm.appTheme.t2),
+                              Text(
+                                'Встречается в плейлистах',
+                                style: wm.appTheme.t2,
+                              ),
                               TextButton(
                                 onPressed: wm.onAllPlaylistsTap,
                                 child: const Text('Показать все'),
@@ -147,10 +162,13 @@ class ArtistScreen extends ElementaryWidget<IArtistScreenWidgetModel> {
                           scrollDirection: Axis.horizontal,
                           child: Row(
                             children: playlists
-                                .map((e) => PlaylistWidget(
-                                      playlist: e,
-                                      size: 175,
-                                    ))
+                                .slice(
+                                  0,
+                                  playlists.length < 10 ? playlists.length : 10,
+                                )
+                                .map(
+                                  (e) => PlaylistWidget(playlist: e, size: 175),
+                                )
                                 .toList(),
                           ),
                         ),
@@ -160,10 +178,8 @@ class ArtistScreen extends ElementaryWidget<IArtistScreenWidgetModel> {
                 ),
               ),
               SliverToBoxAdapter(
-                child: SizedBox(
-                  height: wm.mediaQuery.padding.bottom,
-                ),
-              )
+                child: SizedBox(height: wm.mediaQuery.padding.bottom),
+              ),
             ],
           );
         },

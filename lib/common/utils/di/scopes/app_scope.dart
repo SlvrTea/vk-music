@@ -49,10 +49,38 @@ class AppGlobalDependency extends AppAsyncDependency {
 
   @override
   Future<void> initAsync(BuildContext context) async {
-    final AppConfig? cfg = Hive.box<AppConfig>('config').get('main');
-    AppGlobalDependency.isKateAuth = cfg?.isKateAuth;
-    systemColor = SystemTheme.accentColor.accent;
+    _initConfig();
+    user = Hive.box<User>('user').get('user');
+    router = AppRouter();
+    authRepository = AuthRepository();
+    _initDio();
+    cacheManager = IOCacheManager()..readCachedPlaylist();
+    final audioService = AudioService(dio);
+    audioPlayer = AppAudioPlayerController(config);
+    audioRepository = AudioRepository(audioService, user, cacheManager);
+  }
 
+  Future<void> updateConfig(AppConfig newConfig) async {
+    config = newConfig;
+    theme = AppTheme.fromConfig(config);
+    await Hive.box<AppConfig>('config').delete('main');
+    await Hive.box<AppConfig>('config').put('main', config);
+    notifyListeners();
+  }
+
+  void updateUser(User user) {
+    Hive.box<User>('user').put('user', user);
+    this.user = user;
+    audioRepository.updateUser(user);
+    (dio.interceptors.firstWhere((e) => e is VKInterceptor) as VKInterceptor)
+            .user =
+        user;
+    notifyListeners();
+  }
+
+  void _initConfig() {
+    final AppConfig? cfg = Hive.box<AppConfig>('config').get('main');
+    systemColor = SystemTheme.accentColor.accent;
     if (cfg != null) {
       config = cfg;
       theme = AppTheme.fromConfig(cfg);
@@ -74,48 +102,25 @@ class AppGlobalDependency extends AppAsyncDependency {
         loopMode: LoopMode.off,
       );
     }
-
-    user = Hive.box<User>('user').get('user');
-    router = AppRouter();
-    authRepository = AuthRepository();
-    _initDio();
-    cacheManager = IOCacheManager()..readCachedPlaylist();
-
-    final audioService = AudioService(dio);
-    audioPlayer = AppAudioPlayerController(config);
-    audioRepository = AudioRepository(audioService, user, cacheManager);
-  }
-
-  Future<void> updateConfig(AppConfig newConfig) async {
-    config = newConfig;
-    theme = AppTheme.fromConfig(config);
-    await Hive.box<AppConfig>('config').delete('main');
-    await Hive.box<AppConfig>('config').put('main', config);
-    notifyListeners();
   }
 
   void _initDio() {
-    dio = Dio(BaseOptions(baseUrl: baseUrl))
-      ..interceptors.addAll([
-        VKInterceptor(
-          authRepository,
-          apiVersion: apiVersion,
-          user: user,
-          updateUser: updateUser,
-        ),
-        PrettyDioLogger(
-          responseBody: false,
-          error: true,
-          compact: true,
-          enabled: kDebugMode,
-        ),
-      ]);
-  }
-
-  void updateUser(User user) {
-    Hive.box<User>('user').put('user', user);
-    audioRepository.updateUser(user);
-    (dio.interceptors.firstWhere((e) => e is VKInterceptor) as VKInterceptor).user = user;
+    dio = Dio(BaseOptions(baseUrl: baseUrl));
+    dio.interceptors.addAll([
+      VKInterceptor(
+        authRepository,
+        apiVersion: apiVersion,
+        user: user,
+        dio: dio,
+        updateUser: updateUser,
+      ),
+      PrettyDioLogger(
+        responseBody: false,
+        error: true,
+        compact: true,
+        enabled: kDebugMode,
+      ),
+    ]);
   }
 }
 

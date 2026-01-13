@@ -34,10 +34,12 @@ abstract interface class IEditPlaylistWidgetModel implements IWidgetModel {
   Future<void> saveChanges();
 }
 
-EditPlaylistWidgetModel defaultEditPlaylistWidgetModelFactory(BuildContext context) =>
-    EditPlaylistWidgetModel(EditPlaylistModel(context.global.audioRepository));
+EditPlaylistWidgetModel defaultEditPlaylistWidgetModelFactory(
+  BuildContext context,
+) => EditPlaylistWidgetModel(EditPlaylistModel(context.global.audioRepository));
 
-class EditPlaylistWidgetModel extends WidgetModel<EditPlaylistScreen, IEditPlaylistModel>
+class EditPlaylistWidgetModel
+    extends WidgetModel<EditPlaylistScreen, IEditPlaylistModel>
     implements IEditPlaylistWidgetModel {
   EditPlaylistWidgetModel(super.model);
 
@@ -104,17 +106,23 @@ class EditPlaylistWidgetModel extends WidgetModel<EditPlaylistScreen, IEditPlayl
           .then((e) => removeCompleter.complete());
     }
     await model
-        .save(widget.playlist, _titleController.text, _descriptionController.text, _toAdd, _reorder)
+        .save(
+          widget.playlist,
+          _titleController.text,
+          _descriptionController.text,
+          _toAdd.isEmpty ? null : _toAdd,
+          _reorder.isEmpty ? null : _reorder,
+        )
         .then((e) => saveCompleter.complete());
-    if (context.mounted && saveCompleter.isCompleted && _toRemove.isEmpty ? true : removeCompleter.isCompleted) {
+    if (context.mounted && saveCompleter.isCompleted && _toRemove.isEmpty
+        ? true
+        : removeCompleter.isCompleted) {
       await context.router.maybePop(true);
     }
   }
 
   Future<void> _initAsync() async {
-    await Future.wait([
-      _loadAudios(),
-    ]);
+    await Future.wait([_loadAudios()]);
   }
 
   Future<void> _loadAudios() async {
@@ -140,10 +148,13 @@ class EditPlaylistWidgetModel extends WidgetModel<EditPlaylistScreen, IEditPlayl
     if (_audiosEntity.value.data == null) return;
     // Audios without items marked to remove. We need this because any item in [AddAudiosScreen.playlistAudios] marked
     // as playlist item.
-    final audios =
-        [..._audiosEntity.value.data!].where((e) => !_toRemove.any((i) => i.contains(e.id.toString()))).toList();
+    final audios = [
+      ..._audiosEntity.value.data!,
+    ].where((e) => !_toRemove.any((i) => i.contains(e.id.toString()))).toList();
 
-    final res = await context.router.push<List<PlayerAudio>>(AddAudioRoute(playlistAudios: audios));
+    final res = await context.router.push<List<PlayerAudio>>(
+      AddAudioRoute(playlistAudios: audios),
+    );
 
     if (res != null) {
       // Indices that user marked as removed, but added them again on [AddAudioScreen]
@@ -160,17 +171,28 @@ class EditPlaylistWidgetModel extends WidgetModel<EditPlaylistScreen, IEditPlayl
       }
 
       // If res contains any audio, that already in playlist, we need to mark that as removed
-      _toRemove.addAll(res.where((e) => audios.any((audio) => audio.id == e.id)).map((e) => '${e.ownerId}_${e.id}'));
+      _toRemove.addAll(
+        res
+            .where((e) => audios.any((audio) => audio.id == e.id))
+            .map((e) => '${e.ownerId}_${e.id}'),
+      );
 
-      _toAdd.addAll(res
-          .where((e) => !_toRemove.any((id) => id.contains(e.id.toString())))
-          .map((e) => '${e.ownerId}_${e.id}_${e.accessKey}'));
+      _toAdd.addAll(
+        res
+            .where((e) => !_toRemove.any((id) => id.contains(e.id.toString())))
+            .map((e) => '${e.ownerId}_${e.id}_${e.accessKey}'),
+      );
 
-      _audiosEntity
-          .content([...res.where((e) => !_audiosEntity.value.data!.any((audio) => audio.id == e.id)), ...audios]);
+      _audiosEntity.content([
+        ...res.where(
+          (e) => !_audiosEntity.value.data!.any((audio) => audio.id == e.id),
+        ),
+        ...audios,
+      ]);
     }
   }
 
   @override
-  bool isAdded(PlayerAudio audio) => !_toRemove.any((e) => e.contains(audio.id.toString()));
+  bool isAdded(PlayerAudio audio) =>
+      !_toRemove.any((e) => e.contains(audio.id.toString()));
 }

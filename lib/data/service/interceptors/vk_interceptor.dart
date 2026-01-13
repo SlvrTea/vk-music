@@ -14,12 +14,14 @@ class VKInterceptor extends Interceptor {
     this._authRepository, {
     required this.apiVersion,
     required this.updateUser,
+    required this.dio,
     this.user,
   });
 
   final AuthRepository _authRepository;
   final double apiVersion;
   final void Function(User) updateUser;
+  final Dio dio;
 
   User? user;
   bool _exchangeInProcess = false;
@@ -38,7 +40,6 @@ class VKInterceptor extends Interceptor {
       options.headers.addAll({
         "User-Agent":
             "KateMobileAndroid/109.1 lite-550 (Android 13; SDK 33; x86_64; Google Pixel 5; ru)",
-        "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
         "Accept-Encoding": "gzip",
         "Content-Encoding": "gzip",
       });
@@ -46,8 +47,6 @@ class VKInterceptor extends Interceptor {
       options.headers.addAll({
         "User-Agent":
             "VKAndroidApp/4.13.1-1206 (Android 4.4.3; SDK 19; armeabi; ; ru)",
-        "Accept": "image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, */*",
-        "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
       });
     }
     final query = options.queryParameters;
@@ -83,9 +82,11 @@ class VKInterceptor extends Interceptor {
         prcl,
       );
 
+      response.requestOptions.queryParameters['access_token'] = res;
       user = user!.copyWith(accessToken: res);
       updateUser(user!);
-      _exchangeInProcess = false;
+
+      response = await dio.fetch(response.requestOptions);
     }
 
     return handler.next(response);
