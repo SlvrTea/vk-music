@@ -15,7 +15,7 @@ class AudioLiveActivityManager(private val context: Context) {
 
     private val remoteViews = RemoteViews("com.vkmusic.channel.audio", R.layout.live_activity)
 
-    private val notificationId = "testaudioremoteview";
+    private val notificationId = 132;
 
     private val channelWithHighPriority = "channelWithHighPriority"
 
