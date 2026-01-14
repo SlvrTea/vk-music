@@ -178,6 +178,15 @@ class AppColors {
     secondaryTextColor: Colors.grey,
   );
 
+  factory AppColors.darkMint() => const AppColors._(
+    backgroundColor: Color(0x2E294EFF),
+    secondaryBackground: Color(0x100E1BFF),
+    primaryButtonColor: Colors.greenAccent,
+    mainTextColor: Colors.white,
+    secondary: Color(0x100E1BFF),
+    secondaryTextColor: Colors.grey,
+  );
+
   final Color backgroundColor;
   final Color secondaryBackground;
   final Color primaryButtonColor;

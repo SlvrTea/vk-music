@@ -33,12 +33,12 @@ abstract interface class IArtistScreenWidgetModel implements IWidgetModel {
   void onAllAlbumsTap();
 }
 
-ArtistScreenWidgetModel defaultArtistScreenWidgetModelFactory(BuildContext context) =>
-    ArtistScreenWidgetModel(ArtistScreenModel(
-      context.global.audioRepository,
-    ));
+ArtistScreenWidgetModel defaultArtistScreenWidgetModelFactory(
+  BuildContext context,
+) => ArtistScreenWidgetModel(ArtistScreenModel(context.global.audioRepository));
 
-class ArtistScreenWidgetModel extends WidgetModel<ArtistScreen, IArtistScreenModel>
+class ArtistScreenWidgetModel
+    extends WidgetModel<ArtistScreen, IArtistScreenModel>
     implements IArtistScreenWidgetModel {
   ArtistScreenWidgetModel(super.model);
 
@@ -75,11 +75,7 @@ class ArtistScreenWidgetModel extends WidgetModel<ArtistScreen, IArtistScreenMod
   }
 
   Future<void> _initAsync() async {
-    await Future.wait([
-      _loadArtist(),
-      _loadAudio(),
-      _loadAlbums(),
-    ]);
+    await Future.wait([_loadArtist(), _loadAudio(), _loadAlbums()]);
 
     _loadPlaylists();
 
@@ -107,7 +103,7 @@ class ArtistScreenWidgetModel extends WidgetModel<ArtistScreen, IArtistScreenMod
 
   Future<void> _loadAlbums() async {
     try {
-      final albums = await model.getAlbumsByArtist(widget.artistId);
+      final albums = await model.getAlbumsByArtist(widget.artistId, count: 100);
       _albumsEntity.content(albums);
     } on Exception catch (e) {
       rethrow;
@@ -116,7 +112,10 @@ class ArtistScreenWidgetModel extends WidgetModel<ArtistScreen, IArtistScreenMod
 
   Future<void> _loadPlaylists() async {
     try {
-      final playlists = await model.getPlaylists(_artistEntity.value.data!.name);
+      final playlists = await model.getPlaylists(
+        _artistEntity.value.data!.name,
+        count: 100,
+      );
       _playlistsEntity.content(playlists);
     } on Exception catch (e) {
       rethrow;
@@ -124,12 +123,20 @@ class ArtistScreenWidgetModel extends WidgetModel<ArtistScreen, IArtistScreenMod
   }
 
   @override
-  void onAllAudiosTap() =>
-      context.router.push(AllArtistSongsRoute(artistId: widget.artistId, initialAudios: _audiosEntity.value.data!));
+  void onAllAudiosTap() => context.router.push(
+    AllArtistSongsRoute(
+      artistId: widget.artistId,
+      initialAudios: _audiosEntity.value.data!,
+    ),
+  );
 
   @override
-  void onAllPlaylistsTap() => context.router.push(AllPlaylistsRoute(playlists: _playlistsEntity.value.data!));
+  void onAllPlaylistsTap() => context.router.push(
+    AllPlaylistsRoute(playlists: _playlistsEntity.value.data!),
+  );
 
   @override
-  void onAllAlbumsTap() => context.router.push(AllPlaylistsRoute(playlists: _albumsEntity.value.data!));
+  void onAllAlbumsTap() => context.router.push(
+    AllPlaylistsRoute(playlists: _albumsEntity.value.data!),
+  );
 }

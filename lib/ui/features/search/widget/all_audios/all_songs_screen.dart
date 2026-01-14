@@ -33,18 +33,17 @@ class AllSongsScreen extends ElementaryWidget<IAllSongsWidgetModel> {
           },
           child: EntityStateNotifierBuilder(
             listenableEntityState: wm.audios,
-            loadingBuilder: (_, __) => const Center(child: CircularProgressIndicator()),
+            loadingBuilder: (_, _) =>
+                const Center(child: CircularProgressIndicator()),
             builder: (context, audios) {
-              return SingleChildScrollView(
-                child: Column(
-                  children: audios!
-                      .map((e) => AudioTile(
-                            audio: e,
-                            playlist: audios,
-                            withMenu: true,
-                          ))
-                      .toList(),
-                ),
+              if (audios == null) {
+                return SizedBox.shrink();
+              }
+              return ListView.builder(
+                itemCount: audios.length,
+                itemBuilder: (context, i) {
+                  return AudioTile(audio: audios[i], playlist: audios);
+                },
               );
             },
           ),

@@ -108,7 +108,11 @@ class AudioScreenWidgetModel extends WidgetModel<AudioScreen, IAudioScreenModel>
   }
 
   Future<void> _initAsync() async {
-    await Future.wait([loadAudios(), loadPlaylists()]);
+    try {
+      await Future.wait([loadAudios(), loadPlaylists()]);
+    } on Object catch (e) {
+      await _initAsync();
+    }
   }
 
   @override

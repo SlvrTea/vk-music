@@ -11,7 +11,8 @@ import 'package:vk_music/ui/theme/app_theme.dart';
 import 'audio_detail_bottom_sheet.dart';
 import 'audio_detail_bottom_sheet_model.dart';
 
-abstract interface class IAudioDetailBottomSheetWidgetModel implements IWidgetModel {
+abstract interface class IAudioDetailBottomSheetWidgetModel
+    implements IWidgetModel {
   AppTheme get theme;
 
   MediaQueryData get mediaQuery;
@@ -37,10 +38,12 @@ abstract interface class IAudioDetailBottomSheetWidgetModel implements IWidgetMo
   void onPauseTap();
 }
 
-AudioDetailBottomSheetWidgetModel defaultAudioDetailBottomSheetWidgetModelFactory(BuildContext context) =>
+AudioDetailBottomSheetWidgetModel
+defaultAudioDetailBottomSheetWidgetModelFactory(BuildContext context) =>
     AudioDetailBottomSheetWidgetModel(AudioDetailBottomSheetModel());
 
-class AudioDetailBottomSheetWidgetModel extends WidgetModel<AudioDetailBottomSheet, IAudioDetailBottomSheetModel>
+class AudioDetailBottomSheetWidgetModel
+    extends WidgetModel<AudioDetailBottomSheet, IAudioDetailBottomSheetModel>
     with TickerProviderWidgetModelMixin
     implements IAudioDetailBottomSheetWidgetModel {
   AudioDetailBottomSheetWidgetModel(super.model);
@@ -60,7 +63,8 @@ class AudioDetailBottomSheetWidgetModel extends WidgetModel<AudioDetailBottomShe
   final _currentAudioEntity = EntityStateNotifier<PlayerAudio?>();
 
   @override
-  EntityValueListenable<List<PlayerAudio>?> get currentPlaylist => _currentPlaylistEntity;
+  EntityValueListenable<List<PlayerAudio>?> get currentPlaylist =>
+      _currentPlaylistEntity;
   final _currentPlaylistEntity = EntityStateNotifier<List<PlayerAudio>?>();
 
   @override
@@ -76,7 +80,11 @@ class AudioDetailBottomSheetWidgetModel extends WidgetModel<AudioDetailBottomShe
   @override
   void initWidgetModel() {
     _player = context.global.audioPlayer;
-    _tabController = TabController(length: 2, vsync: this, animationDuration: Duration.zero)..addListener(_listenTab);
+    _tabController = TabController(
+      length: 2,
+      vsync: this,
+      animationDuration: Duration.zero,
+    )..addListener(_listenTab);
     _currentTabIndexEntity.content(_tabController.index);
     _isPlayingEntity.content(_player.playing);
     _currentAudioEntity.content(_player.currentAudio);

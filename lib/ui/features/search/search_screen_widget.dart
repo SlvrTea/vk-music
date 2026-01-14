@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:collection/collection.dart';
 import 'package:elementary/elementary.dart';
 import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,8 @@ import 'search_screen_wm.dart';
 
 @RoutePage()
 class SearchScreen extends ElementaryWidget<ISearchScreenWidgetModel> {
-  SearchScreen({super.key, @PathParam('q') this.initialQuery}) : super(defaultSearchScreenWidgetModelFactory);
+  SearchScreen({super.key, @PathParam('q') this.initialQuery})
+    : super(defaultSearchScreenWidgetModelFactory);
 
   String? initialQuery;
 
@@ -23,13 +25,17 @@ class SearchScreen extends ElementaryWidget<ISearchScreenWidgetModel> {
         onNotification: (scrollEnd) {
           final metrics = scrollEnd.metrics;
           if (metrics.pixels + 200 >= metrics.maxScrollExtent) {
-            wm.onLoadMoreRecommendations(offset: wm.recommendations.value.data!.length);
+            wm.onLoadMoreRecommendations(
+              offset: wm.recommendations.value.data!.length,
+            );
           }
           return true;
         },
         child: CustomScrollView(
           slivers: [
-            SliverToBoxAdapter(child: SizedBox(height: wm.mediaQuery.padding.top)),
+            SliverToBoxAdapter(
+              child: SizedBox(height: wm.mediaQuery.padding.top),
+            ),
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -50,119 +56,166 @@ class SearchScreen extends ElementaryWidget<ISearchScreenWidgetModel> {
                         wm.getRecommendations();
                       },
                       icon: const Icon(Icons.close_rounded),
-                    )
+                    ),
                   ],
                 ),
               ),
             ),
-            SliverToBoxAdapter(
-              child: EntityStateNotifierBuilder(
-                listenableEntityState: wm.state,
-                loadingBuilder: (_, __) => const Center(child: CircularProgressIndicator()),
-                builder: (context, state) {
-                  if (state == SearchState.recommendations) {
-                    return EntityStateNotifierBuilder(
-                      loadingBuilder: (_, __) => const Center(child: CircularProgressIndicator()),
-                      listenableEntityState: wm.recommendations,
-                      builder: (context, recs) {
-                        return SingleChildScrollView(
-                          child: Column(
-                            children: [...recs!.map((e) => AudioTile(audio: e, playlist: recs, withMenu: true))],
-                          ),
-                        );
-                      },
-                    );
-                  } else {
-                    return TripleValueListenableBuilder(
-                      firstValue: wm.playlists,
-                      secondValue: wm.audios,
-                      thirdValue: wm.albums,
-                      builder: (context, playlists, audios, albums) {
-                        if (playlists.data == null || audios.data == null || albums.data == null) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                        return SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Все треки', style: context.global.theme.t2),
-                                    TextButton(
-                                      onPressed: () => context.router.push(AllSongsRoute(
-                                        initialAudios: audios.data!,
-                                        query: wm.searchController.text,
-                                      )),
-                                      child: const Text('Показать все'),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
-                                child: HorizontalMusicList(audios.data!),
-                              ),
-                              if (playlists.data!.isNotEmpty) ...[
-                                const Divider(),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text('Все плейлисты', style: context.global.theme.t2),
-                                      TextButton(onPressed: wm.onAllPlaylistsTap, child: const Text('Показать все')),
-                                    ],
-                                  ),
-                                ),
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    children: playlists.data!
-                                        .map((e) => PlaylistWidget(
-                                              playlist: e,
-                                              size: 175,
-                                            ))
-                                        .toList(),
-                                  ),
-                                ),
-                              ],
-                              if (albums.data!.isNotEmpty) ...[
-                                const Divider(),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text('Альбомы', style: context.global.theme.t2),
-                                      TextButton(onPressed: wm.onAllAlbumsTap, child: const Text('Показать все')),
-                                    ],
-                                  ),
-                                ),
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    children: albums.data!
-                                        .map((e) => PlaylistWidget(
-                                              playlist: e,
-                                              size: 175,
-                                            ))
-                                        .toList(),
-                                  ),
-                                ),
-                                SizedBox(height: wm.mediaQuery.padding.bottom),
-                              ],
-                            ],
-                          ),
-                        );
-                      },
-                    );
-                  }
-                },
+            EntityStateNotifierBuilder(
+              listenableEntityState: wm.state,
+              loadingBuilder: (_, _) => SliverToBoxAdapter(
+                child: const Center(child: CircularProgressIndicator()),
               ),
+              builder: (context, state) {
+                if (state == SearchState.recommendations) {
+                  return EntityStateNotifierBuilder(
+                    loadingBuilder: (_, _) => SliverToBoxAdapter(
+                      child: const Center(child: CircularProgressIndicator()),
+                    ),
+                    listenableEntityState: wm.recommendations,
+                    builder: (context, recs) {
+                      if (recs == null) {
+                        return SizedBox.shrink();
+                      }
+                      return SliverList.builder(
+                        itemCount: recs.length,
+                        itemBuilder: (context, i) {
+                          return AudioTile(
+                            audio: recs[i],
+                            playlist: recs,
+                            withMenu: true,
+                          );
+                        },
+                      );
+                    },
+                  );
+                } else {
+                  return TripleValueListenableBuilder(
+                    firstValue: wm.playlists,
+                    secondValue: wm.audios,
+                    thirdValue: wm.albums,
+                    builder: (context, playlists, audios, albums) {
+                      if (playlists.data == null ||
+                          audios.data == null ||
+                          albums.data == null) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      return SliverList(
+                        delegate: SliverChildListDelegate.fixed([
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Все треки',
+                                  style: context.global.theme.t2,
+                                ),
+                                TextButton(
+                                  onPressed: () => context.router.push(
+                                    AllSongsRoute(
+                                      initialAudios: audios.data!,
+                                      query: wm.searchController.text,
+                                    ),
+                                  ),
+                                  child: const Text('Показать все'),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: HorizontalMusicList(audios.data!),
+                          ),
+                          if (playlists.data!.isNotEmpty) ...[
+                            const Divider(),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Все плейлисты',
+                                    style: context.global.theme.t2,
+                                  ),
+                                  TextButton(
+                                    onPressed: wm.onAllPlaylistsTap,
+                                    child: const Text('Показать все'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: playlists.data!
+                                    .slice(
+                                      0,
+                                      playlists.data!.length < 10
+                                          ? playlists.data!.length
+                                          : 10,
+                                    )
+                                    .map(
+                                      (e) => PlaylistWidget(
+                                        playlist: e,
+                                        size: 175,
+                                      ),
+                                    )
+                                    .toList(),
+                              ),
+                            ),
+                          ],
+                          if (albums.data!.isNotEmpty) ...[
+                            const Divider(),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Альбомы',
+                                    style: context.global.theme.t2,
+                                  ),
+                                  TextButton(
+                                    onPressed: wm.onAllAlbumsTap,
+                                    child: const Text('Показать все'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: albums.data!
+                                    .slice(
+                                      0,
+                                      albums.data!.length < 10
+                                          ? albums.data!.length
+                                          : 10,
+                                    )
+                                    .map(
+                                      (e) => PlaylistWidget(
+                                        playlist: e,
+                                        size: 175,
+                                      ),
+                                    )
+                                    .toList(),
+                              ),
+                            ),
+                            SizedBox(height: wm.mediaQuery.padding.bottom),
+                          ],
+                        ]),
+                      );
+                    },
+                  );
+                }
+              },
             ),
           ],
         ),

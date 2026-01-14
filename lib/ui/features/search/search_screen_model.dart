@@ -49,7 +49,7 @@ class SearchScreenModel extends ISearchScreenModel {
   @override
   Future<SearchPlaylistsResponse> searchPlaylists({required String query}) async {
     try {
-      final res = await _audioRepository.searchPlaylists(query: query);
+      final res = await _audioRepository.searchPlaylists(query: query, count: 100);
       return res;
     } on Exception catch (e) {
       throw Exception(e);
@@ -59,7 +59,7 @@ class SearchScreenModel extends ISearchScreenModel {
   @override
   Future<SearchAlbumsResponse> searchAlbums({required String query}) async {
     try {
-      final res = await _audioRepository.searchAlbums(query: query);
+      final res = await _audioRepository.searchAlbums(query: query, count: 100);
       return res;
     } on Exception catch (e) {
       throw Exception(e);

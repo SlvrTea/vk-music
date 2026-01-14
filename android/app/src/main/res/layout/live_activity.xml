@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+    <!-- Текст со статусом заказа -->
+    <TextView
+        android:id="@+id/order_status"  
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your order is being processed"  
+        android:textSize="16sp"
+        android:textColor="#000000"
+        android:layout_marginBottom="8dp" />
+    <!-- Текст со этапом заказа -->
+    <TextView
+        android:id="@+id/stage_status"  
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Stage status 1/4"  
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:shadowColor="#AA000000"
+        android:textColor="#000000"
+        android:layout_marginBottom="8dp"
+        android:gravity="start" />
+</LinearLayout>
