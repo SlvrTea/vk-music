@@ -62,6 +62,7 @@ class AppDrawer extends StatelessWidget {
                 context.global.audioRepository
                   ..userAudiosNotifier.value = []
                   ..userAlbumsNotifier.value = [];
+                context.global.user = null;
                 context.router.replace(const AuthRoute());
               },
               child: const Row(

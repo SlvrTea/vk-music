@@ -42,7 +42,11 @@ class AllSongsScreen extends ElementaryWidget<IAllSongsWidgetModel> {
               return ListView.builder(
                 itemCount: audios.length,
                 itemBuilder: (context, i) {
-                  return AudioTile(audio: audios[i], playlist: audios);
+                  return AudioTile(
+                    audio: audios[i],
+                    playlist: audios,
+                    withMenu: true,
+                  );
                 },
               );
             },
