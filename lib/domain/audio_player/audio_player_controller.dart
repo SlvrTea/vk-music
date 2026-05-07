@@ -93,7 +93,6 @@ class AppAudioPlayerController with ChangeNotifier {
     int? initialIndex,
   }) async {
     if (initialIndex != null) {
-      print(playlist[initialIndex].runtimeType);
       if (_player.playerState.playing &&
           initialIndex == currentIndex &&
           playlist[initialIndex] == currentAudio) {
@@ -127,7 +126,11 @@ class AppAudioPlayerController with ChangeNotifier {
 
   Future<void> move(int currentIndex, int newIndex) async {
     if (_player.shuffleModeEnabled) {
-      return;
+      _player.shuffleIndices.insert(
+        newIndex > currentIndex ? newIndex - 1 : newIndex,
+        _player.shuffleIndices.removeAt(currentIndex),
+      );
+      return notifyListeners();
     }
     currentPlaylist!.insert(
       newIndex > currentIndex ? newIndex - 1 : newIndex,

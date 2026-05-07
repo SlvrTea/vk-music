@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:text_marquee/text_marquee.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
 import 'package:vk_music/domain/model/player_audio.dart';
+import 'package:vk_music/ui/features/audio_bottom_sheet/audio_bottom_sheet_widget.dart';
 
 import '../../../widgets/common/media_cover.dart';
 import '../../main/widget/navigation_bar/slider_bar.dart';
@@ -60,7 +61,8 @@ class AudioTab extends StatelessWidget {
                     )
                   else
                     SizedBox.square(
-                        dimension: MediaQuery.of(context).size.width - 32),
+                      dimension: MediaQuery.of(context).size.width - 32,
+                    ),
                   BackdropFilter(
                     filter: ImageFilter.blur(sigmaY: 30, sigmaX: 30),
                     child: Container(
@@ -119,9 +121,10 @@ class AudioTab extends StatelessWidget {
                     child: TextMarquee(
                       audio.title,
                       style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 24,
-                          overflow: TextOverflow.ellipsis),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ),
                   Padding(
@@ -133,8 +136,9 @@ class AudioTab extends StatelessWidget {
                   ),
                   const Spacer(),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      _DownloadButton(audio: audio),
                       _RewindButton(seekPrevious: onRewindTap),
                       _PlayButton(
                         isPlaying: playing,
@@ -142,6 +146,7 @@ class AudioTab extends StatelessWidget {
                         pause: onPauseTap,
                       ),
                       _ForwardButton(seekNext: onForwardTap),
+                      _MenuButton(audio: audio),
                     ],
                   ),
                   const Spacer(),
@@ -151,6 +156,44 @@ class AudioTab extends StatelessWidget {
           },
         ),
       ],
+    );
+  }
+}
+
+class _DownloadButton extends StatelessWidget {
+  const _DownloadButton({required this.audio});
+
+  final PlayerAudio audio;
+  final double size = 32;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      onPressed: () => context.global.audioRepository.downloadAudio(audio),
+      iconSize: size,
+      icon: Icon(Icons.download_rounded),
+    );
+  }
+}
+
+class _MenuButton extends StatelessWidget {
+  const _MenuButton({required this.audio});
+
+  final PlayerAudio audio;
+  final double size = 32;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      onPressed: () => showModalBottomSheet(
+        useRootNavigator: true,
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: context.global.theme.colors.secondaryBackground,
+        builder: (_) => AudioBottomSheetWidget(audio: audio),
+      ),
+      iconSize: size,
+      icon: Icon(Icons.more_vert_rounded),
     );
   }
 }
@@ -176,13 +219,12 @@ class _PlayButton extends StatelessWidget {
           onPressed: isPlaying == null
               ? null
               : isPlaying
-                  ? pause
-                  : play,
+              ? pause
+              : play,
           icon: Icon(
-              isPlaying ?? false
-                  ? Icons.pause_rounded
-                  : Icons.play_arrow_rounded,
-              size: size),
+            isPlaying ?? false ? Icons.pause_rounded : Icons.play_arrow_rounded,
+            size: size,
+          ),
         );
       },
     );
@@ -198,11 +240,9 @@ class _RewindButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-        onPressed: seekPrevious,
-        icon: Icon(
-          Icons.fast_rewind_rounded,
-          size: size,
-        ));
+      onPressed: seekPrevious,
+      icon: Icon(Icons.fast_rewind_rounded, size: size),
+    );
   }
 }
 
@@ -216,10 +256,7 @@ class _ForwardButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: seekNext,
-      icon: Icon(
-        Icons.fast_forward_rounded,
-        size: size,
-      ),
+      icon: Icon(Icons.fast_forward_rounded, size: size),
     );
   }
 }
@@ -254,10 +291,7 @@ class _PlaceholderControl extends StatelessWidget {
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 25),
-            child: Text(
-              '',
-              style: TextStyle(fontSize: 16),
-            ),
+            child: Text('', style: TextStyle(fontSize: 16)),
           ),
           Spacer(),
           Row(
@@ -265,28 +299,19 @@ class _PlaceholderControl extends StatelessWidget {
             children: [
               IconButton(
                 onPressed: null,
-                icon: Icon(
-                  Icons.fast_rewind_rounded,
-                  size: 48,
-                ),
+                icon: Icon(Icons.fast_rewind_rounded, size: 48),
               ),
               IconButton(
                 onPressed: null,
-                icon: Icon(
-                  Icons.pause_rounded,
-                  size: 48,
-                ),
+                icon: Icon(Icons.pause_rounded, size: 48),
               ),
               IconButton(
                 onPressed: null,
-                icon: Icon(
-                  Icons.fast_forward_rounded,
-                  size: 48,
-                ),
+                icon: Icon(Icons.fast_forward_rounded, size: 48),
               ),
             ],
           ),
-          Spacer()
+          Spacer(),
         ],
       ),
     );
