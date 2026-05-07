@@ -48,7 +48,7 @@ class MainScreen extends StatelessWidget {
       },
       bottomNavigationBuilder: (context, router) {
         return ClipRect(
-          child: BackdropFilter( 
+          child: BackdropFilter(
             filter: ImageFilter.blur(sigmaY: 20, sigmaX: 20),
             child: Container(
               decoration: BoxDecoration(

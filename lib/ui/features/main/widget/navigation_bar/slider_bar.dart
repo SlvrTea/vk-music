@@ -15,6 +15,7 @@ class SliderBar extends StatelessWidget {
           stream: player.bufferedPositionStream,
           builder: (context, buffered) {
             return ProgressBar(
+              barHeight: 3,
               progress: position.data ?? const Duration(),
               buffered: buffered.data ?? const Duration(),
               thumbRadius: 6,

@@ -49,10 +49,9 @@ class VKAuthService {
     return tokenRes;
   }
 
-  Future<String> exchangeToken(String token, String prcl) async {
+  Future<String> exchangeToken(String token) async {
     final headers = _headers
       ..addAll({
-        'cookie': prcl,
         'host': 'api.vk.com',
         'X-Screeen': 'feed_recent',
         'X-VK-Android-Client': 'new',

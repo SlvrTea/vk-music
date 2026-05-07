@@ -72,15 +72,13 @@ class VKInterceptor extends Interceptor {
         !_exchangeInProcess) {
       _exchangeInProcess = true;
       Timer(const Duration(seconds: 5), () => _exchangeInProcess = false);
-      final prcl = response.headers.map['set-cookie']!
-          .firstWhere((e) => e.startsWith('prcl'))
-          .split(';')
-          .firstWhere((e) => e.startsWith('prcl'));
 
       final res = await _authRepository.exchangeToken(
         user!.exchangeToken,
-        prcl,
-      );
+      ).then((v) {
+        _exchangeInProcess = false;
+        return v;
+      });
 
       response.requestOptions.queryParameters['access_token'] = res;
       user = user!.copyWith(accessToken: res);
