@@ -15,6 +15,7 @@ abstract interface class PlayerAudio extends UriAudioSource {
     required this.title,
     required super.duration,
     required this.accessKey,
+    this.contentRestricted,
     this.album,
     this.releaseAudioId,
     this.mainArtists,
@@ -34,6 +35,7 @@ abstract interface class PlayerAudio extends UriAudioSource {
   final int ownerId;
   final String title;
   final String accessKey;
+  int? contentRestricted;
   SongAlbum? album;
   String? releaseAudioId;
   List<Artist>? mainArtists;
@@ -59,6 +61,7 @@ abstract interface class PlayerAudio extends UriAudioSource {
     String? title,
     String? accessKey,
     SongAlbum? album,
+    int? contentRestricted,
     String? releaseAudioId,
     List<Artist>? mainArtists,
   });
@@ -75,6 +78,7 @@ final class PlayerAudioMP3 extends ProgressiveAudioSource
     required this.title,
     required super.duration,
     required this.accessKey,
+    this.contentRestricted,
     this.album,
     this.releaseAudioId,
     this.mainArtists,
@@ -102,6 +106,8 @@ final class PlayerAudioMP3 extends ProgressiveAudioSource
   final String title;
   @override
   final String accessKey;
+  @override
+  int? contentRestricted;
   @override
   SongAlbum? album;
   @override
@@ -125,6 +131,7 @@ final class PlayerAudioMP3 extends ProgressiveAudioSource
       mainArtists: (json['main_artists'] as List<dynamic>?)
           ?.map((e) => Artist.fromJson(e as Map<String, dynamic>))
           .toList(),
+      contentRestricted: json['content_restricted'] as int?,
     );
   }
 
@@ -138,6 +145,7 @@ final class PlayerAudioMP3 extends ProgressiveAudioSource
       'title': title,
       'access_key': accessKey,
       'duration': super.duration?.inSeconds,
+      'content_resticted': contentRestricted,
       'album': album?.toJson(),
       'release_audio_id': releaseAudioId,
       'main_artists': mainArtists?.map((e) => e.toJson()).toList(),
@@ -157,6 +165,7 @@ final class PlayerAudioMP3 extends ProgressiveAudioSource
     int? ownerId,
     String? title,
     String? accessKey,
+    int? contentRestricted,
     SongAlbum? album,
     String? releaseAudioId,
     List<Artist>? mainArtists,
@@ -172,6 +181,7 @@ final class PlayerAudioMP3 extends ProgressiveAudioSource
       album: album ?? this.album,
       releaseAudioId: releaseAudioId ?? this.releaseAudioId,
       mainArtists: mainArtists ?? this.mainArtists,
+      contentRestricted: contentRestricted ?? this.contentRestricted,
     );
   }
 }
@@ -187,6 +197,7 @@ final class PlayerAudioM3U8 extends HlsAudioSource
     required this.title,
     required super.duration,
     required this.accessKey,
+    this.contentRestricted,
     this.album,
     this.releaseAudioId,
     this.mainArtists,
@@ -215,6 +226,8 @@ final class PlayerAudioM3U8 extends HlsAudioSource
   @override
   final String accessKey;
   @override
+  int? contentRestricted;
+  @override
   SongAlbum? album;
   @override
   String? releaseAudioId;
@@ -237,6 +250,7 @@ final class PlayerAudioM3U8 extends HlsAudioSource
       mainArtists: (json['main_artists'] as List<dynamic>?)
           ?.map((e) => Artist.fromJson(e as Map<String, dynamic>))
           .toList(),
+      contentRestricted: json['content_restricted'] as int?,
     );
   }
 
@@ -253,6 +267,7 @@ final class PlayerAudioM3U8 extends HlsAudioSource
       'album': album?.toJson(),
       'release_audio_id': releaseAudioId,
       'main_artists': mainArtists?.map((e) => e.toJson()).toList(),
+      'content_restricted': contentRestricted,
     };
   }
 
@@ -267,6 +282,7 @@ final class PlayerAudioM3U8 extends HlsAudioSource
     album: album,
     releaseAudioId: releaseAudioId,
     mainArtists: mainArtists,
+    contentRestricted: contentRestricted,
   );
 
   @override
@@ -285,6 +301,7 @@ final class PlayerAudioM3U8 extends HlsAudioSource
     SongAlbum? album,
     String? releaseAudioId,
     List<Artist>? mainArtists,
+    int? contentRestricted,
   }) {
     return PlayerAudioM3U8(
       uri: uri ?? this.uri,
@@ -297,6 +314,7 @@ final class PlayerAudioM3U8 extends HlsAudioSource
       album: album ?? this.album,
       releaseAudioId: releaseAudioId ?? this.releaseAudioId,
       mainArtists: mainArtists ?? this.mainArtists,
+      contentRestricted: contentRestricted ?? this.contentRestricted,
     );
   }
 }
