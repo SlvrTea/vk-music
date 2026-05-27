@@ -21,7 +21,9 @@ class AppAudioPlayer extends AudioPlayer {
     ShuffleOrder? shuffleOrder,
   }) async {
     assert(audioSources is List<PlayerAudio>);
-    _audioSources = [...audioSources as List<PlayerAudio>];
+    audioSources = (audioSources as List<PlayerAudio>).toList();
+    audioSources.removeWhere((e) => e.contentRestricted == 1);
+    _audioSources = audioSources;
     return super.setAudioSources(
       audioSources,
       preload: preload,
@@ -92,12 +94,15 @@ class AppAudioPlayerController with ChangeNotifier {
     required List<PlayerAudio> playlist,
     int? initialIndex,
   }) async {
+    // Handle play/pause
     if (initialIndex != null) {
+      // pause if target audio already playing
       if (_player.playerState.playing &&
           initialIndex == currentIndex &&
           playlist[initialIndex] == currentAudio) {
         await _player.pause();
         return notifyListeners();
+        // resume if target audio is paused
       } else if (!_player.playerState.playing &&
           initialIndex == currentIndex &&
           playlist[initialIndex] == currentAudio) {
@@ -114,6 +119,7 @@ class AppAudioPlayerController with ChangeNotifier {
     if (playing ?? false) {
       await _player.stop();
     }
+
     currentPlaylist = [...playlist];
     await _player.setAudioSources(
       playlist,

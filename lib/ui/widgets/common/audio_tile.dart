@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:vk_music/common/utils/di/scopes/app_scope.dart';
 import 'package:vk_music/domain/model/player_audio.dart';
@@ -22,10 +23,15 @@ class AudioTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final duration = audio.duration!.inSeconds;
-    final formatDuration = '${duration ~/ 60}:${duration % 60 < 10 ? '0${duration % 60}' : duration % 60}';
+    final formatDuration =
+        '${duration ~/ 60}:${duration % 60 < 10 ? '0${duration % 60}' : duration % 60}';
     final player = context.global.audioPlayer;
     final cachedAudios = context.global.audioRepository.cachedAudioNotifier;
-    final inProgress = context.global.audioRepository.downloadInProgressNotifier;
+    final inProgress =
+        context.global.audioRepository.downloadInProgressNotifier;
+    final formattedPlaylist = playlist
+        .whereNot((e) => e.contentRestricted == 1)
+        .toList();
     return ListTile(
       trailing: withMenu
           ? ListenableBuilder(
@@ -40,10 +46,9 @@ class AudioTile extends StatelessWidget {
                         useRootNavigator: true,
                         context: context,
                         isScrollControlled: true,
-                        backgroundColor: context.global.theme.colors.secondaryBackground,
-                        builder: (_) => AudioBottomSheetWidget(
-                          audio: audio,
-                        ),
+                        backgroundColor:
+                            context.global.theme.colors.secondaryBackground,
+                        builder: (_) => AudioBottomSheetWidget(audio: audio),
                       );
                     },
                     icon: const Icon(Icons.more_vert_rounded),
@@ -55,11 +60,13 @@ class AudioTile extends StatelessWidget {
                 return Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (cachedAudios.value.any((e) => e.id == audio.id)) const Icon(Icons.download, size: 16),
+                    if (cachedAudios.value.any((e) => e.id == audio.id))
+                      const Icon(Icons.download, size: 16),
                     child!,
                   ],
                 );
-              })
+              },
+            )
           : Text(formatDuration),
       leading: CoverWidget(
         photoUrl: audio.album?.thumb?.photo270,
@@ -74,7 +81,9 @@ class AudioTile extends StatelessWidget {
                 }
                 final isPlaying = player.playing;
                 final currentAudio = player.currentAudio;
-                if (currentAudio == null || isPlaying == null) return const SizedBox.shrink();
+                if (currentAudio == null || isPlaying == null) {
+                  return const SizedBox.shrink();
+                }
                 if (currentAudio.id == audio.id) {
                   if (isPlaying) {
                     return const Icon(Icons.pause_rounded, size: 48);
@@ -95,7 +104,11 @@ class AudioTile extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
         style: context.global.theme.b1,
       ),
-      onTap: () => player.playFrom(playlist: playlist, initialIndex: playlist.indexOf(audio)),
+      onTap: () => player.playFrom(
+        playlist: formattedPlaylist,
+        initialIndex: formattedPlaylist.indexOf(audio),
+      ),
+      enabled: (audio.contentRestricted ?? 0) == 1 ? false : true,
     );
   }
 }
